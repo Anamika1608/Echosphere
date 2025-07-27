@@ -24,7 +24,8 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/40 bg-background/90 backdrop-blur-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between px-8
+      ">
         <Link to="/" className="font-bold text-lg">CommunityAI</Link>
         <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (

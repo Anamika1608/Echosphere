@@ -1,5 +1,5 @@
-import { Button } from '../../../components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import { PlusCircle, History, CalendarDays, Mic, User, Settings } from 'lucide-react';
 
 const Resident = () => {
