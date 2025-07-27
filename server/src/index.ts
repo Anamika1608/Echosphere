@@ -5,6 +5,7 @@ import cors from "cors";
 import config from "./config"
 
 import { authRouter } from "./modules/auth/auth.routes";
+import { voiceChatRouter } from "./modules/voiceChat/voiceChat.routes";
 
 const app = express()
 const port = config.port
@@ -33,3 +34,4 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter)
+app.use("/api/voice-chat", voiceChatRouter)

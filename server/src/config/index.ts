@@ -5,6 +5,7 @@ const config = {
   port: process.env.PORT,
   frontendUrl: process.env.FRONTEND_URL,
   jwtSecret: process.env.JWT_SECRET!,
+  omniDimKey: process.env.OMNIDIM_API_KEY
 };
 
 if (!config.jwtSecret) {
