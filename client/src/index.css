@@ -6,4 +6,30 @@
   --font-sans: 'Nunito', sans-serif;
 }
 
+@layer utilities {
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
 
+  @keyframes glowPulse {
+    0%, 100% {
+      box-shadow: 0 0 40px rgba(255, 191, 128, 0.4), 0 0 80px rgba(255, 144, 160, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 60px rgba(255, 191, 128, 0.5), 0 0 100px rgba(255, 144, 160, 0.4);
+    }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .animate-glowPulse {
+    animation: glowPulse 6s ease-in-out infinite;
+  }
+}

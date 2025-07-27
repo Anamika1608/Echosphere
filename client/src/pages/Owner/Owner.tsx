@@ -1,5 +1,5 @@
-import { Button } from '../../../components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import { ListChecks, Megaphone, PlusCircle, Mic, User, Settings, Wrench, Mail, Phone } from 'lucide-react';
 
 // Mock data for technicians - in a real app, this would come from an API
