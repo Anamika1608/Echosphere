@@ -1,11 +1,11 @@
 import { Button } from '../../../components/ui/button';
 import { Link } from 'react-router-dom';
 import HeroGradient from '../../../assets/HeroGradient.svg'
-import Mic from '../../../assets/Mic.svg';
+import Spline from '@splinetool/react-spline';
 
 const Hero = () => {
     return (
-        <section id="hero" className="container mx-auto px-0  pb-16 text-center">
+        <section id="hero" className="container mx-auto px-0 pb-16 text-center">
             <div className=" absolute inset-[-10] sm:inset-0" style={{ display: 'inline-flex', padding: '', flexDirection: 'column', alignItems: 'center' }}>
                 <img src={HeroGradient} alt="Hero Gradient" className="w-full h-full object-cover" />
             </div>
@@ -17,21 +17,25 @@ const Hero = () => {
                     </span>
                 </h1>
             </div>
-            <p className="max-w-xl mt-6 mx-10 text-base md:text-lg text-slate-600">
+            <p className="max-w-xl mt-6 mx-10 text-base md:text-lg text-slate-600 pb-5">
                 A faster approach to Residential Community problems. Making support instant and community building effortless.
             </p>
-            <div className='flex justify-center align-items-center mx-auto pt-5' style={{ width: '123px', height: '123px', flexShrink: 0 }}>
-                <img src={Mic} alt="Mic" className=''/>
+            <div className='flex justify-center align-items-center mx-auto' style={{ width: '123px', height: '123px', flexShrink: 0 }}>
+                <Spline
+        scene="../../../../../public/spline.spline" 
+      />
             </div>
 
-            <div className="mt-8 flex flex-row sm:flex-row items-center justify-center gap-4">
+            <div className="mt-5 flex flex-row sm:flex-row items-center justify-center gap-4">
                 <Button size="default" className="bg-[#FF4500] hover:bg-[#E03E00] text-white  sm:w-auto" asChild>
                     <Link to="/register">Voice assistant</Link>
                 </Button>
                 <Button size="default" className="bg-orange-100 hover:bg-[#E03E00] hover:text-white text-[#FF4500]  sm:w-auto" asChild>
                     <Link to="/register">Login here</Link>
                 </Button>
+
             </div>
+            
         </section>
     );
 }
