@@ -1,55 +1,55 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '../../../components/ui/button';
-import { Menu, X } from 'lucide-react';
+import React from "react";
+import {
+  Home,
+  Calendar,
+  User,
+  MessageCircle,
+  LogOut,
+} from "lucide-react";
+import { FloatingDock } from "../../../components/ui/floating-dock";
+import { Link } from "react-router-dom";
 
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const navItems = [
+  {
+    title: "Home",
+    icon: <Home className="text-[#FF4500]" />,
+    href: "/home",
+  },
+  {
+    title: "Schedule",
+    icon: <Calendar className="text-[#FF4500]" />,
+    href: "/schedule",
+  },
+  {
+    title: "Messages",
+    icon: <MessageCircle className="text-[#FF4500]" />,
+    href: "/messages",
+  },
+  {
+    title: "Profile",
+    icon: <User className="text-[#FF4500]" />,
+    href: "/profile",
+  },
+  {
+    title: "Sign Out",
+    icon: <LogOut className="text-[#FF4500]" />,
+    href: "/logout",
+  },
+];
 
-  const handleScrollLink = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    e.preventDefault();
-    const targetId = e.currentTarget.href.split('#')[1];
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsOpen(false);
-  };
-
-  const navLinks = [
-    { href: '#features', label: 'Features' },
-    { href: '#how-it-works', label: 'How It Works' },
-    { href: '#faq', label: 'FAQs' },
-  ];
-
+const Navbar: React.FC = () => {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/40 bg-background/90 backdrop-blur-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-8
-      ">
-        <Link to="/" className="font-bold text-lg">CommunityAI</Link>
-        <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <a key={link.label} href={link.href} onClick={handleScrollLink} className="text-sm font-medium text-slate-600 hover:text-slate-900">
-              {link.label}
-            </a>
-          ))}
-        </nav>
-        <div className="hidden md:flex items-center gap-2">
-          <Button variant="ghost" asChild><Link to="/login">Login</Link></Button>
-          <Button className="bg-[#FF4500] hover:bg-[#E03E00] text-white" asChild><Link to="/register">Sign Up</Link></Button>
-        </div>
-        <div className="md:hidden">
-          <Button onClick={() => setIsOpen(!isOpen)} variant="ghost" size="icon">{isOpen ? <X /> : <Menu />}</Button>
-        </div>
-      </div>
-      {isOpen && (
-        <nav className="md:hidden p-4 border-t flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <a key={link.label} href={link.href} onClick={handleScrollLink} className="font-medium text-slate-700">{link.label}</a>
-          ))}
-        </nav>
-      )}
-    </header>
+    <div className="fixed bottom-2 md:bottom-4 left-0 right-0 z-50 flex justify-center">
+      <FloatingDock
+        items={navItems.map((item) => ({
+          ...item,
+          // keep original icon inside motion-enabled wrapper
+          icon: item.icon,
+        }))}
+        className="bottom-4" // use one class only, both mobile and desktop
+      />
+    </div>
   );
-}
+};
+
 export default Navbar;

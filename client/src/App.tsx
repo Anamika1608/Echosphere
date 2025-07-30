@@ -6,6 +6,7 @@ import Register from './app/Register/Register';
 import Owner from './pages/Owner/Owner.tsx';
 import Resident from './pages/Resident/Resident.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
+import { SmoothCursor } from "./components/ui/smooth-cursor";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
       </Routes>
       <Toaster />
+      <SmoothCursor />
     </>
   );
 }
