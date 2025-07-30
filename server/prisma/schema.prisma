@@ -7,19 +7,160 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserType {
-  OWNER
-  RESIDENT
+model User {
+  id             String  @id @default(cuid())
+  name           String
+  email          String  @unique
+  password       String
+  profilePicture String?
+
+  raisedIssues      RaisedIssue[]
+  requestedServices RequestedService[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  PgOwner   PgOwner? @relation(fields: [pgOwnerId], references: [id])
+  pgOwnerId String?
 }
 
+model PgOwner {
+  id             String  @id @default(cuid())
+  name           String
+  email          String  @unique
+  password       String
+  profilePicture String?
 
-model User {
-  id                   String          @id @default(cuid())
-  name                 String
-  email                String          @unique
-  password             String
-  profilePicture       String?
-  type                 UserType        @default(RESIDENT)
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
+  residents   User[]
+  issues      RaisedIssue[]
+  services    RequestedService[]
+  technicians Technician[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Technician {
+  id          String          @id @default(cuid())
+  name        String
+  phoneNumber String
+  speciality  TechnicianField
+  isAvailable Boolean         @default(true)
+
+  assignedIssues   RaisedIssue[]
+  assignedServices RequestedService[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  PgOwner   PgOwner? @relation(fields: [pgOwnerId], references: [id])
+  pgOwnerId String?
+}
+
+model RaisedIssue {
+  id            String        @id @default(cuid())
+  ticketNumber  Int           @unique @default(autoincrement())
+  title         String
+  description   String
+  issueType     IssueType
+  priorityLevel PriorityLevel
+  status        IssueStatus   @default(PENDING)
+  location      String
+  imageUrls     String[]
+
+  raisedById String
+  raisedBy   User   @relation(fields: [raisedById], references: [id])
+
+  assignedTechnicianId String?
+  assignedTechnician   Technician? @relation(fields: [assignedTechnicianId], references: [id])
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  resolvedAt DateTime?
+  PgOwner    PgOwner?  @relation(fields: [pgOwnerId], references: [id])
+  pgOwnerId  String?
+}
+
+model RequestedService {
+  id            String        @id @default(cuid())
+  ticketNumber  Int           @unique @default(autoincrement())
+  title         String
+  description   String
+  serviceType   ServiceType
+  priorityLevel PriorityLevel
+  status        ServiceStatus @default(PENDING)
+  location      String
+
+  isApprovedByOwner Boolean @default(false)
+  ownerComment      String?
+  rejectionReason   String?
+
+  requestedById String
+  requestedBy   User   @relation(fields: [requestedById], references: [id])
+
+  assignedTechnicianId String?
+  assignedTechnician   Technician? @relation(fields: [assignedTechnicianId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  approvedAt  DateTime?
+  completedAt DateTime?
+  PgOwner     PgOwner?  @relation(fields: [pgOwnerId], references: [id])
+  pgOwnerId   String?
+}
+
+enum TechnicianField {
+  PLUMBING
+  ELECTRICAL
+  CARPENTRY
+  CLEANING
+  PAINTING
+  AC_REPAIR
+  APPLIANCE_REPAIR
+  GENERAL_MAINTENANCE
+}
+
+enum IssueType {
+  PLUMBING
+  ELECTRICAL
+  HEATING_COOLING
+  CLEANING
+  SECURITY
+  INTERNET_WIFI
+  APPLIANCE
+  STRUCTURAL
+  PEST_CONTROL
+  OTHER
+}
+
+enum ServiceType {
+  CLEANING
+  MAINTENANCE
+  REPAIR
+  INSTALLATION
+  UPGRADE
+  INSPECTION
+  OTHER
+}
+
+enum PriorityLevel {
+  P1 // Critical - Immediate attention
+  P2 // High - Within 24 hours
+  P3 // Medium - Within 3 days
+  P4 // Low - Within a week
+}
+
+enum IssueStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum ServiceStatus {
+  PENDING
+  AWAITING_APPROVAL
+  APPROVED
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
 }
