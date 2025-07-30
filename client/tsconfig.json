@@ -10,8 +10,14 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+      "importsNotUsedAsValues": "remove",
+
+    "erasableSyntaxOnly": false,
+    "verbatimModuleSyntax": false,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   }
 }

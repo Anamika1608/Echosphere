@@ -22,6 +22,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // const { auth } = useUserStore()
+
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -39,13 +42,15 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
 
     try {
       const response = await axios.post(`${serverUrl}/api/auth/login`, formData, {
-        withCredentials: true, 
+        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
         }
       });
 
       const { data } = response.data;
+
+      // auth.setUser(data)
 
       // Call success callback
       if (onLoginSuccess) {
