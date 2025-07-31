@@ -75,12 +75,12 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">Create New PG Community</h2>
                 <button
                     onClick={onCancel}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                     ✕
                 </button>
@@ -103,7 +103,7 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-300' : 'border-gray-300'
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] ${errors.name ? 'border-red-300' : 'border-gray-300'
                             }`}
                         placeholder="Enter PG name"
                     />
@@ -120,7 +120,7 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.address ? 'border-red-300' : 'border-gray-300'
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] ${errors.address ? 'border-red-300' : 'border-gray-300'
                             }`}
                         placeholder="Enter complete address"
                     />
@@ -137,7 +137,7 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
                         value={formData.description}
                         onChange={handleChange}
                         rows={4}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.description ? 'border-red-300' : 'border-gray-300'
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] ${errors.description ? 'border-red-300' : 'border-gray-300'
                             }`}
                         placeholder="Optional description about your PG"
                     />
@@ -148,14 +148,14 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200"
+                        className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={loading}
-                        className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                        className="flex-1 bg-[#FF4500] text-white py-2 px-4 rounded-md hover:bg-[#E03E00] disabled:opacity-50 transition-colors"
                     >
                         {loading ? 'Creating...' : 'Create Community'}
                     </button>

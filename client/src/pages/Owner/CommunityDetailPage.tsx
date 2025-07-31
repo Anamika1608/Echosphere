@@ -13,7 +13,9 @@ import {
   ExclamationTriangleIcon,
   WrenchScrewdriverIcon,
   CalendarIcon,
-  ArrowLeftIcon
+  ArrowLeftIcon,
+  Bars3Icon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import type { PgCommunity } from '../../types/pgCommunity';
 import { serverUrl } from '@/utils';
@@ -27,13 +29,11 @@ interface TabConfig {
 }
 
 const tabs: TabConfig[] = [
-  // { id: 'stats', label: 'Statistics', icon: ChartBarIcon },
   { id: 'residents', label: 'Residents', icon: UsersIcon },
   { id: 'issues', label: 'Raised Issues', icon: ExclamationTriangleIcon },
   { id: 'services', label: 'Requested Services', icon: WrenchScrewdriverIcon },
   { id: 'events', label: 'Events', icon: CalendarIcon },
   { id: 'technicians', label: 'Technicians', icon: WrenchScrewdriverIcon },
-
 ];
 
 const CommunityDetailPage: React.FC = () => {
@@ -43,6 +43,7 @@ const CommunityDetailPage: React.FC = () => {
   const [community, setCommunity] = useState<PgCommunity | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -66,22 +67,31 @@ const CommunityDetailPage: React.FC = () => {
     navigate('/dashboard/owner');
   };
 
+  const handleTabChange = (tabId: TabType) => {
+    setActiveTab(tabId);
+    setIsMenuOpen(false);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#FF4500]"></div>
       </div>
     );
   }
 
   if (error || !community) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <div className="text-red-800">{error || 'Community not found'}</div>
+      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
+        <div className="bg-white rounded-3xl p-6 shadow-xl w-full max-w-sm">
+          <div className="text-red-600 text-center mb-4 text-sm">{error || 'Community not found'}</div>
           <button
             onClick={handleBackToDashboard}
-            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="w-full bg-[#FF4500] text-white px-4 py-3 rounded-2xl hover:bg-[#E03E00] transition-colors text-sm font-semibold"
           >
             Back to Dashboard
           </button>
@@ -107,59 +117,87 @@ const CommunityDetailPage: React.FC = () => {
       case 'technicians':
         return <CommunityTechnicians communityId={id} />;
       default:
-        return <CommunityStats communityId={id} />;
+        return <CommunityResidents communityId={id} />;
     }
   };
 
+  const getActiveTabLabel = () => {
+    const activeTabConfig = tabs.find(tab => tab.id === activeTab);
+    return activeTabConfig?.label || 'Residents';
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
+    <div className="min-h-screen" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
+      {/* Mobile Header */}
+      <div className="bg-white shadow-lg border-b border-orange-100">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <button
                 onClick={handleBackToDashboard}
-                className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
+                className="text-gray-600 hover:text-[#FF4500] p-2 rounded-xl hover:bg-orange-50 transition-colors"
               >
                 <ArrowLeftIcon className="h-5 w-5" />
-                Back to Dashboard
               </button>
-              <span className="text-gray-400">|</span>
-              <h1 className="text-xl font-semibold text-gray-900">{community.name}</h1>
-              <span className="text-sm text-gray-500">({community.pgCode})</span>
+              <div>
+                <h1 className="text-lg font-bold text-gray-900">{community.name}</h1>
+                <p className="text-xs text-gray-500">Code: {community.pgCode}</p>
+              </div>
             </div>
+            
+            {/* Hamburger Menu Button */}
+            <button
+              onClick={toggleMenu}
+              className="text-gray-600 hover:text-[#FF4500] p-2 rounded-xl hover:bg-orange-50 transition-colors"
+            >
+              {isMenuOpen ? (
+                <XMarkIcon className="h-6 w-6" />
+              ) : (
+                <Bars3Icon className="h-6 w-6" />
+              )}
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
-          {/* Sidebar */}
-          <div className="w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleMenu}>
+          <div className="absolute top-0 right-0 h-full w-64 bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-bold text-gray-900">Menu</h2>
+                <button
+                  onClick={toggleMenu}
+                  className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </div>
+              
               {/* Community Info */}
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="font-semibold text-gray-900 mb-2">{community.name}</h2>
+              <div className="mb-6 p-4 bg-orange-50 rounded-2xl">
+                <h3 className="font-semibold text-gray-900 mb-2">{community.name}</h3>
                 <p className="text-sm text-gray-600 mb-2">{community.address}</p>
                 {community.description && (
                   <p className="text-sm text-gray-500">{community.description}</p>
                 )}
               </div>
 
-              {/* Navigation */}
-              <nav className="p-4">
+              {/* Navigation Tabs */}
+              <nav>
                 <ul className="space-y-2">
                   {tabs.map((tab) => {
                     const Icon = tab.icon;
                     return (
                       <li key={tab.id}>
                         <button
-                          onClick={() => setActiveTab(tab.id)}
-                          className={`w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === tab.id
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                            }`}
+                          onClick={() => handleTabChange(tab.id)}
+                          className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 ${
+                            activeTab === tab.id
+                              ? 'bg-[#FF4500] text-white shadow-lg'
+                              : 'text-gray-600 hover:bg-orange-50 hover:text-[#FF4500]'
+                          }`}
                         >
                           <Icon className="h-5 w-5" />
                           {tab.label}
@@ -171,13 +209,33 @@ const CommunityDetailPage: React.FC = () => {
               </nav>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Main Content */}
-          <div className="flex-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              {renderTabContent()}
+      {/* Main Content */}
+      <div className="px-4 py-6">
+        {/* Current Tab Indicator */}
+        <div className="mb-6">
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-orange-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">{getActiveTabLabel()}</h2>
+                <p className="text-sm text-gray-500">Community Management</p>
+              </div>
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                {(() => {
+                  const activeTabConfig = tabs.find(tab => tab.id === activeTab);
+                  const Icon = activeTabConfig?.icon || UsersIcon;
+                  return <Icon className="h-6 w-6 text-[#FF4500]" />;
+                })()}
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Tab Content */}
+        <div className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+          {renderTabContent()}
         </div>
       </div>
     </div>

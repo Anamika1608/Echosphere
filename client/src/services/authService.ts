@@ -1,11 +1,9 @@
 import axios from "axios";
 import { serverUrl } from "@/utils";
 import userStore from "@/store/userStore";
-import { useNavigate } from "react-router-dom";
 
-export const handleUserLogout = async () => {
+export const handleUserLogout = async (navigate: any) => {
     const { clearUser } = userStore()
-    const navigate = useNavigate()
     try {
         await axios.get(`${serverUrl}/auth/logout`, {
             withCredentials: true,
