@@ -21,8 +21,7 @@ const technicians = [
 const OwnerOldDashboard = () => {
 
   const { user } = userStore()
-
-
+  const navigate = useNavigate()
 
   return (
     <div className="p-4 md:p-8 bg-slate-50 min-h-screen">
@@ -31,7 +30,7 @@ const OwnerOldDashboard = () => {
           <h1 className="text-3xl font-bold tracking-tight">Owner Dashboard</h1>
           <p className="text-slate-500">Manage your community, effortlessly.</p>
         </div>
-        <button onClick={handleUserLogout}>
+        <button onClick={() => handleUserLogout(navigate)}>
           <LogOut />
         </button>
       </header>
