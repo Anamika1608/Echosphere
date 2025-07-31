@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../../../components/ui/accordion.tsx";
+import Spline from '@splinetool/react-spline';
 
 const faqs = [
   {
@@ -26,18 +27,25 @@ const faqs = [
 
 export function FAQs() {
   return (
-    <section id="faq" className="container mx-auto px-4 py-16 sm:py-24">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
+    <section id="faq" className="grid grid-cols-1 mx-auto px-4 py-8 sm:py-16 gap-4">
+
+      <div className="sm:mx-auto mx-10 px-0 text-center">
+        <div className="text-center py-4 sm:mb-8">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Frequently Asked Questions
+          Frequently Asked Questions
           </h2>
         </div>
+        <div className="flex justify-center items-center h-[160px] sm:h-[223px] my-4 mb-4 sm:mb-4">
+                    <Spline scene="../../../../../public/spline.spline" />
+                </div>
+      </div>
+      <div className="max-w-3xl mx-auto sm:w-xl overflow-visible">
+
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, index) => (
             <AccordionItem value={`item-${index}`} key={index}>
               <AccordionTrigger>{faq.q}</AccordionTrigger>
-              <AccordionContent>{faq.a}</AccordionContent>
+              <AccordionContent className="text-gray-500">{faq.a}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

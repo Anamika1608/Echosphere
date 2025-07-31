@@ -10,9 +10,9 @@ import Register from './app/Register/Register';
 import OwnerDashboard from './pages/Owner/OwnerDashboard.tsx';
 import ResidentDashboard from './pages/Resident/ResidentDashboard.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
+import LoadingSpinner from './components/ui/loading.tsx';
 import ProtectedRoute from './components/route/ProtectedRoute.tsx';
 import NotFound from './pages/NotFound/NotFound.tsx';
-import LoadingSpinner from './components/ui/loading.tsx';
 import PgCommunity from './pages/PgCommunity/PgCommunity.tsx';
 
 function App() {
