@@ -32,10 +32,13 @@ const Hero = () => {
                 <p className="mt-4 text-gray-500 max-w-[500px] mx-8 sm:mx-auto font-light">
                     A faster approach to <strong className='font-bold'>Residential Community</strong> problems. Making <strong className='font-bold'>support instant</strong> and community building effortless.
                 </p>
-                
-                <div className="flex justify-center items-center h-[160px] sm:h-[223px] mt-6">
-                    <Spline scene="../../../../../public/spline.spline" />
-                </div>
+
+                <div className="flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative">
+  <Spline scene="../../../../../public/spline.spline" />
+  
+  {/* Overlay div to disable interaction */}
+  <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
+</div>
                 <div className="mt-8 flex flex-row sm:flex-row items-center justify-center gap-4 sm:mt-10">
                     <Button size="lg" className="bg-[#FF6D2E] hover:bg-[#E03E00] text-white sm:w-auto" asChild>
                         <Link to="/register">Voice assistant</Link>
