@@ -10,14 +10,9 @@ import Register from './app/Register/Register';
 import OwnerDashboard from './pages/Owner/OwnerDashboard.tsx';
 import ResidentDashboard from './pages/Resident/ResidentDashboard.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
-<<<<<<< HEAD
+import LoadingSpinner from './components/ui/loading.tsx';
 import ProtectedRoute from './components/route/ProtectedRoute.tsx';
 import NotFound from './pages/NotFound/NotFound.tsx';
-import LoadingSpinner from './components/ui/loading.tsx';
-import { SmoothCursor } from "./components/ui/smooth-cursor.tsx"; 
-=======
-
->>>>>>> 5a7b49b0831a7cd1564db2d2c65802fdff565d57
 
 function App() {
   const { setUser, user, clearUser } = userStore();
