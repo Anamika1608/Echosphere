@@ -31,4 +31,9 @@ export interface User {
 
   raisedIssues?: RaisedIssue[];
   requestedServices?: RequestedService[];
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> 5a7b49b0831a7cd1564db2d2c65802fdff565d57

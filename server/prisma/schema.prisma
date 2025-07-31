@@ -8,32 +8,50 @@ datasource db {
 }
 
 model User {
-  id             String  @id @default(cuid())
+  id             String   @id @default(cuid())
   name           String
-  email          String  @unique
+  email          String   @unique
   password       String
   profilePicture String?
+  role           UserRole
+  
+  // For residents - which specific PG they belong to
+  pgCommunityId String?
+  pgCommunity   PgCommunity? @relation("PgResidents", fields: [pgCommunityId], references: [id])
+  
+  // For PG owners - the PG communities they own
+  ownedPgCommunities PgCommunity[] @relation("PgOwnerCommunities")
 
+  // Issues and services raised by this user (residents)
   raisedIssues      RaisedIssue[]
   requestedServices RequestedService[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  PgOwner   PgOwner? @relation(fields: [pgOwnerId], references: [id])
-  pgOwnerId String?
 }
 
-model PgOwner {
-  id             String  @id @default(cuid())
-  name           String
-  email          String  @unique
-  password       String
-  profilePicture String?
-
-  residents   User[]
-  issues      RaisedIssue[]
-  services    RequestedService[]
-  technicians Technician[]
+model PgCommunity {
+  id          String @id @default(cuid())
+  name        String
+  address     String
+  description String?
+  
+  // Unique PG code for residents to use during signup
+  pgCode      String @unique
+  
+  // Who owns this PG
+  ownerId String
+  owner   User   @relation("PgOwnerCommunities", fields: [ownerId], references: [id])
+  
+  // Residents in this PG
+  residents User[] @relation("PgResidents")
+  
+  // Issues and services for this specific PG
+  issues   RaisedIssue[]
+  services RequestedService[]
+  
+  // Technicians available for this PG
+  technicians TechnicianPgAssignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -46,13 +64,29 @@ model Technician {
   speciality  TechnicianField
   isAvailable Boolean         @default(true)
 
+  // Many-to-many relationship with PG communities
+  pgAssignments TechnicianPgAssignment[]
+  
   assignedIssues   RaisedIssue[]
   assignedServices RequestedService[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  PgOwner   PgOwner? @relation(fields: [pgOwnerId], references: [id])
-  pgOwnerId String?
+}
+
+// Junction table for Technician-PG relationships
+model TechnicianPgAssignment {
+  id String @id @default(cuid())
+  
+  technicianId String
+  technician   Technician @relation(fields: [technicianId], references: [id], onDelete: Cascade)
+  
+  pgCommunityId String
+  pgCommunity   PgCommunity @relation(fields: [pgCommunityId], references: [id], onDelete: Cascade)
+  
+  assignedAt DateTime @default(now())
+  
+  @@unique([technicianId, pgCommunityId])
 }
 
 model RaisedIssue {
@@ -66,8 +100,13 @@ model RaisedIssue {
   location      String
   imageUrls     String[]
 
+  // Who raised this issue (resident)
   raisedById String
   raisedBy   User   @relation(fields: [raisedById], references: [id])
+
+  // Which PG community this belongs to
+  pgCommunityId String
+  pgCommunity   PgCommunity @relation(fields: [pgCommunityId], references: [id])
 
   assignedTechnicianId String?
   assignedTechnician   Technician? @relation(fields: [assignedTechnicianId], references: [id])
@@ -75,8 +114,6 @@ model RaisedIssue {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   resolvedAt DateTime?
-  PgOwner    PgOwner?  @relation(fields: [pgOwnerId], references: [id])
-  pgOwnerId  String?
 }
 
 model RequestedService {
@@ -93,8 +130,13 @@ model RequestedService {
   ownerComment      String?
   rejectionReason   String?
 
+  // Who requested this service (resident)
   requestedById String
   requestedBy   User   @relation(fields: [requestedById], references: [id])
+
+  // Which PG community this belongs to
+  pgCommunityId String
+  pgCommunity   PgCommunity @relation(fields: [pgCommunityId], references: [id])
 
   assignedTechnicianId String?
   assignedTechnician   Technician? @relation(fields: [assignedTechnicianId], references: [id])
@@ -103,8 +145,11 @@ model RequestedService {
   updatedAt   DateTime  @updatedAt
   approvedAt  DateTime?
   completedAt DateTime?
-  PgOwner     PgOwner?  @relation(fields: [pgOwnerId], references: [id])
-  pgOwnerId   String?
+}
+
+enum UserRole {
+  PG_OWNER
+  RESIDENT
 }
 
 enum TechnicianField {

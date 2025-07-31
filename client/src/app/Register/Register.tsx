@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import { useState } from 'react';
 
 // const Register = () => {
@@ -664,3 +665,5 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
 };
 
 export default Signup;
+=======
+>>>>>>> 5a7b49b0831a7cd1564db2d2c65802fdff565d57

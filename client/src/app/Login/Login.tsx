@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import { useState } from 'react';
 // import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 // import { Input } from '../../components/ui/input';
@@ -375,3 +376,5 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
 };
 
 export default Login;
+=======
+>>>>>>> 5a7b49b0831a7cd1564db2d2c65802fdff565d57

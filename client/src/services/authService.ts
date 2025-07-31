@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5a7b49b0831a7cd1564db2d2c65802fdff565d57
 import axios from "axios";
 import { serverUrl } from "@/utils";
 import userStore from "@/store/userStore";
@@ -17,4 +20,8 @@ export const handleUserLogout = async () => {
         clearUser();
         navigate('/');
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 5a7b49b0831a7cd1564db2d2c65802fdff565d57
