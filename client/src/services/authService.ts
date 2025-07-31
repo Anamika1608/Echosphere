@@ -7,7 +7,7 @@ export const handleUserLogout = async () => {
     const { clearUser } = userStore()
     const navigate = useNavigate()
     try {
-        await axios.get(`${serverUrl}/api/auth/logout`, {
+        await axios.get(`${serverUrl}/auth/logout`, {
             withCredentials: true,
         });
     } catch (err) {

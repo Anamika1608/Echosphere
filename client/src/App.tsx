@@ -24,7 +24,7 @@ function App() {
     const getUserProfile = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${serverUrl}/api/auth/getUserProfile`, {
+        const response = await axios.get(`${serverUrl}/auth/getUserProfile`, {
           withCredentials: true,
         });
         const { data } = response.data;
@@ -59,11 +59,18 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        <Route path="/dashboard/owner" element={
+        {/* <Route path="/dashboard/owner" element={
           <ProtectedRoute allowedRoles={["PG_OWNER"]}>
             <OwnerDashboard />
           </ProtectedRoute>
+        } /> */}
+
+        <Route path="/dashboard/owner" element={
+          <ProtectedRoute allowedRoles={["PG_OWNER"]}>
+            <PgCommunity />
+          </ProtectedRoute>
         } />
+
 
         <Route path="/manage-communities" element={
           <ProtectedRoute allowedRoles={["PG_OWNER"]}>

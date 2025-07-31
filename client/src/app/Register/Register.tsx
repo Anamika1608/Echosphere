@@ -395,7 +395,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
         ...(formData.role === 'RESIDENT' && { pgCode: formData.pgCode })
       };
 
-      const response = await axios.post(`${serverUrl}/api/auth/signup`, signupData, {
+      const response = await axios.post(`${serverUrl}/auth/signup`, signupData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',

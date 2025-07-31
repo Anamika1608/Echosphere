@@ -5,7 +5,7 @@ import PgCommunityResidents from '@/app/components/PgCommunity/PgCommunityReside
 import CreatePgCommunityForm from '@/app/components/PgCommunity/CreatePgCommunityForm';
 import EditPgCommunityForm from '@/app/components/PgCommunity/EditPgCommunityForm';
 
-type AppView = 'dashboard' | 'create' | 'edit' | 'residents' | 'stats';
+type AppView = 'dashboard' | 'create' | 'edit' | 'residents' ;
 
 const PgCommunity: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
@@ -25,11 +25,6 @@ const PgCommunity: React.FC = () => {
   const handleViewResidents = (community: PgCommunity) => {
     setSelectedCommunity(community);
     setCurrentView('residents');
-  };
-
-  const handleViewStats = (community: PgCommunity) => {
-    setSelectedCommunity(community);
-    setCurrentView('stats');
   };
 
   const handleSuccess = () => {
@@ -120,22 +115,8 @@ const PgCommunity: React.FC = () => {
           />
         )}
 
-        {/* {currentView === 'stats' && selectedCommunity && (
-          <PgCommunityStatsComponent
-            community={selectedCommunity}
-            onBack={handleCancel}
-          />
-        )} */}
       </div>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="text-center text-sm text-gray-500">
-            PG Community Management System
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
