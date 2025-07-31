@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService } from './auth.service';
 import config from '../../config';
+import { AuthenticatedRequest } from '@/middleware/authenticate.middleware';
 
 const NODE_ENV = config.NODE_ENV
 
@@ -48,10 +49,9 @@ export const authController = {
     }
   },
 
-  async getUserProfile(req: Request, res: Response, next: NextFunction) {
+  async getUserProfile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const userId = req.user?.id as string
-      const response = await authService.getUserById(userId);
+      const response = await authService.getUserById(req.user?.userId as string);
 
       res.status(200).json({ message: 'Profile fetched successfully', data: response });
     } catch (error) {

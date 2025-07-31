@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Auth schemas
 export const signupSchema = z.object({
   body: z.object({
     role: z.enum(['PG_OWNER', 'RESIDENT'], {
