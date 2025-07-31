@@ -130,18 +130,17 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
     return colors[speciality as keyof typeof colors] || colors.GENERAL;
   };
 
-  const specialityOptions = [
-    { value: '', label: 'All Specialities' },
-    { value: 'PLUMBING', label: 'Plumbing' },
-    { value: 'ELECTRICAL', label: 'Electrical' },
-    { value: 'CLEANING', label: 'Cleaning' },
-    { value: 'MAINTENANCE', label: 'Maintenance' },
-    { value: 'SECURITY', label: 'Security' },
-    { value: 'GARDENING', label: 'Gardening' },
-    { value: 'PAINTING', label: 'Painting' },
-    { value: 'CARPENTRY', label: 'Carpentry' },
-    { value: 'GENERAL', label: 'General' }
-  ];
+ const specialityOptions = [
+  { value: '', label: 'All Specialities' },
+  { value: 'PLUMBING', label: 'Plumbing' },
+  { value: 'ELECTRICAL', label: 'Electrical' },
+  { value: 'CARPENTRY', label: 'Carpentry' },
+  { value: 'CLEANING', label: 'Cleaning' },
+  { value: 'PAINTING', label: 'Painting' },
+  { value: 'AC_REPAIR', label: 'AC Repair' },
+  { value: 'APPLIANCE_REPAIR', label: 'Appliance Repair' },
+  { value: 'GENERAL_MAINTENANCE', label: 'General Maintenance' }
+];
 
   if (loading) {
     return (
