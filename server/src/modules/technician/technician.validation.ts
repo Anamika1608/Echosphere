@@ -15,7 +15,7 @@ const TechnicianFieldEnum = z.enum([
 ]);
 
 export const createTechnicianSchema = z.object({
-  body: z.object({
+    
     name: z.string()
       .min(2, 'Name must be at least 2 characters')
       .max(100, 'Name must not exceed 100 characters')
@@ -28,7 +28,6 @@ export const createTechnicianSchema = z.object({
     isAvailable: z.boolean().optional(),
     pgCommunityId: z.string()
       .uuid('Invalid PG community ID format')
-  })
 });
 
 export const assignTechnicianSchema = z.object({
@@ -64,6 +63,12 @@ export const getTechniciansForPgSchema = z.object({
   query: z.object({
     speciality: TechnicianFieldEnum.optional()
   }).optional()
+});
+
+export const getAvailableTechniciansSchema = z.object({
+  params: z.object({
+    pgCommunityId: z.string().uuid('Invalid PG community ID format')
+  })
 });
 
 export const updateTechnicianSchema = z.object({

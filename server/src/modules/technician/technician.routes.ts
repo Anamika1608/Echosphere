@@ -1,14 +1,6 @@
-// routes/technician.routes.ts
 import { Router } from 'express';
-import { technicianController } from '../technician/technician.controller';
+import { technicianController } from './technician.controller';
 import { authenticateToken } from '../../middleware/authenticate.middleware';
-import { 
-  createTechnicianSchema,
-  assignTechnicianSchema,
-  updateTechnicianAvailabilitySchema,
-  getTechnicianByIdSchema,
-  validate 
-} from '../technician/technician.validation';
 
 const router = Router();
 
@@ -20,7 +12,6 @@ const router = Router();
 router.post(
   '/',
   authenticateToken,
-  validate(createTechnicianSchema),
   technicianController.createTechnician
 );
 
@@ -32,8 +23,18 @@ router.post(
 router.get(
   '/pg/:pgCommunityId',
   authenticateToken,
-  validate(getTechnicianByIdSchema),
   technicianController.getTechniciansForPg
+);
+
+/**
+ * @route GET /api/technician/owner/available/:pgCommunityId
+ * @desc Get available technicians from other PG communities that can be imported
+ * @access Private (PG Owner only)
+ */
+router.get(
+  '/owner/available/:pgCommunityId',
+  authenticateToken,
+  technicianController.getAvailableTechniciansFromOtherPgs
 );
 
 /**
@@ -55,7 +56,6 @@ router.get(
 router.get(
   '/:id',
   authenticateToken,
-  validate(getTechnicianByIdSchema),
   technicianController.getTechnicianById
 );
 
@@ -67,7 +67,6 @@ router.get(
 router.put(
   '/:id/availability',
   authenticateToken,
-  validate(updateTechnicianAvailabilitySchema),
   technicianController.updateTechnicianAvailability
 );
 
@@ -79,7 +78,6 @@ router.put(
 router.post(
   '/:id/assign',
   authenticateToken,
-  validate(assignTechnicianSchema),
   technicianController.assignTechnicianToPgs
 );
 
@@ -91,7 +89,6 @@ router.post(
 router.delete(
   '/:id/remove',
   authenticateToken,
-  validate(assignTechnicianSchema),
   technicianController.removeTechnicianFromPgs
 );
 
@@ -103,7 +100,6 @@ router.delete(
 router.get(
   '/:id/workload',
   authenticateToken,
-  validate(getTechnicianByIdSchema),
   technicianController.getTechnicianWorkload
 );
 
@@ -115,7 +111,6 @@ router.get(
 router.delete(
   '/:id',
   authenticateToken,
-  validate(getTechnicianByIdSchema),
   technicianController.deleteTechnician
 );
 
@@ -127,8 +122,7 @@ router.delete(
 router.put(
   '/:id',
   authenticateToken,
-  validate(createTechnicianSchema),
   technicianController.updateTechnician
 );
 
-export default router;
+export { router as technicianRouter };

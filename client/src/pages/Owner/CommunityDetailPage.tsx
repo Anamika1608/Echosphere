@@ -6,18 +6,19 @@ import CommunityResidents from '../../app/components/PgAnalytics/CommunityReside
 import CommunityIssues from '../../app/components/PgAnalytics/CommunityIssues';
 import CommunityServices from '../../app/components/PgAnalytics/CommunityServices';
 import CommunityEvents from '../../app/components/PgAnalytics/CommunityEvents';
-import { 
-  ChartBarIcon, 
-  UsersIcon, 
-  ExclamationTriangleIcon, 
-  WrenchScrewdriverIcon, 
+import CommunityTechnicians from '../../app/components/PgAnalytics/CommunityTechnicians';
+import {
+  ChartBarIcon,
+  UsersIcon,
+  ExclamationTriangleIcon,
+  WrenchScrewdriverIcon,
   CalendarIcon,
-  ArrowLeftIcon 
+  ArrowLeftIcon
 } from '@heroicons/react/24/outline';
 import type { PgCommunity } from '../../types/pgCommunity';
 import { serverUrl } from '@/utils';
 
-type TabType = 'stats' | 'residents' | 'issues' | 'services' | 'events';
+type TabType = 'stats' | 'residents' | 'issues' | 'services' | 'events' | 'technicians';
 
 interface TabConfig {
   id: TabType;
@@ -31,6 +32,8 @@ const tabs: TabConfig[] = [
   { id: 'issues', label: 'Raised Issues', icon: ExclamationTriangleIcon },
   { id: 'services', label: 'Requested Services', icon: WrenchScrewdriverIcon },
   { id: 'events', label: 'Events', icon: CalendarIcon },
+  { id: 'technicians', label: 'Technicians', icon: WrenchScrewdriverIcon },
+
 ];
 
 const CommunityDetailPage: React.FC = () => {
@@ -101,6 +104,8 @@ const CommunityDetailPage: React.FC = () => {
         return <CommunityServices communityId={id} />;
       case 'events':
         return <CommunityEvents communityId={id} />;
+      case 'technicians':
+        return <CommunityTechnicians communityId={id} />;
       default:
         return <CommunityStats communityId={id} />;
     }
@@ -151,11 +156,10 @@ const CommunityDetailPage: React.FC = () => {
                       <li key={tab.id}>
                         <button
                           onClick={() => setActiveTab(tab.id)}
-                          className={`w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                            activeTab === tab.id
+                          className={`w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === tab.id
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                          }`}
+                            }`}
                         >
                           <Icon className="h-5 w-5" />
                           {tab.label}
