@@ -18,7 +18,7 @@ const technicians = [
   { id: 4, name: 'Priya Mehta', specialty: 'General Maintenance', phone: '+91 98765 43213' },
 ];
 
-const OwnerDashboard = () => {
+const OwnerOldDashboard = () => {
 
   const { user } = userStore()
 
@@ -101,4 +101,4 @@ const OwnerDashboard = () => {
   );
 }
 
-export default OwnerDashboard;
+export default OwnerOldDashboard;

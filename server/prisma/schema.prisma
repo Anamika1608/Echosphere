@@ -25,6 +25,13 @@ model User {
   // Issues and services raised by this user (residents)
   raisedIssues      RaisedIssue[]
   requestedServices RequestedService[]
+  
+  // Events created by this user (owners)
+  createdEvents Event[] @relation("EventCreator")
+  
+  // Event attendance and feedback
+  eventAttendances EventAttendance[]
+  eventFeedbacks   EventFeedback[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -49,6 +56,9 @@ model PgCommunity {
   // Issues and services for this specific PG
   issues   RaisedIssue[]
   services RequestedService[]
+  
+  // Events for this PG
+  events Event[]
   
   // Technicians available for this PG
   technicians TechnicianPgAssignment[]
@@ -147,6 +157,73 @@ model RequestedService {
   completedAt DateTime?
 }
 
+model Event {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  eventType   EventType
+  location    String
+  startDate   DateTime
+  endDate     DateTime
+  maxCapacity Int?
+  
+  // Event images/attachments
+  imageUrls   String[]
+  
+  // Registration settings
+  requiresRegistration Boolean @default(false)
+  registrationDeadline DateTime?
+  
+  // Who created this event (PG owner)
+  createdById String
+  createdBy   User @relation("EventCreator", fields: [createdById], references: [id])
+  
+  // Which PG community this belongs to
+  pgCommunityId String
+  pgCommunity   PgCommunity @relation(fields: [pgCommunityId], references: [id])
+  
+  // Event attendance and feedback
+  attendances EventAttendance[]
+  feedbacks   EventFeedback[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EventAttendance {
+  id String @id @default(cuid())
+  
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+  
+  eventId String
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  status AttendanceStatus @default(REGISTERED)
+  registeredAt DateTime @default(now())
+  attendedAt   DateTime?
+  
+  @@unique([userId, eventId])
+}
+
+model EventFeedback {
+  id String @id @default(cuid())
+  
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+  
+  eventId String
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  rating      Int // 1-5 scale
+  comment     String?
+  feedbackType FeedbackType @default(GENERAL)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, eventId])
+}
+
 enum UserRole {
   PG_OWNER
   RESIDENT
@@ -208,4 +285,29 @@ enum ServiceStatus {
   IN_PROGRESS
   COMPLETED
   REJECTED
+}
+
+enum EventType {
+  SOCIAL
+  MAINTENANCE
+  MEETING
+  CELEBRATION
+  WORKSHOP
+  ANNOUNCEMENT
+  OTHER
+}
+
+enum AttendanceStatus {
+  REGISTERED
+  ATTENDED
+  NO_SHOW
+  CANCELLED
+}
+
+enum FeedbackType {
+  GENERAL
+  ORGANIZATION
+  CONTENT
+  VENUE
+  TIMING
 }

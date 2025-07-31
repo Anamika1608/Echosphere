@@ -42,7 +42,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
     setError('');
 
     try {
-      const response = await axios.post(`${serverUrl}/api/auth/login`, formData, {
+      const response = await axios.post(`${serverUrl}/auth/login`, formData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',

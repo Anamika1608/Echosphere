@@ -7,12 +7,15 @@ import { Layout } from './app/Layout/Layout.tsx';
 import Landing from './pages/Landing/Landing.tsx';
 import Login from './app/Login/Login';
 import Register from './app/Register/Register';
-import OwnerDashboard from './pages/Owner/OwnerDashboard.tsx';
+import OwnerOldDashboard from './pages/Owner/OwnerOldDashboard.tsx';
+import PgOwnerDashboard from './pages/Owner/OnwerDashboard.tsx';
 import ResidentDashboard from './pages/Resident/ResidentDashboard.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import LoadingSpinner from './components/ui/loading.tsx';
 import ProtectedRoute from './components/route/ProtectedRoute.tsx';
 import NotFound from './pages/NotFound/NotFound.tsx';
+import CommunityDetailPage from './pages/Owner/CommunityDetailPage.tsx';
+
 
 function App() {
   const { setUser, user, clearUser } = userStore();
@@ -23,12 +26,12 @@ function App() {
     const getUserProfile = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${serverUrl}/api/auth/getUserProfile`, {
+        const response = await axios.get(`${serverUrl}/auth/getUserProfile`, {
           withCredentials: true,
         });
         const { data } = response.data;
         setUser(data);
-        
+
         // console.log("User profile fetched:", data);
       } catch (error) {
         console.log("No user session found or error fetching profile:", error);
@@ -54,24 +57,37 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Landing />} />
         </Route>
-        
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
+
+        {/* <Route path="/dashboard/owner" element={
+          <ProtectedRoute allowedRoles={["PG_OWNER"]}>
+            <OwnerOldDashboard />
+          </ProtectedRoute>
+        } /> */}
+
         <Route path="/dashboard/owner" element={
           <ProtectedRoute allowedRoles={["PG_OWNER"]}>
-            <OwnerDashboard />
+            <PgOwnerDashboard />
           </ProtectedRoute>
         } />
-        
+
+        <Route path="/community/:id" element={
+          <ProtectedRoute allowedRoles={["PG_OWNER"]}>
+            <CommunityDetailPage />
+          </ProtectedRoute>
+        } />
+
         <Route path="/dashboard/resident" element={
           <ProtectedRoute allowedRoles={["RESIDENT"]}>
             <ResidentDashboard />
           </ProtectedRoute>
         } />
-        
+
+
         <Route path="/notFound" element={<NotFound />} />
-        
+
         {/* Catch all route - should be last */}
         <Route path="*" element={<NotFound />} />
       </Routes>

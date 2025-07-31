@@ -31,7 +31,7 @@ const ResidentDashboard = () => {
           <CardContent>
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center">
-                <User className="h-8 w-8 text-[#FF4500]" />
+                <img src={user.profilePicture ?? undefined} alt='user-profile' className='rounded-md' />
               </div>
               <div>
                 <p className="font-bold text-lg">{`${user.name}`}</p>

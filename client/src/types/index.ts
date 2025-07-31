@@ -3,8 +3,18 @@ export type UserRole = 'PG_OWNER' | 'RESIDENT';
 export interface PgCommunity {
   id: string;
   name: string;
-  location: string;
+  address: string;
+  pgCode: string;
+  ownerId: string;
+  owner: User;
+  residents: any[]; 
+  issues: any[];    
+  services: any[];  
+  technicians: any[]; 
+  createdAt: Date;
+  updatedAt: Date;
 }
+
 
 export interface RaisedIssue {
   id: string;
