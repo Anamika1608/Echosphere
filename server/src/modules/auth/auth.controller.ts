@@ -2,10 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import { authService } from './auth.service';
 import config from '../../config';
 import { AuthenticatedRequest } from '@/middleware/authenticate.middleware';
-
+import Redis from 'ioredis';
 const NODE_ENV = config.NODE_ENV
+const redis = new Redis();
 
 export const authController = {
+
   async signup(req: Request, res: Response, next: NextFunction) {
     try {
       const { user, token } = await authService.signup(req.body);
@@ -58,4 +60,32 @@ export const authController = {
       next(error);
     }
   },
+
+  // Set user ID in Redis
+  async setUserInRedis(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.userId
+      await redis.set('widgetSession', userId as string)
+      
+      res.status(200).json({
+        message: 'Widget session user ID set successfully',
+        data: { userId }
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get user ID from Redis
+  async getUserFromRedis(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await redis.get('widgetSession');
+      res.status(200).json({
+        message: 'Widget session user ID get successfully',
+        data: { result }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 };

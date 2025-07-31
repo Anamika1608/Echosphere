@@ -10,5 +10,7 @@ router.post('/signup', validate(signupSchema), authController.signup);
 router.post('/login', validate(loginSchema), authController.login);
 router.get('/logout', authController.logout);
 router.get('/getUserProfile', authenticateToken, authController.getUserProfile);
+router.get('/setWidgetSessionUserId', authenticateToken, authController.setUserInRedis);
+router.get('/getWidgetSessionUserId', authController.getUserFromRedis);
 
 export { router as authRouter };

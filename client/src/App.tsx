@@ -16,7 +16,6 @@ import ProtectedRoute from './components/route/ProtectedRoute.tsx';
 import NotFound from './pages/NotFound/NotFound.tsx';
 import CommunityDetailPage from './pages/Owner/CommunityDetailPage.tsx';
 
-
 function App() {
   const { setUser, user, clearUser } = userStore();
   const [isLoading, setIsLoading] = useState(true);
@@ -45,6 +44,16 @@ function App() {
 
     getUserProfile();
   }, [setUser, clearUser]);
+
+  useEffect(() => {
+    const setUserToRedis = async () => {
+      const response = await axios.get(`${serverUrl}/auth/setWidgetSessionUserId`, {
+        withCredentials: true
+      });
+      console.log("response after setting up userId in redis", response)
+    }
+    setUserToRedis()
+  },[])
 
   // Show loading spinner while checking authentication
   if (isLoading || !authChecked) {
@@ -84,7 +93,6 @@ function App() {
             <ResidentDashboard />
           </ProtectedRoute>
         } />
-
 
         <Route path="/notFound" element={<NotFound />} />
 
