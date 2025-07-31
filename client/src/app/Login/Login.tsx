@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import { serverUrl } from '@/utils';
+import userStore from '@/store/userStore';
 
 interface LoginFormData {
   email: string;
@@ -22,8 +23,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // const { auth } = useUserStore()
-
+  const { auth} = userStore()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,7 +50,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
 
       const { data } = response.data;
 
-      // auth.setUser(data)
+      // console.log("data after login", data)
+
+      auth.setUser(data)
+
+      // console.log("auth.user", auth.user)
 
       // Call success callback
       if (onLoginSuccess) {

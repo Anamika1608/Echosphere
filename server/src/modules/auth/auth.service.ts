@@ -152,6 +152,7 @@ export const authService = {
       }
     });
 
+
     if (!user) {
       throw new AppError('User not found', 404);
     }

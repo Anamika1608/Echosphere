@@ -26,7 +26,7 @@ export const authController = {
     try {
       const { user, token } = await authService.login(req.body);
 
-      res.cookie("token", token, {
+      res.cookie("community_auth_token", token, {
         httpOnly: true,
         secure: NODE_ENV === "production",
         sameSite: NODE_ENV === "production" ? "none" : "lax",
@@ -34,6 +34,17 @@ export const authController = {
       });
 
       res.status(200).json({ message: 'Login successful', data: user });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getUserProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.id as string
+      const response = await authService.getUserById(userId);
+
+      res.status(200).json({ message: 'Profile fetched successfully', data: response });
     } catch (error) {
       next(error);
     }

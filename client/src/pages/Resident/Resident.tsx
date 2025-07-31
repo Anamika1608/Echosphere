@@ -1,12 +1,15 @@
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import { PlusCircle, History, CalendarDays, Mic, User, Settings } from 'lucide-react';
+import userStore from '@/store/userStore';
 
 const Resident = () => {
+  const {auth} = userStore()
+  
   return (
     <div className="p-4 md:p-8 bg-slate-50 min-h-screen">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome, Anushree</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{`Welcome, ${auth.user.name}`}</h1>
         <p className="text-slate-500">Here's a look at your community.</p>
       </header>
 
@@ -25,8 +28,8 @@ const Resident = () => {
                 <User className="h-8 w-8 text-[#FF4500]" />
               </div>
               <div>
-                <p className="font-bold text-lg">Anushree</p>
-                <p className="text-sm text-muted-foreground">anushree@example.com</p>
+                <p className="font-bold text-lg">{`${auth.user.name}`}</p>
+                <p className="text-sm text-muted-foreground">{`${auth.user.email}`}</p>
               </div>
             </div>
             <Button variant="outline" className="w-full mt-6">

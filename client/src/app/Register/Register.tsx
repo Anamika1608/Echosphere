@@ -5,7 +5,7 @@ import { serverUrl } from '@/utils';
 import { useMemo } from 'react';
 import { createAvatar } from '@dicebear/core';
 import { thumbs } from '@dicebear/collection';
-
+import userStore from '@/store/userStore';
 
 interface SignupFormData {
   name: string;
@@ -51,6 +51,9 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
   const [error, setError] = useState('');
   const [pgCommunity, setPgCommunity] = useState<PgCommunity | null>(null);
   const [searchingPg, setSearchingPg] = useState(false);
+
+  const { auth } = userStore()
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -155,7 +158,12 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
 
       const { data } = response.data;
 
-      console.log("user after signing up", response.data)
+      // console.log("user after signing up", response.data)
+
+      auth.setUser(data)
+
+      // console.log("auth.user", auth.user)
+
 
       // Call success callback
       if (onSignupSuccess) {

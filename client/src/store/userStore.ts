@@ -1,17 +1,36 @@
 import { create } from 'zustand'
 
-const initialUser = {
+import type { User, RaisedIssue, RequestedService } from '@/types'
+
+// Initial user state
+const initialUser: User = {
+  id: '',
   name: '',
   email: '',
-  password: '',
   profilePicture: null,
-  role: '',
+  role: 'RESIDENT', // default role
+  ownedPgCommunities: [],
+  pgCommunity: null,
   pgCommunityId: null,
   raisedIssues: [],
   requestedServices: [],
+};
+
+// Zustand store types
+interface StoreState {
+  auth: {
+    user: User;
+    setUser: (newUser: User) => void;
+    updateUser: (updates: Partial<User>) => void;
+    clearUser: () => void;
+  };
+  addRaisedIssue: (issue: RaisedIssue) => void;
+  removeRaisedIssue: (issueId: string) => void;
+  addRequestedService: (service: RequestedService) => void;
+  removeRequestedService: (serviceId: string) => void;
 }
 
-const userStore = create((set) => ({
+const userStore = create<StoreState>((set) => ({
   // Auth object (all user-related actions)
   auth: {
     user: initialUser,
@@ -42,7 +61,7 @@ const userStore = create((set) => ({
         ...state.auth,
         user: {
           ...state.auth.user,
-          raisedIssues: [...state.auth.user.raisedIssues, issue],
+          raisedIssues: [...(state.auth.user.raisedIssues ?? []), issue],
         },
       },
     })),
@@ -53,8 +72,8 @@ const userStore = create((set) => ({
         ...state.auth,
         user: {
           ...state.auth.user,
-          raisedIssues: state.auth.user.raisedIssues.filter(
-            (issue) => issue.id !== issueId
+          raisedIssues: (state.auth.user.raisedIssues ?? []).filter(
+            (issue) => issue.id === undefined || issue.id !== issueId
           ),
         },
       },
@@ -68,7 +87,7 @@ const userStore = create((set) => ({
         user: {
           ...state.auth.user,
           requestedServices: [
-            ...state.auth.user.requestedServices,
+            ...(state.auth.user.requestedServices ?? []),
             service,
           ],
         },
@@ -81,12 +100,12 @@ const userStore = create((set) => ({
         ...state.auth,
         user: {
           ...state.auth.user,
-          requestedServices: state.auth.user.requestedServices.filter(
-            (service) => service.id !== serviceId
+          requestedServices: (state.auth.user.requestedServices ?? []).filter(
+            (service) => service.id === undefined || service.id !== serviceId
           ),
         },
       },
     })),
-}))
+}));
 
-export default userStore
+export default userStore;
