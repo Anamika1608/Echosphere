@@ -16,7 +16,6 @@ const initialUser: User = {
   requestedServices: [],
 };
 
-// Zustand store types
 interface StoreState {
   user: User;
   isLoading: boolean;

@@ -13,6 +13,7 @@ import { Toaster } from './components/ui/sonner.tsx';
 import ProtectedRoute from './components/route/ProtectedRoute.tsx';
 import NotFound from './pages/NotFound/NotFound.tsx';
 import LoadingSpinner from './components/ui/loading.tsx';
+import PgCommunity from './pages/PgCommunity/PgCommunity.tsx';
 
 function App() {
   const { setUser, user, clearUser } = userStore();
@@ -28,7 +29,7 @@ function App() {
         });
         const { data } = response.data;
         setUser(data);
-        
+
         // console.log("User profile fetched:", data);
       } catch (error) {
         console.log("No user session found or error fetching profile:", error);
@@ -54,24 +55,31 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Landing />} />
         </Route>
-        
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
+
         <Route path="/dashboard/owner" element={
           <ProtectedRoute allowedRoles={["PG_OWNER"]}>
             <OwnerDashboard />
           </ProtectedRoute>
         } />
-        
+
+        <Route path="/manage-communities" element={
+          <ProtectedRoute allowedRoles={["PG_OWNER"]}>
+            <PgCommunity />
+          </ProtectedRoute>
+        } />
+
         <Route path="/dashboard/resident" element={
           <ProtectedRoute allowedRoles={["RESIDENT"]}>
             <ResidentDashboard />
           </ProtectedRoute>
         } />
-        
+
+
         <Route path="/notFound" element={<NotFound />} />
-        
+
         {/* Catch all route - should be last */}
         <Route path="*" element={<NotFound />} />
       </Routes>
