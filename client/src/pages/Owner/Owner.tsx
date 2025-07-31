@@ -17,7 +17,7 @@ const technicians = [
 
 const Owner = () => {
 
-  const { auth } = userStore()
+  const { user } = userStore()
 
   return (
     <div className="p-4 md:p-8 bg-slate-50 min-h-screen">
@@ -38,8 +38,8 @@ const Owner = () => {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center"><User className="h-8 w-8 text-[#FF4500]" /></div>
               <div>
-                <p className="font-bold text-lg">{auth.user.name}</p>
-                <p className="text-sm text-muted-foreground">{auth.user.email}</p>
+                <p className="font-bold text-lg">{user.name}</p>
+                <p className="text-sm text-muted-foreground">{user.email}</p>
               </div>
             </div>
             <Button variant="outline" className="w-full mt-6"><Settings className="mr-2 h-4 w-4" />Edit Profile</Button>

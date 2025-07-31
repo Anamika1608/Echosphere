@@ -23,7 +23,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { auth} = userStore()
+  const { setUser} = userStore()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,7 +52,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
 
       // console.log("data after login", data)
 
-      auth.setUser(data)
+      setUser(data)
 
       // console.log("auth.user", auth.user)
 

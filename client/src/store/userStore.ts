@@ -18,92 +18,95 @@ const initialUser: User = {
 
 // Zustand store types
 interface StoreState {
-  auth: {
-    user: User;
-    setUser: (newUser: User) => void;
-    updateUser: (updates: Partial<User>) => void;
-    clearUser: () => void;
-  };
+  user: User;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  setUser: (newUser: User) => void;
+  updateUser: (updates: Partial<User>) => void;
+  clearUser: () => void;
+  setLoading: (loading: boolean) => void;
   addRaisedIssue: (issue: RaisedIssue) => void;
   removeRaisedIssue: (issueId: string) => void;
   addRequestedService: (service: RequestedService) => void;
   removeRequestedService: (serviceId: string) => void;
 }
 
-const userStore = create<StoreState>((set) => ({
-  // Auth object (all user-related actions)
-  auth: {
-    user: initialUser,
+const userStore = create<StoreState>((set, get) => ({
+  // User state
+  user: initialUser,
+  isLoading: false,
+  isAuthenticated: false,
 
-    // Set entire user object
-    setUser: (newUser) =>
-      set((state) => ({
-        auth: { ...state.auth, user: { ...newUser } },
-      })),
+  // Set loading state
+  setLoading: (loading) =>
+    set(() => ({
+      isLoading: loading,
+    })),
 
-    // Update specific user fields
-    updateUser: (updates) =>
-      set((state) => ({
-        auth: { ...state.auth, user: { ...state.auth.user, ...updates } },
-      })),
+  // Set entire user object
+  setUser: (newUser) =>
+    set(() => ({
+      user: { ...newUser },
+      isAuthenticated: Boolean(newUser.id),
+      isLoading: false,
+    })),
 
-    // Clear user info
-    clearUser: () =>
-      set((state) => ({
-        auth: { ...state.auth, user: initialUser },
-      })),
-  },
+  // Update specific user fields
+  updateUser: (updates) =>
+    set((state) => {
+      const updatedUser = { ...state.user, ...updates };
+      return {
+        user: updatedUser,
+        isAuthenticated: Boolean(updatedUser.id),
+      };
+    }),
+
+  // Clear user info
+  clearUser: () =>
+    set(() => ({
+      user: initialUser,
+      isAuthenticated: false,
+      isLoading: false,
+    })),
 
   // Raised Issues Functions
   addRaisedIssue: (issue) =>
     set((state) => ({
-      auth: {
-        ...state.auth,
-        user: {
-          ...state.auth.user,
-          raisedIssues: [...(state.auth.user.raisedIssues ?? []), issue],
-        },
+      user: {
+        ...state.user,
+        raisedIssues: [...(state.user.raisedIssues ?? []), issue],
       },
     })),
 
   removeRaisedIssue: (issueId) =>
     set((state) => ({
-      auth: {
-        ...state.auth,
-        user: {
-          ...state.auth.user,
-          raisedIssues: (state.auth.user.raisedIssues ?? []).filter(
-            (issue) => issue.id === undefined || issue.id !== issueId
-          ),
-        },
+      user: {
+        ...state.user,
+        raisedIssues: (state.user.raisedIssues ?? []).filter(
+          (issue) => issue.id === undefined || issue.id !== issueId
+        ),
       },
     })),
 
   // Requested Services Functions
   addRequestedService: (service) =>
     set((state) => ({
-      auth: {
-        ...state.auth,
-        user: {
-          ...state.auth.user,
-          requestedServices: [
-            ...(state.auth.user.requestedServices ?? []),
-            service,
-          ],
-        },
+      user: {
+        ...state.user,
+        requestedServices: [
+          ...(state.user.requestedServices ?? []),
+          service,
+        ],
       },
     })),
 
   removeRequestedService: (serviceId) =>
     set((state) => ({
-      auth: {
-        ...state.auth,
-        user: {
-          ...state.auth.user,
-          requestedServices: (state.auth.user.requestedServices ?? []).filter(
-            (service) => service.id === undefined || service.id !== serviceId
-          ),
-        },
+      user: {
+        ...state.user,
+        requestedServices: (state.user.requestedServices ?? []).filter(
+          (service) => service.id === undefined || service.id !== serviceId
+        ),
       },
     })),
 }));

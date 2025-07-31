@@ -52,7 +52,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
   const [pgCommunity, setPgCommunity] = useState<PgCommunity | null>(null);
   const [searchingPg, setSearchingPg] = useState(false);
 
-  const { auth } = userStore()
+  const { setUser, user } = userStore()
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -160,7 +160,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
 
       // console.log("user after signing up", response.data)
 
-      auth.setUser(data)
+      setUser(data)
 
       // console.log("auth.user", auth.user)
 
