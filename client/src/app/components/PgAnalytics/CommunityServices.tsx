@@ -11,37 +11,61 @@ import { serverUrl } from '@/utils';
 
 interface Service {
   id: string;
+  ticketNumber?: number;
   title: string;
   description: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  status: 'PENDING' | 'AWAITING_APPROVAL' | 'APPROVED' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'REJECTED';
+  priorityLevel: 'P1' | 'P2' | 'P3' | 'P4'; // Updated to match API
   serviceType: string;
+  location?: string;
+  isApprovedByOwner: boolean;
+  ownerComment?: string | null;
+  rejectionReason?: string | null;
   requestedBy: {
     id: string;
     name: string;
     email: string;
+    profilePicture?: string;
+  };
+  assignedTechnician?: {
+    id: string;
+    name: string;
+    phoneNumber: string;
+    speciality: string;
+  } | null;
+  pgCommunity?: {
+    id: string;
+    name: string;
   };
   createdAt: string;
   updatedAt: string;
-  completedAt?: string;
+  approvedAt?: string | null;
+  completedAt?: string | null;
   estimatedCost?: number;
   actualCost?: number;
 }
 
-interface ServicesResponse {
-  services: Service[];
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  data: Service[]; // API returns data array directly
   pagination: {
     page: number;
     limit: number;
     total: number;
     totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
   };
   summary: {
     total: number;
     pending: number;
+    awaitingApproval: number;
+    approved: number;
+    assigned: number;
     inProgress: number;
     completed: number;
-    cancelled: number;
+    rejected: number;
   };
 }
 
@@ -50,7 +74,25 @@ interface CommunityServicesProps {
 }
 
 const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) => {
-  const [servicesData, setServicesData] = useState<ServicesResponse | null>(null);
+  const [services, setServices] = useState<Service[]>([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+    hasNext: false,
+    hasPrev: false
+  });
+  const [summary, setSummary] = useState({
+    total: 0,
+    pending: 0,
+    awaitingApproval: 0,
+    approved: 0,
+    assigned: 0,
+    inProgress: 0,
+    completed: 0,
+    rejected: 0
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -85,12 +127,18 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
       const response = await axios.get(`${serverUrl}/pg-analytics/${communityId}/services?${params}`, {
         withCredentials: true
       });
-      setServicesData(response.data.data ? response.data : {
-        services: [],
-        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
-        summary: { total: 0, pending: 0, inProgress: 0, completed: 0, cancelled: 0 }
-      });
+
+      const apiResponse: ApiResponse = response.data;
+      
+      if (apiResponse.success) {
+        setServices(apiResponse.data || []);
+        setPagination(apiResponse.pagination);
+        setSummary(apiResponse.summary);
+      } else {
+        setError(apiResponse.message || 'Failed to load services');
+      }
     } catch (err: any) {
+      console.error('Error loading services:', err);
       setError(err.response?.data?.message || 'Failed to load services');
     } finally {
       setLoading(false);
@@ -104,20 +152,23 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'URGENT': return 'bg-red-100 text-red-800';
-      case 'HIGH': return 'bg-orange-100 text-orange-800';
-      case 'MEDIUM': return 'bg-yellow-100 text-yellow-800';
-      case 'LOW': return 'bg-green-100 text-green-800';
+      case 'P1': return 'bg-red-100 text-red-800';
+      case 'P2': return 'bg-orange-100 text-orange-800';
+      case 'P3': return 'bg-yellow-100 text-yellow-800';
+      case 'P4': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+      case 'PENDING': return 'bg-gray-100 text-gray-800';
+      case 'AWAITING_APPROVAL': return 'bg-yellow-100 text-yellow-800';
+      case 'APPROVED': return 'bg-green-100 text-green-800';
+      case 'ASSIGNED': return 'bg-blue-100 text-blue-800';
       case 'IN_PROGRESS': return 'bg-blue-100 text-blue-800';
       case 'COMPLETED': return 'bg-green-100 text-green-800';
-      case 'CANCELLED': return 'bg-red-100 text-red-800';
+      case 'REJECTED': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -135,7 +186,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         </div>
       </div>
     );
-  };
+  }
 
   if (error) {
     return (
@@ -160,19 +211,28 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Requested Services</h2>
           <p className="text-gray-600 mt-1">
-            {servicesData?.summary.total || 0} total service requests
+            {summary.total || 0} total service requests
           </p>
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <WrenchScrewdriverIcon className="h-8 w-8 text-gray-600" />
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Pending</p>
+              <p className="text-2xl font-semibold text-gray-900">{summary.pending || 0}</p>
+            </div>
+          </div>
+        </div>
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <div className="flex items-center">
             <WrenchScrewdriverIcon className="h-8 w-8 text-yellow-600" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-yellow-600">Pending</p>
-              <p className="text-2xl font-semibold text-yellow-900">{servicesData?.summary.pending || 0}</p>
+              <p className="text-sm font-medium text-yellow-600">Awaiting Approval</p>
+              <p className="text-2xl font-semibold text-yellow-900">{summary.awaitingApproval || 0}</p>
             </div>
           </div>
         </div>
@@ -181,7 +241,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
             <WrenchScrewdriverIcon className="h-8 w-8 text-blue-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-blue-600">In Progress</p>
-              <p className="text-2xl font-semibold text-blue-900">{servicesData?.summary.inProgress || 0}</p>
+              <p className="text-2xl font-semibold text-blue-900">{(summary.assigned || 0) + (summary.inProgress || 0)}</p>
             </div>
           </div>
         </div>
@@ -190,16 +250,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
             <WrenchScrewdriverIcon className="h-8 w-8 text-green-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-green-600">Completed</p>
-              <p className="text-2xl font-semibold text-green-900">{servicesData?.summary.completed || 0}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <WrenchScrewdriverIcon className="h-8 w-8 text-red-600" />
-            <div className="ml-3">
-              <p className="text-sm font-medium text-red-600">Cancelled</p>
-              <p className="text-2xl font-semibold text-red-900">{servicesData?.summary.cancelled || 0}</p>
+              <p className="text-2xl font-semibold text-green-900">{summary.completed || 0}</p>
             </div>
           </div>
         </div>
@@ -225,9 +276,12 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         >
           <option value="">All Status</option>
           <option value="PENDING">Pending</option>
+          <option value="AWAITING_APPROVAL">Awaiting Approval</option>
+          <option value="APPROVED">Approved</option>
+          <option value="ASSIGNED">Assigned</option>
           <option value="IN_PROGRESS">In Progress</option>
           <option value="COMPLETED">Completed</option>
-          <option value="CANCELLED">Cancelled</option>
+          <option value="REJECTED">Rejected</option>
         </select>
         <select
           value={priorityFilter}
@@ -235,10 +289,10 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
           className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <option value="">All Priority</option>
-          <option value="URGENT">Urgent</option>
-          <option value="HIGH">High</option>
-          <option value="MEDIUM">Medium</option>
-          <option value="LOW">Low</option>
+          <option value="P1">P1 (Critical)</option>
+          <option value="P2">P2 (High)</option>
+          <option value="P3">P3 (Medium)</option>
+          <option value="P4">P4 (Low)</option>
         </select>
         <select
           value={sortBy}
@@ -247,7 +301,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         >
           <option value="createdAt">Created Date</option>
           <option value="updatedAt">Updated Date</option>
-          <option value="priority">Priority</option>
+          <option value="priorityLevel">Priority</option>
           <option value="status">Status</option>
         </select>
         <select
@@ -261,7 +315,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
       </div>
 
       {/* Services List */}
-      {!servicesData?.services || servicesData.services.length === 0 ? (
+      {!services || services.length === 0 ? (
         <div className="text-center py-12">
           <WrenchScrewdriverIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">No services found</h3>
@@ -287,76 +341,111 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         </div>
       ) : (
         <div className="space-y-4">
-          {servicesData?.services && servicesData.services.length > 0 ? (
-            servicesData.services.map((service) => (
-              <div key={service.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{service.title}</h3>
-                    <p className="text-gray-600 mb-3">{service.description}</p>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <span>Requested by: {service.requestedBy.name}</span>
-                      <span>•</span>
-                      <span>Type: {service.serviceType}</span>
-                      <span>•</span>
-                      <span>Created: {new Date(service.createdAt).toLocaleDateString()}</span>
-                      {service.completedAt && (
+          {services.map((service) => (
+            <div key={service.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900">{service.title}</h3>
+                    {service.ticketNumber && (
+                      <span className="text-sm text-gray-500">#{service.ticketNumber}</span>
+                    )}
+                  </div>
+                  <p className="text-gray-600 mb-3">{service.description}</p>
+                  {service.location && (
+                    <p className="text-sm text-gray-500 mb-2">
+                      <span className="font-medium">Location:</span> {service.location}
+                    </p>
+                  )}
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <span>Requested by: {service.requestedBy.name}</span>
+                    <span>•</span>
+                    <span>Type: {service.serviceType.replace('_', ' ')}</span>
+                    <span>•</span>
+                    <span>Created: {new Date(service.createdAt).toLocaleDateString()}</span>
+                    {service.assignedTechnician && (
+                      <>
+                        <span>•</span>
+                        <span>Assigned to: {service.assignedTechnician.name}</span>
+                      </>
+                    )}
+                  </div>
+                  {service.completedAt && (
+                    <div className="text-sm text-gray-500 mt-1">
+                      <span>Completed: {new Date(service.completedAt).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {service.approvedAt && (
+                    <div className="text-sm text-gray-500 mt-1">
+                      <span>Approved: {new Date(service.approvedAt).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {(service.estimatedCost || service.actualCost) && (
+                    <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
+                      {service.estimatedCost && (
+                        <span>Estimated Cost: ₹{service.estimatedCost}</span>
+                      )}
+                      {service.actualCost && (
                         <>
                           <span>•</span>
-                          <span>Completed: {new Date(service.completedAt).toLocaleDateString()}</span>
+                          <span>Actual Cost: ₹{service.actualCost}</span>
                         </>
                       )}
                     </div>
-                    {(service.estimatedCost || service.actualCost) && (
-                      <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
-                        {service.estimatedCost && (
-                          <span>Estimated Cost: ₹{service.estimatedCost}</span>
-                        )}
-                        {service.actualCost && (
-                          <>
-                            <span>•</span>
-                            <span>Actual Cost: ₹{service.actualCost}</span>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col space-y-2 ml-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(service.status)}`}>
-                      {service.status.replace('_', ' ')}
+                  )}
+                  {service.ownerComment && (
+                    <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
+                      <span className="font-medium text-blue-800">Owner Comment:</span>
+                      <span className="text-blue-700 ml-1">{service.ownerComment}</span>
+                    </div>
+                  )}
+                  {service.rejectionReason && (
+                    <div className="mt-2 p-2 bg-red-50 rounded text-sm">
+                      <span className="font-medium text-red-800">Rejection Reason:</span>
+                      <span className="text-red-700 ml-1">{service.rejectionReason}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col space-y-2 ml-4">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(service.status)}`}>
+                    {service.status.replace('_', ' ')}
+                  </span>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(service.priorityLevel)}`}>
+                    {service.priorityLevel}
+                  </span>
+                  {service.isApprovedByOwner && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Owner Approved
                     </span>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(service.priority)}`}>
-                      {service.priority}
-                    </span>
-                  </div>
+                  )}
                 </div>
               </div>
-            ))
-          ) : null}
+            </div>
+          ))}
         </div>
       )}
 
       {/* Pagination */}
-      {servicesData && servicesData.services && servicesData.services.length > 0 && servicesData.pagination.totalPages > 1 && (
+      {services && services.length > 0 && pagination.totalPages > 1 && (
         <div className="flex justify-between items-center mt-6">
           <div className="text-sm text-gray-700">
-            Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, servicesData.pagination.total)} of {servicesData.pagination.total} results
+            Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, pagination.total)} of {pagination.total} results
           </div>
           <div className="flex space-x-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
+              disabled={!pagination.hasPrev}
               className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ChevronLeftIcon className="h-4 w-4 mr-1" />
               Previous
             </button>
             <span className="flex items-center px-3 py-2 text-sm font-medium text-gray-700">
-              Page {currentPage} of {servicesData.pagination.totalPages}
+              Page {currentPage} of {pagination.totalPages}
             </span>
             <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, servicesData.pagination.totalPages))}
-              disabled={currentPage === servicesData.pagination.totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+              disabled={!pagination.hasNext}
               className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next

@@ -6,7 +6,7 @@ const config = {
   frontendUrl: process.env.FRONTEND_URL,
   jwtSecret: process.env.JWT_SECRET!,
   NODE_ENV: process.env.NODE_ENV,
-  omniDimKey: process.env.OMNIDIM_API_KEY
+  omniDimKey: process.env.OMNIDIM_API_KEY,
 };
 
 if (!config.jwtSecret) {

@@ -203,18 +203,18 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
           onChange={(e) => setSpecialityFilter(e.target.value)}
           className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
-          <option value="">All Specialities</option>
-          <option value="PLUMBING">Plumbing</option>
-          <option value="ELECTRICAL">Electrical</option>
-          <option value="CLEANING">Cleaning</option>
-          <option value="MAINTENANCE">Maintenance</option>
-          <option value="SECURITY">Security</option>
-          <option value="GARDENING">Gardening</option>
-          <option value="PAINTING">Painting</option>
-          <option value="CARPENTRY">Carpentry</option>
-          <option value="GENERAL">General</option>
+              <option value="">All Specialities</option>
+<option value="PLUMBING">Plumbing</option>
+<option value="ELECTRICAL">Electrical</option>
+<option value="CARPENTRY">Carpentry</option>
+<option value="CLEANING">Cleaning</option>
+<option value="PAINTING">Painting</option>
+<option value="AC_REPAIR">AC Repair</option>
+<option value="APPLIANCE_REPAIR">Appliance Repair</option>
+<option value="GENERAL_MAINTENANCE">General Maintenance</option>
+
         </select>
-      </div>
+      </div> 
 
       {/* Technicians List */}
       {filteredTechnicians.length === 0 ? (

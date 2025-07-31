@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import { authService } from './auth.service';
 import config from '../../config';
 import { AuthenticatedRequest } from '@/middleware/authenticate.middleware';
-import Redis from 'ioredis';
+import { redis } from '../../lib/redis';
+
 const NODE_ENV = config.NODE_ENV
-const redis = new Redis();
 
 export const authController = {
 
@@ -66,7 +66,7 @@ export const authController = {
     try {
       const userId = req.user?.userId
       await redis.set('widgetSession', userId as string)
-      
+
       res.status(200).json({
         message: 'Widget session user ID set successfully',
         data: { userId }
