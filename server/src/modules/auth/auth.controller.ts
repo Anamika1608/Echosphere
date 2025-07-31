@@ -39,6 +39,15 @@ export const authController = {
     }
   },
 
+  async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      res.clearCookie("community_auth_token");
+      res.status(200).json({ message: 'Logged out successfully', data: null });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async getUserProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.id as string

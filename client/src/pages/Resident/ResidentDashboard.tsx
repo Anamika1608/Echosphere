@@ -1,16 +1,22 @@
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
-import { PlusCircle, History, CalendarDays, Mic, User, Settings } from 'lucide-react';
+import { PlusCircle, History, CalendarDays, Mic, User, Settings, LogOut } from 'lucide-react';
 import userStore from '@/store/userStore';
+import { handleUserLogout } from '@/services/authService';
 
-const Resident = () => {
+const ResidentDashboard = () => {
   const { user } = userStore()
   
   return (
     <div className="p-4 md:p-8 bg-slate-50 min-h-screen">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">{`Welcome, ${user.name}`}</h1>
+      <header className="mb-8 flex items-center justify-between">
+        <div>
+            <h1 className="text-3xl font-bold tracking-tight">{`Welcome, ${user.name}`}</h1>
         <p className="text-slate-500">Here's a look at your community.</p>
+        </div>
+        <button onClick={handleUserLogout}>
+          <LogOut />
+        </button>
       </header>
 
       <main className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -80,4 +86,4 @@ const Resident = () => {
   );
 }
 
-export default Resident;
+export default ResidentDashboard;

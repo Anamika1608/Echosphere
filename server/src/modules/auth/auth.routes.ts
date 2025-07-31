@@ -8,6 +8,7 @@ const router = Router();
 
 router.post('/signup', validate(signupSchema), authController.signup);
 router.post('/login', validate(loginSchema), authController.login);
+router.get('/logout', authController.logout);
 router.get('/getUserProfile', authenticate, authController.getUserProfile);
 
 export { router as authRouter };

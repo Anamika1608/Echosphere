@@ -1,11 +1,14 @@
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
-import { ListChecks, Megaphone, PlusCircle, Mic, User, Settings, Wrench, Mail, Phone } from 'lucide-react';
+import { ListChecks, Megaphone, PlusCircle, Mic, User, Settings, Wrench, Mail, Phone, LogOut } from 'lucide-react';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { serverUrl } from '@/utils';
+import { useNavigate } from 'react-router-dom';
 
 import userStore from '@/store/userStore';
+import { handleUserLogout } from '@/services/authService';
+
 
 // Mock data for technicians - in a real app, this would come from an API
 const technicians = [
@@ -15,15 +18,22 @@ const technicians = [
   { id: 4, name: 'Priya Mehta', specialty: 'General Maintenance', phone: '+91 98765 43213' },
 ];
 
-const Owner = () => {
+const OwnerDashboard = () => {
 
   const { user } = userStore()
 
+
+
   return (
     <div className="p-4 md:p-8 bg-slate-50 min-h-screen">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Owner Dashboard</h1>
-        <p className="text-slate-500">Manage your community, effortlessly.</p>
+      <header className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Owner Dashboard</h1>
+          <p className="text-slate-500">Manage your community, effortlessly.</p>
+        </div>
+        <button onClick={handleUserLogout}>
+          <LogOut />
+        </button>
       </header>
 
       <main className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
@@ -36,7 +46,9 @@ const Owner = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center"><User className="h-8 w-8 text-[#FF4500]" /></div>
+              <div className="w-16 h-16 flex items-center justify-center">
+                <img src={user.profilePicture ?? undefined} alt='user-profile' className='rounded-md' />
+              </div>
               <div>
                 <p className="font-bold text-lg">{user.name}</p>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
@@ -89,4 +101,4 @@ const Owner = () => {
   );
 }
 
-export default Owner;
+export default OwnerDashboard;
