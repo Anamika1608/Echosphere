@@ -7,15 +7,23 @@ interface CreateTechnicianData {
     phoneNumber: string;
     speciality: TechnicianField;
     isAvailable?: boolean;
+    pgCommunityId: string;
 }
 
 interface AssignTechnicianToPgData {
     technicianId: string;
-    pgCommunityIds: string[]; // Array of PG community IDs
+    pgCommunityIds: string[];
+}
+
+interface UpdateTechnicianData {
+    name?: string;
+    phoneNumber?: string;
+    speciality?: TechnicianField;
+    isAvailable?: boolean;
 }
 
 export const technicianService = {
-    // Create a new technician
+    // Create a new technician and assign to PG community
     async createTechnician(data: CreateTechnicianData) {
         const technician = await prisma.technician.create({
             data: {
@@ -23,17 +31,31 @@ export const technicianService = {
                 phoneNumber: data.phoneNumber,
                 speciality: data.speciality,
                 isAvailable: data.isAvailable ?? true,
+                pgAssignments: {
+                    create: {
+                        pgCommunityId: data.pgCommunityId
+                    }
+                }
             },
             include: {
                 pgAssignments: {
                     include: {
                         pgCommunity: {
-                            include: {
+                            select: { 
+                                id: true, 
+                                name: true, 
+                                pgCode: true,
                                 owner: {
                                     select: { id: true, name: true, email: true }
                                 }
                             }
                         }
+                    }
+                },
+                _count: {
+                    select: {
+                        assignedIssues: { where: { status: { not: 'RESOLVED' } } },
+                        assignedServices: { where: { status: { not: 'COMPLETED' } } }
                     }
                 }
             }
@@ -44,7 +66,6 @@ export const technicianService = {
 
     // Assign technician to multiple PG communities
     async assignTechnicianToPgs(data: AssignTechnicianToPgData) {
-        // Verify technician exists
         const technician = await prisma.technician.findUnique({
             where: { id: data.technicianId }
         });
@@ -53,7 +74,6 @@ export const technicianService = {
             throw new AppError('Technician not found', 404);
         }
 
-        // Verify all PG communities exist
         const pgCommunities = await prisma.pgCommunity.findMany({
             where: {
                 id: { in: data.pgCommunityIds }
@@ -64,7 +84,6 @@ export const technicianService = {
             throw new AppError('One or more PG communities not found', 404);
         }
 
-        // Create assignments (using createMany with skipDuplicates to avoid errors)
         const assignments = data.pgCommunityIds.map(pgCommunityId => ({
             technicianId: data.technicianId,
             pgCommunityId
@@ -75,7 +94,6 @@ export const technicianService = {
             skipDuplicates: true
         });
 
-        // Return updated technician with assignments
         return await this.getTechnicianById(data.technicianId);
     },
 
@@ -99,7 +117,10 @@ export const technicianService = {
                 pgAssignments: {
                     include: {
                         pgCommunity: {
-                            include: {
+                            select: {
+                                id: true,
+                                name: true,
+                                pgCode: true,
                                 owner: {
                                     select: { id: true, name: true, email: true }
                                 }
@@ -109,8 +130,8 @@ export const technicianService = {
                 },
                 _count: {
                     select: {
-                        assignedIssues: true,
-                        assignedServices: true
+                        assignedIssues: { where: { status: { not: 'RESOLVED' } } },
+                        assignedServices: { where: { status: { not: 'COMPLETED' } } }
                     }
                 }
             }
@@ -130,8 +151,7 @@ export const technicianService = {
                 some: {
                     pgCommunityId
                 }
-            },
-            isAvailable: true
+            }
         };
 
         if (speciality) {
@@ -188,8 +208,8 @@ export const technicianService = {
                 },
                 _count: {
                     select: {
-                        assignedIssues: true,
-                        assignedServices: true
+                        assignedIssues: { where: { status: { not: 'RESOLVED' } } },
+                        assignedServices: { where: { status: { not: 'COMPLETED' } } }
                     }
                 }
             },
@@ -211,11 +231,80 @@ export const technicianService = {
                             select: { id: true, name: true, pgCode: true }
                         }
                     }
+                },
+                _count: {
+                    select: {
+                        assignedIssues: { where: { status: { not: 'RESOLVED' } } },
+                        assignedServices: { where: { status: { not: 'COMPLETED' } } }
+                    }
                 }
             }
         });
 
         return technician;
+    },
+
+    // Update technician details
+    async updateTechnician(technicianId: string, data: UpdateTechnicianData) {
+        const technician = await prisma.technician.update({
+            where: { id: technicianId },
+            data,
+            include: {
+                pgAssignments: {
+                    include: {
+                        pgCommunity: {
+                            select: { id: true, name: true, pgCode: true }
+                        }
+                    }
+                },
+                _count: {
+                    select: {
+                        assignedIssues: { where: { status: { not: 'RESOLVED' } } },
+                        assignedServices: { where: { status: { not: 'COMPLETED' } } }
+                    }
+                }
+            }
+        });
+
+        return technician;
+    },
+
+    // Delete technician (only if not assigned to any active tasks)
+    async deleteTechnician(technicianId: string) {
+        // Check if technician has active tasks
+        const activeTasksCount = await prisma.technician.findUnique({
+            where: { id: technicianId },
+            select: {
+                _count: {
+                    select: {
+                        assignedIssues: { where: { status: { not: 'RESOLVED' } } },
+                        assignedServices: { where: { status: { not: 'COMPLETED' } } }
+                    }
+                }
+            }
+        });
+
+        if (!activeTasksCount) {
+            throw new AppError('Technician not found', 404);
+        }
+
+        const totalActiveTasks = activeTasksCount._count.assignedIssues + activeTasksCount._count.assignedServices;
+        
+        if (totalActiveTasks > 0) {
+            throw new AppError('Cannot delete technician with active assignments', 400);
+        }
+
+        // First delete all assignments
+        await prisma.technicianPgAssignment.deleteMany({
+            where: { technicianId }
+        });
+
+        // Then delete the technician
+        await prisma.technician.delete({
+            where: { id: technicianId }
+        });
+
+        return { message: 'Technician deleted successfully' };
     },
 
     // Get technician workload statistics
@@ -225,11 +314,27 @@ export const technicianService = {
             include: {
                 assignedIssues: {
                     where: { status: { not: 'RESOLVED' } },
-                    select: { id: true, title: true, priorityLevel: true, status: true }
+                    select: { 
+                        id: true, 
+                        title: true, 
+                        priorityLevel: true, 
+                        status: true,
+                        pgCommunity: {
+                            select: { name: true, pgCode: true }
+                        }
+                    }
                 },
                 assignedServices: {
                     where: { status: { not: 'COMPLETED' } },
-                    select: { id: true, title: true, priorityLevel: true, status: true }
+                    select: { 
+                        id: true, 
+                        title: true, 
+                        priorityLevel: true, 
+                        status: true,
+                        pgCommunity: {
+                            select: { name: true, pgCode: true }
+                        }
+                    }
                 },
                 pgAssignments: {
                     include: {
@@ -254,5 +359,107 @@ export const technicianService = {
                 assignedPgs: technician.pgAssignments.length
             }
         };
+    },
+
+    // Verify PG community ownership
+    async verifyPgOwnership(pgCommunityId: string, ownerId: string) {
+        const pgCommunity = await prisma.pgCommunity.findFirst({
+            where: {
+                id: pgCommunityId,
+                ownerId
+            }
+        });
+
+        if (!pgCommunity) {
+            throw new AppError('PG community not found or access denied', 403);
+        }
+
+        return pgCommunity;
+    },
+
+    // Verify technician ownership (technician belongs to owner's PG)
+    async verifyTechnicianOwnership(technicianId: string, ownerId: string) {
+        const technician = await prisma.technician.findFirst({
+            where: {
+                id: technicianId,
+                pgAssignments: {
+                    some: {
+                        pgCommunity: {
+                            ownerId
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!technician) {
+            throw new AppError('Technician not found or access denied', 403);
+        }
+
+        return technician;
+    },
+
+    // Verify PG community access (for residents and owners)
+    async verifyPgAccess(pgCommunityId: string, userId: string, userRole: string) {
+        if (userRole === 'PG_OWNER') {
+            return await this.verifyPgOwnership(pgCommunityId, userId);
+        } else if (userRole === 'RESIDENT') {
+            const resident = await prisma.user.findFirst({
+                where: {
+                    id: userId,
+                    pgCommunityId
+                }
+            });
+
+            if (!resident) {
+                throw new AppError('Access denied to this PG community', 403);
+            }
+
+            return resident;
+        } else {
+            throw new AppError('Invalid user role', 403);
+        }
+    },
+
+    // Get available technicians from other PG communities owned by the same owner
+    async getAvailableTechniciansFromOtherPgs(currentPgId: string, ownerId: string) {
+        const technicians = await prisma.technician.findMany({
+            where: {
+                pgAssignments: {
+                    some: {
+                        pgCommunity: {
+                            ownerId,
+                            id: { not: currentPgId }
+                        }
+                    },
+                    none: {
+                        pgCommunityId: currentPgId
+                    }
+                }
+            },
+            include: {
+                pgAssignments: {
+                    include: {
+                        pgCommunity: {
+                            select: { id: true, name: true, pgCode: true }
+                        }
+                    },
+                    where: {
+                        pgCommunity: {
+                            ownerId
+                        }
+                    }
+                },
+                _count: {
+                    select: {
+                        assignedIssues: { where: { status: { not: 'RESOLVED' } } },
+                        assignedServices: { where: { status: { not: 'COMPLETED' } } }
+                    }
+                }
+            },
+            orderBy: { name: 'asc' }
+        });
+
+        return technicians;
     }
 };
