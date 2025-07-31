@@ -7,13 +7,15 @@ import { Layout } from './app/Layout/Layout.tsx';
 import Landing from './pages/Landing/Landing.tsx';
 import Login from './app/Login/Login';
 import Register from './app/Register/Register';
-import OwnerDashboard from './pages/Owner/OwnerDashboard.tsx';
+import OwnerOldDashboard from './pages/Owner/OwnerOldDashboard.tsx';
+import PgOwnerDashboard from './pages/Owner/OnwerDashboard.tsx';
 import ResidentDashboard from './pages/Resident/ResidentDashboard.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import LoadingSpinner from './components/ui/loading.tsx';
 import ProtectedRoute from './components/route/ProtectedRoute.tsx';
 import NotFound from './pages/NotFound/NotFound.tsx';
-import PgCommunity from './pages/PgCommunity/PgCommunity.tsx';
+import CommunityDetailPage from './pages/Owner/CommunityDetailPage.tsx';
+
 
 function App() {
   const { setUser, user, clearUser } = userStore();
@@ -61,20 +63,19 @@ function App() {
 
         {/* <Route path="/dashboard/owner" element={
           <ProtectedRoute allowedRoles={["PG_OWNER"]}>
-            <OwnerDashboard />
+            <OwnerOldDashboard />
           </ProtectedRoute>
         } /> */}
 
         <Route path="/dashboard/owner" element={
           <ProtectedRoute allowedRoles={["PG_OWNER"]}>
-            <PgCommunity />
+            <PgOwnerDashboard />
           </ProtectedRoute>
         } />
 
-
-        <Route path="/manage-communities" element={
+        <Route path="/community/:id" element={
           <ProtectedRoute allowedRoles={["PG_OWNER"]}>
-            <PgCommunity />
+            <CommunityDetailPage />
           </ProtectedRoute>
         } />
 

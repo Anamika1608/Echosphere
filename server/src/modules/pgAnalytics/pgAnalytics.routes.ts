@@ -9,7 +9,7 @@ import { authenticateToken } from '../../middleware/authenticate.middleware';
 const router = Router();
 
 /**
- * @route GET /api/pg-community/:id/dashboard
+ * @route GET /api/pg-analytics/:id/dashboard
  * @desc Get dashboard overview for a PG community
  * @access Private (Owner or Resident of that community)
  */
@@ -21,7 +21,7 @@ router.get(
 );
 
 /**
- * @route GET /api/pg-community/:id/issues
+ * @route GET /api/pg-analytics/:id/issues
  * @desc Get all raised issues for a PG community with filters and pagination
  * @query page, limit, status, priority, issueType, sortBy, sortOrder
  * @access Private (Owner or Resident of that community)
@@ -34,7 +34,7 @@ router.get(
 );
 
 /**
- * @route GET /api/pg-community/:id/services
+ * @route GET /api/pg-analytics/:id/services
  * @desc Get all requested services for a PG community with filters and pagination
  * @query page, limit, status, priority, serviceType, sortBy, sortOrder
  * @access Private (Owner or Resident of that community)
@@ -47,7 +47,7 @@ router.get(
 );
 
 /**
- * @route GET /api/pg-community/:id/events
+ * @route GET /api/pg-analytics/:id/events
  * @desc Get all events for a PG community with filters and pagination
  * @query page, limit, eventType, upcoming, sortBy, sortOrder
  * @access Private (Owner or Resident of that community)
@@ -60,7 +60,7 @@ router.get(
 );
 
 /**
- * @route GET /api/pg-community/:id/analytics
+ * @route GET /api/pg-analytics/:id/analytics
  * @desc Get comprehensive analytics for a PG community
  * @query timeframe (days, default: 30)
  * @access Private (Owner or Resident of that community)
@@ -73,7 +73,7 @@ router.get(
 );
 
 /**
- * @route GET /api/pg-community/:id/event-analytics
+ * @route GET /api/pg-analytics/:id/event-analytics
  * @desc Get event-specific analytics for a PG community
  * @query timeframe (days, default: 30)
  * @access Private (Owner or Resident of that community)
@@ -86,7 +86,7 @@ router.get(
 );
 
 /**
- * @route GET /api/pg-community/:id/activities
+ * @route GET /api/pg-analytics/:id/activities
  * @desc Get recent activities for a PG community
  * @query limit (default: 20)
  * @access Private (Owner or Resident of that community)
