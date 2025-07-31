@@ -171,7 +171,7 @@ const freeTierFeatures = [
     icon: Icon1,
     title: (
       <>
-        <strong className="font-bold">1.</strong> Resident reports <strong className="font-bold">"My Wi-Fi is down!"</strong> into the app<strong className="font-bold"> using voice assistant.</strong>
+        <strong className="font-bold">1.</strong> Resident reports <strong className="font-bold">"My Wi-Fi is down!"</strong> using<strong className="font-bold"> voice assistant.</strong>
       </>
     ),
   },
@@ -187,7 +187,7 @@ const freeTierFeatures = [
     icon: Icon3,
     title: (
       <>
-        <strong className="font-bold">3.</strong> Instantly creates a ticket & assigns the right technician. Also suggests <strong className="font-bold">smart</strong>, AI-driven <strong className="font-bold">community events.</strong>
+        <strong className="font-bold">3.</strong> Instantly <strong className="font-bold">creates</strong> a ticket & <strong className="font-bold">suggests</strong> the right technician.
       </>
     ),
   },
@@ -195,7 +195,7 @@ const freeTierFeatures = [
     icon: Icon4,
     title: (
       <>
-        <strong className="font-bold">4.</strong> <strong className="font-bold">AI confirms:</strong> ticket created & assigned. Marks it as a <strong className="font-bold">high-priority issue</strong> with <strong className="font-bold">auto-alerts.</strong>
+        <strong className="font-bold">4.</strong> <strong className="font-bold">AI confirms:</strong> ticket created & assigned. Marks its <strong className="font-bold">priority.</strong>
       </>
     ),
   },
@@ -221,28 +221,29 @@ const HowItWorks = () => {
   return (
     <section
       id="features"
-      className="container grid sm:grid-cols-2 sm:gap-6 mx-auto px-4 sm:px-16 py-16 sm:py-24"
+      className="container grid sm:grid-cols-2 sm:gap-6 mx-auto px-6 sm:px-16 py-16 sm:py-24"
       style={{
         backgroundImage:
           'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)',
       }}
     >
       <div className="text-center sm:text-left mb-12 sm:pl-20">
-        <span className="text-sm sm:text-xl font-semibold text-gray-500">FREE-TIER FEATURES</span>
+        
         <h2 className="text-3xl sm:text-5xl sm:font-semibold font-bold tracking-tight mt-2 sm:w-[450px] leading-tight">
-          All The Essentials, <span className="text-[#FF4500]">For Free</span>
+           How it works 
         </h2>
+        <span className="text-sm sm:text-xl font-semibold text-gray-500">SIMPLE STEPS</span>
       </div>
 
-      <div className="grid grid-cols-2 sm:max-w-[600px] sm:gap-8 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 sm:max-w-[600px] sm:gap-8 sm:grid-cols-2 lg:grid-cols-2 gap-4">
         {freeTierFeatures.map(({ icon, title }, index) => (
           <Card
             key={index}
-            className="text-left border-transparent rounded-[32px] sm:rounded-[44px] hover:border-[#FF4500] hover:shadow-xl transition-all duration-300 py-4 px-6 min-h-[200px] sm:min-h-auto bg-white"
+            className="text-left border-transparent rounded-[36px] sm:rounded-[44px] hover:border-[#FF4500] hover:shadow-xl transition-all duration-300 py-4 px-6 min-h-[200px] sm:min-h-auto bg-white"
           >
             <CardHeader className="p-0">
               <div className="pt-2 mb-4">
-                <img src={icon} alt={`Feature icon ${index + 1}`} className="w-8 h-8" />
+                <img src={icon} alt={`Feature icon ${index + 1}`} className="w-7 h-7" />
               </div>
               <CardTitle className="text-gray-800 text-left text-base font-light leading-snug sm:mb-4">
                 {title}
