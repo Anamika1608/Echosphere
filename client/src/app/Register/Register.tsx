@@ -325,10 +325,10 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
 
     setSearchingPg(true);
     try {
-      const response = await axios.get(`http://localhost:3000/pg-community/${pgCode}`, {
+      const response = await axios.get(`${serverUrl}/pg-community/code/${pgCode}`, {
         withCredentials: true,
       });
-      setPgCommunity(response.data);
+      setPgCommunity(response.data.data);
       setError('');
     } catch (err: any) {
       setPgCommunity(null);
@@ -404,12 +404,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
 
       const { data } = response.data;
 
-      // console.log("user after signing up", response.data)
-
       setUser(data)
-
-      // console.log("auth.user", auth.user)
-
 
       // Call success callback
       if (onSignupSuccess) {
@@ -553,7 +548,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                         <p className="text-sm font-medium text-green-800">{pgCommunity.name}</p>
                         <p className="text-xs text-green-600">{pgCommunity.address}</p>
                         <p className="text-xs text-green-600">
-                          Owner: {pgCommunity.owner.name} • {pgCommunity._count.residents} residents
+                          Owner: {pgCommunity.owner.name} 
                         </p>
                       </div>
                     </div>

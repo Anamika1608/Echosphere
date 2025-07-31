@@ -10,7 +10,7 @@ export const authController = {
     try {
       const { user, token } = await authService.signup(req.body);
 
-      res.cookie("token", token, {
+      res.cookie("community_auth_token", token, {
         httpOnly: true,
         secure: NODE_ENV === "production",
         sameSite: NODE_ENV === "production" ? "none" : "lax",
