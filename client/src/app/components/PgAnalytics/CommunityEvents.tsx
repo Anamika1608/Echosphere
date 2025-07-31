@@ -87,7 +87,11 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
       const response = await axios.get(`${serverUrl}/pg-analytics/${communityId}/events?${params}`, {
         withCredentials: true
       });
-      setEventsData(response.data);
+      setEventsData(response.data.data ? response.data : {
+        events: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+        summary: { total: 0, upcoming: 0, ongoing: 0, completed: 0, cancelled: 0 }
+      });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load events');
     } finally {
@@ -259,100 +263,117 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
       </div>
 
       {/* Events List */}
-      {eventsData?.events.length === 0 ? (
+      {!eventsData?.events || eventsData.events.length === 0 ? (
         <div className="text-center py-12">
           <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">No events found</h3>
           <p className="mt-1 text-sm text-gray-500">
-            No events match your current filters.
+            {eventTypeFilter || upcomingFilter || searchTerm
+              ? 'No events match your current filters. Try adjusting your search criteria.'
+              : 'No events have been organized for this community yet.'}
           </p>
+          {(eventTypeFilter || upcomingFilter || searchTerm) && (
+            <button
+              onClick={() => {
+                setEventTypeFilter('');
+                setUpcomingFilter('');
+                setSearchTerm('');
+                setCurrentPage(1);
+              }}
+              className="mt-4 text-blue-600 hover:text-blue-500 text-sm font-medium"
+            >
+              Clear all filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-6">
-          {eventsData?.events.map((event) => {
-            const startDateTime = formatDateTime(event.startDate);
-            const endDateTime = formatDateTime(event.endDate);
-            const upcoming = isEventUpcoming(event.startDate);
-            
-            return (
-              <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900">{event.title}</h3>
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(event.status)}`}>
-                        {event.status}
-                      </span>
-                    </div>
-                    
-                    <p className="text-gray-600 mb-4">{event.description}</p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <CalendarIcon className="h-4 w-4 mr-2" />
-                        <div>
-                          <p className="font-medium">Start</p>
-                          <p>{startDateTime.date}</p>
-                          <p>{startDateTime.time}</p>
-                        </div>
+          {eventsData?.events && eventsData.events.length > 0 ? (
+            eventsData.events.map((event) => {
+              const startDateTime = formatDateTime(event.startDate);
+              const endDateTime = formatDateTime(event.endDate);
+              const upcoming = isEventUpcoming(event.startDate);
+              
+              return (
+                <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-xl font-semibold text-gray-900">{event.title}</h3>
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(event.status)}`}>
+                          {event.status}
+                        </span>
                       </div>
                       
-                      <div className="flex items-center text-sm text-gray-500">
-                        <ClockIcon className="h-4 w-4 mr-2" />
-                        <div>
-                          <p className="font-medium">End</p>
-                          <p>{endDateTime.date}</p>
-                          <p>{endDateTime.time}</p>
-                        </div>
-                      </div>
+                      <p className="text-gray-600 mb-4">{event.description}</p>
                       
-                      {event.location && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                         <div className="flex items-center text-sm text-gray-500">
-                          <MapPinIcon className="h-4 w-4 mr-2" />
+                          <CalendarIcon className="h-4 w-4 mr-2" />
                           <div>
-                            <p className="font-medium">Location</p>
-                            <p>{event.location}</p>
+                            <p className="font-medium">Start</p>
+                            <p>{startDateTime.date}</p>
+                            <p>{startDateTime.time}</p>
                           </div>
                         </div>
-                      )}
-                      
-                      <div className="flex items-center text-sm text-gray-500">
-                        <UsersIcon className="h-4 w-4 mr-2" />
-                        <div>
-                          <p className="font-medium">Attendees</p>
-                          <p>
-                            {event.currentAttendees}
-                            {event.maxAttendees && ` / ${event.maxAttendees}`}
-                          </p>
+                        
+                        <div className="flex items-center text-sm text-gray-500">
+                          <ClockIcon className="h-4 w-4 mr-2" />
+                          <div>
+                            <p className="font-medium">End</p>
+                            <p>{endDateTime.date}</p>
+                            <p>{endDateTime.time}</p>
+                          </div>
+                        </div>
+                        
+                        {event.location && (
+                          <div className="flex items-center text-sm text-gray-500">
+                            <MapPinIcon className="h-4 w-4 mr-2" />
+                            <div>
+                              <p className="font-medium">Location</p>
+                              <p>{event.location}</p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center text-sm text-gray-500">
+                          <UsersIcon className="h-4 w-4 mr-2" />
+                          <div>
+                            <p className="font-medium">Attendees</p>
+                            <p>
+                              {event.currentAttendees}
+                              {event.maxAttendees && ` / ${event.maxAttendees}`}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center space-x-4">
-                        <span>Organized by: {event.organizer.name}</span>
-                        <span>•</span>
-                        <span>Type: {event.eventType}</span>
-                        <span>•</span>
-                        <span>Created: {new Date(event.createdAt).toLocaleDateString()}</span>
-                      </div>
                       
-                      {upcoming && (
-                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
-                          Upcoming
-                        </span>
-                      )}
+                      <div className="flex items-center justify-between text-sm text-gray-500">
+                        <div className="flex items-center space-x-4">
+                          <span>Organized by: {event.organizer.name}</span>
+                          <span>•</span>
+                          <span>Type: {event.eventType}</span>
+                          <span>•</span>
+                          <span>Created: {new Date(event.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        
+                        {upcoming && (
+                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                            Upcoming
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : null}
         </div>
       )}
 
       {/* Pagination */}
-      {eventsData && eventsData.pagination.totalPages > 1 && (
+      {eventsData && eventsData.events && eventsData.events.length > 0 && eventsData.pagination.totalPages > 1 && (
         <div className="flex justify-between items-center mt-6">
           <div className="text-sm text-gray-700">
             Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, eventsData.pagination.total)} of {eventsData.pagination.total} results

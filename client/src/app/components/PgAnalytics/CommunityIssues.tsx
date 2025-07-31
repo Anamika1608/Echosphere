@@ -63,7 +63,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
 
   useEffect(() => {
     loadIssues();
-  }, [communityId, currentPage, statusFilter, priorityFilter, issueTypeFilter, sortBy, sortOrder, searchTerm]);
+  }, [communityId, currentPage, statusFilter, priorityFilter, issueTypeFilter, sortBy, sortOrder]);
 
   const loadIssues = async () => {
     try {
@@ -75,7 +75,6 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
         sortOrder,
       });
       
-      if (searchTerm) params.append('search', searchTerm); // Add search term to API request
       if (statusFilter) params.append('status', statusFilter);
       if (priorityFilter) params.append('priority', priorityFilter);
       if (issueTypeFilter) params.append('issueType', issueTypeFilter);
@@ -83,11 +82,12 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
       const response = await axios.get(`${serverUrl}/pg-analytics/${communityId}/issues?${params}`, {
         withCredentials: true
       });
-
-      console.log("API response:", response.data); // Log the full response for debugging
-      setIssuesData(response.data.data || null); // Ensure null if response.data.data is undefined
+      setIssuesData(response.data.data ? response.data : {
+        issues: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+        summary: { total: 0, open: 0, inProgress: 0, resolved: 0, closed: 0 }
+      });
     } catch (err: any) {
-      console.error("Error loading issues:", err); // Log error for debugging
       setError(err.response?.data?.message || 'Failed to load issues');
     } finally {
       setLoading(false);
@@ -121,7 +121,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
 
   if (loading) {
     return (
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="p-6">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
           <div className="space-y-4">
@@ -136,7 +136,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
 
   if (error) {
     return (
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="p-6">
         <div className="bg-red-50 border border-red-200 rounded-md p-4">
           <div className="text-red-800">{error}</div>
           <button
@@ -150,32 +150,14 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
     );
   }
 
-  if (!issuesData) {
-    return (
-      <div className="p-6 bg-gray-50 min-h-screen text-center py-12">
-        <ExclamationTriangleIcon className="mx-auto h-12 w-12 text-gray-400" />
-        <h3 className="mt-2 text-sm font-medium text-gray-900">No data available</h3>
-        <p className="mt-1 text-sm text-gray-500">
-          Unable to load issues data. Please try again later.
-        </p>
-        <button
-          onClick={loadIssues}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Raised Issues</h2>
           <p className="text-gray-600 mt-1">
-            {issuesData.summary.total || 0} total issues reported
+            {issuesData?.summary.total || 0} total issues reported
           </p>
         </div>
       </div>
@@ -187,7 +169,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
             <ExclamationTriangleIcon className="h-8 w-8 text-red-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-red-600">Open Issues</p>
-              <p className="text-2xl font-semibold text-red-900">{issuesData.summary.open || 0}</p>
+              <p className="text-2xl font-semibold text-red-900">{issuesData?.summary.open || 0}</p>
             </div>
           </div>
         </div>
@@ -196,7 +178,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
             <ExclamationTriangleIcon className="h-8 w-8 text-blue-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-blue-600">In Progress</p>
-              <p className="text-2xl font-semibold text-blue-900">{issuesData.summary.inProgress || 0}</p>
+              <p className="text-2xl font-semibold text-blue-900">{issuesData?.summary.inProgress || 0}</p>
             </div>
           </div>
         </div>
@@ -205,7 +187,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
             <ExclamationTriangleIcon className="h-8 w-8 text-green-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-green-600">Resolved</p>
-              <p className="text-2xl font-semibold text-green-900">{issuesData.summary.resolved || 0}</p>
+              <p className="text-2xl font-semibold text-green-900">{issuesData?.summary.resolved || 0}</p>
             </div>
           </div>
         </div>
@@ -214,7 +196,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
             <ExclamationTriangleIcon className="h-8 w-8 text-gray-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Closed</p>
-              <p className="text-2xl font-semibold text-gray-900">{issuesData.summary.closed || 0}</p>
+              <p className="text-2xl font-semibold text-gray-900">{issuesData?.summary.closed || 0}</p>
             </div>
           </div>
         </div>
@@ -276,46 +258,64 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
       </div>
 
       {/* Issues List */}
-      {issuesData.issues.length === 0 ? (
+      {!issuesData?.issues || issuesData.issues.length === 0 ? (
         <div className="text-center py-12">
           <ExclamationTriangleIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">No issues found</h3>
           <p className="mt-1 text-sm text-gray-500">
-            No issues match your current filters or search term.
+            {statusFilter || priorityFilter || issueTypeFilter || searchTerm
+              ? 'No issues match your current filters. Try adjusting your search criteria.'
+              : 'No issues have been reported for this community yet.'}
           </p>
+          {(statusFilter || priorityFilter || issueTypeFilter || searchTerm) && (
+            <button
+              onClick={() => {
+                setStatusFilter('');
+                setPriorityFilter('');
+                setIssueTypeFilter('');
+                setSearchTerm('');
+                setCurrentPage(1);
+              }}
+              className="mt-4 text-blue-600 hover:text-blue-500 text-sm font-medium"
+            >
+              Clear all filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-4">
-          {issuesData.issues.map((issue) => (
-            <div key={issue.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{issue.title}</h3>
-                  <p className="text-gray-600 mb-3">{issue.description}</p>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <span>Reported by: {issue.reportedBy.name}</span>
-                    <span>•</span>
-                    <span>Type: {issue.issueType}</span>
-                    <span>•</span>
-                    <span>Created: {new Date(issue.createdAt).toLocaleDateString()}</span>
+          {issuesData?.issues && issuesData.issues.length > 0 ? (
+            issuesData.issues.map((issue) => (
+              <div key={issue.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{issue.title}</h3>
+                    <p className="text-gray-600 mb-3">{issue.description}</p>
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <span>Reported by: {issue.reportedBy.name}</span>
+                      <span>•</span>
+                      <span>Type: {issue.issueType}</span>
+                      <span>•</span>
+                      <span>Created: {new Date(issue.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col space-y-2 ml-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(issue.status)}`}>
+                      {issue.status.replace('_', ' ')}
+                    </span>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}>
+                      {issue.priority}
+                    </span>
                   </div>
                 </div>
-                <div className="flex flex-col space-y-2 ml-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(issue.status)}`}>
-                    {issue.status.replace('_', ' ')}
-                  </span>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}>
-                    {issue.priority}
-                  </span>
-                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : null}
         </div>
       )}
 
       {/* Pagination */}
-      {issuesData.pagination.totalPages > 1 && (
+      {issuesData && issuesData.issues && issuesData.issues.length > 0 && issuesData.pagination.totalPages > 1 && (
         <div className="flex justify-between items-center mt-6">
           <div className="text-sm text-gray-700">
             Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, issuesData.pagination.total)} of {issuesData.pagination.total} results

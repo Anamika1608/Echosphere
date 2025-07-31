@@ -85,7 +85,11 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
       const response = await axios.get(`${serverUrl}/pg-analytics/${communityId}/services?${params}`, {
         withCredentials: true
       });
-      setServicesData(response.data);
+      setServicesData(response.data.data ? response.data : {
+        services: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+        summary: { total: 0, pending: 0, inProgress: 0, completed: 0, cancelled: 0 }
+      });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load services');
     } finally {
@@ -257,65 +261,83 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
       </div>
 
       {/* Services List */}
-      {servicesData?.services.length === 0 ? (
+      {!servicesData?.services || servicesData.services.length === 0 ? (
         <div className="text-center py-12">
           <WrenchScrewdriverIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">No services found</h3>
           <p className="mt-1 text-sm text-gray-500">
-            No service requests match your current filters.
+            {statusFilter || priorityFilter || serviceTypeFilter || searchTerm
+              ? 'No service requests match your current filters. Try adjusting your search criteria.'
+              : 'No service requests have been made for this community yet.'}
           </p>
+          {(statusFilter || priorityFilter || serviceTypeFilter || searchTerm) && (
+            <button
+              onClick={() => {
+                setStatusFilter('');
+                setPriorityFilter('');
+                setServiceTypeFilter('');
+                setSearchTerm('');
+                setCurrentPage(1);
+              }}
+              className="mt-4 text-blue-600 hover:text-blue-500 text-sm font-medium"
+            >
+              Clear all filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-4">
-          {servicesData?.services.map((service) => (
-            <div key={service.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{service.title}</h3>
-                  <p className="text-gray-600 mb-3">{service.description}</p>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <span>Requested by: {service.requestedBy.name}</span>
-                    <span>•</span>
-                    <span>Type: {service.serviceType}</span>
-                    <span>•</span>
-                    <span>Created: {new Date(service.createdAt).toLocaleDateString()}</span>
-                    {service.completedAt && (
-                      <>
-                        <span>•</span>
-                        <span>Completed: {new Date(service.completedAt).toLocaleDateString()}</span>
-                      </>
-                    )}
-                  </div>
-                  {(service.estimatedCost || service.actualCost) && (
-                    <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
-                      {service.estimatedCost && (
-                        <span>Estimated Cost: ₹{service.estimatedCost}</span>
-                      )}
-                      {service.actualCost && (
+          {servicesData?.services && servicesData.services.length > 0 ? (
+            servicesData.services.map((service) => (
+              <div key={service.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{service.title}</h3>
+                    <p className="text-gray-600 mb-3">{service.description}</p>
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <span>Requested by: {service.requestedBy.name}</span>
+                      <span>•</span>
+                      <span>Type: {service.serviceType}</span>
+                      <span>•</span>
+                      <span>Created: {new Date(service.createdAt).toLocaleDateString()}</span>
+                      {service.completedAt && (
                         <>
                           <span>•</span>
-                          <span>Actual Cost: ₹{service.actualCost}</span>
+                          <span>Completed: {new Date(service.completedAt).toLocaleDateString()}</span>
                         </>
                       )}
                     </div>
-                  )}
-                </div>
-                <div className="flex flex-col space-y-2 ml-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(service.status)}`}>
-                    {service.status.replace('_', ' ')}
-                  </span>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(service.priority)}`}>
-                    {service.priority}
-                  </span>
+                    {(service.estimatedCost || service.actualCost) && (
+                      <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
+                        {service.estimatedCost && (
+                          <span>Estimated Cost: ₹{service.estimatedCost}</span>
+                        )}
+                        {service.actualCost && (
+                          <>
+                            <span>•</span>
+                            <span>Actual Cost: ₹{service.actualCost}</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col space-y-2 ml-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(service.status)}`}>
+                      {service.status.replace('_', ' ')}
+                    </span>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(service.priority)}`}>
+                      {service.priority}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : null}
         </div>
       )}
 
       {/* Pagination */}
-      {servicesData && servicesData.pagination.totalPages > 1 && (
+      {servicesData && servicesData.services && servicesData.services.length > 0 && servicesData.pagination.totalPages > 1 && (
         <div className="flex justify-between items-center mt-6">
           <div className="text-sm text-gray-700">
             Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, servicesData.pagination.total)} of {servicesData.pagination.total} results
