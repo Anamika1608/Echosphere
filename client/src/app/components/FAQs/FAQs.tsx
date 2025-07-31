@@ -35,11 +35,14 @@ export function FAQs() {
           Frequently Asked Questions
           </h2>
         </div>
-        <div className="flex justify-center items-center h-[160px] sm:h-[223px] my-4 mb-4 sm:mb-4">
-                    <Spline scene="../../../../../public/spline.spline" />
-                </div>
+        <div className="flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative">
+  <Spline scene="../../../../../public/spline.spline" />
+  
+  {/* Overlay div to disable interaction */}
+  <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
+</div>
       </div>
-      <div className="max-w-3xl mx-auto sm:w-xl overflow-visible">
+      <div className="max-w-3xl mx-4 sm:mx-auto sm:w-xl overflow-visible">
 
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, index) => (
