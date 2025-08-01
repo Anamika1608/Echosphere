@@ -8,7 +8,8 @@ import { authRouter } from "./modules/auth/auth.routes";
 import { voiceChatRouter } from "./modules/voiceChat/voiceChat.routes";
 import { pgCommunityRouter } from "./modules/pgCommunity/pgCommunity.routes"
 import { pgAnalyticsRouter } from "./modules/pgAnalytics/pgAnalytics.routes";
-import {technicianRouter} from './modules/technician/technician.routes'
+import { technicianRouter } from './modules/technician/technician.routes'
+import { eventSuggestionRouter } from './modules/eventSuggestion/eventSuggestion.routes'
 
 const app = express()
 const port = config.port
@@ -41,3 +42,4 @@ app.use("/api/pg-community", pgCommunityRouter)
 app.use("/api/pg-analytics", pgAnalyticsRouter)
 app.use("/api/technician", technicianRouter)
 app.use("/api/voice-chat", voiceChatRouter)
+app.use("/api/event-suggestions", eventSuggestionRouter)

@@ -63,6 +63,109 @@ model PgCommunity {
   // Technicians available for this PG
   technicians TechnicianPgAssignment[]
 
+  facilities PgFacility[]
+  eventAnalytics EventAnalytic[]
+  eventSuggestions EventSuggestion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PgFacility {
+  id String @id @default(cuid())
+  
+  name String
+  type FacilityType
+  capacity Int?
+  description String?
+  isAvailable Boolean @default(true)
+  amenities String[] // Array of amenities like "Projector", "Sound System", etc.
+  
+  pgCommunityId String
+  pgCommunity PgCommunity @relation(fields: [pgCommunityId], references: [id], onDelete: Cascade)
+  
+  // Events that used this facility
+  usedInEvents Event[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EventAnalytic {
+  id String @id @default(cuid())
+  
+  eventId String @unique
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  pgCommunityId String
+  pgCommunity PgCommunity @relation(fields: [pgCommunityId], references: [id], onDelete: Cascade)
+  
+  // Attendance metrics
+  totalRegistrations Int @default(0)
+  actualAttendance Int @default(0)
+  attendanceRate Float @default(0) // Percentage
+  noShowCount Int @default(0)
+  
+  // Engagement metrics
+  averageRating Float?
+  totalFeedbacks Int @default(0)
+  positiveFeedbackCount Int @default(0)
+  negativeFeedbackCount Int @default(0)
+  neutralFeedbackCount Int @default(0)
+  
+  // Engagement score (calculated based on attendance, ratings, feedback)
+  engagementScore Float @default(0) // 0-100 scale
+  
+  // Cost and ROI
+  eventCost Float?
+  estimatedROI Float?
+  
+  // Social metrics
+  photosShared Int @default(0)
+  socialMentions Int @default(0)
+  
+  // Analysis insights
+  successFactors String[] // What made this event successful
+  improvementAreas String[] // Areas for improvement
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EventSuggestion {
+  id String @id @default(cuid())
+  
+  pgCommunityId String
+  pgCommunity PgCommunity @relation(fields: [pgCommunityId], references: [id], onDelete: Cascade)
+  
+  // Suggestion details
+  title String
+  description String
+  suggestedEventType EventType
+  suggestedDate DateTime?
+  suggestedDuration Int? // in minutes
+  
+  // AI reasoning
+  reasoning String // Why this event was suggested
+  contextFactors String[] // Factors like "Weekend approaching", "Festival season", etc.
+  
+  // Based on past events
+  basedOnEventIds String[] // IDs of past successful events this is based on
+  expectedEngagement Float? // Predicted engagement score
+  
+  // Facility requirements
+  requiredFacilities String[]
+  recommendedCapacity Int?
+  estimatedCost Float?
+  
+  // Status
+  status SuggestionStatus @default(PENDING)
+  implementedAsEventId String? // If the suggestion was implemented
+  
+  // Owner feedback
+  ownerFeedback String?
+  ownerRating Int? // 1-5 scale
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -174,6 +277,12 @@ model Event {
   requiresRegistration Boolean @default(false)
   registrationDeadline DateTime?
   
+  // NEW: Facility and cost tracking
+  facilityId String?
+  facility   PgFacility? @relation(fields: [facilityId], references: [id])
+  estimatedCost Float?
+  actualCost Float?
+  
   // Who created this event (PG owner)
   createdById String
   createdBy   User @relation("EventCreator", fields: [createdById], references: [id])
@@ -185,6 +294,9 @@ model Event {
   // Event attendance and feedback
   attendances EventAttendance[]
   feedbacks   EventFeedback[]
+  
+  // NEW: Analytics relationship
+  analytics EventAnalytic?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -294,6 +406,10 @@ enum EventType {
   CELEBRATION
   WORKSHOP
   ANNOUNCEMENT
+  FESTIVAL
+  SPORTS
+  CULTURAL
+  EDUCATIONAL
   OTHER
 }
 
@@ -310,4 +426,28 @@ enum FeedbackType {
   CONTENT
   VENUE
   TIMING
+}
+
+// NEW Enums
+enum FacilityType {
+  COMMON_ROOM
+  ROOFTOP
+  GARDEN
+  PARKING_AREA
+  DINING_HALL
+  RECREATION_ROOM
+  STUDY_ROOM
+  GYM
+  LIBRARY
+  BALCONY
+  COURTYARD
+  OTHER
+}
+
+enum SuggestionStatus {
+  PENDING
+  APPROVED
+  IMPLEMENTED
+  REJECTED
+  EXPIRED
 }

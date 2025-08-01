@@ -322,6 +322,8 @@ export const pgCommunityAnalyticsController = {
         sortOrder: sortOrder as 'asc' | 'desc'
       };
 
+      
+
       const result = await pgCommunityAnalyticsService.getPgCommunityEvents(
         id, 
         req.user.userId, 
