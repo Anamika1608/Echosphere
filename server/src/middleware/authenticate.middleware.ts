@@ -11,8 +11,8 @@ export interface AuthenticatedRequest extends Request {
     userId: string;
     role: 'PG_OWNER' | 'RESIDENT';
   };
+  [key: string]: any; // allows body, params, query without type checking
 }
-
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies?.community_auth_token;
