@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import { AppError } from '../../utils/errors';
-import { UserRole } from '@prisma/client';
+import type { UserRole } from '@prisma/client';
 
 interface FilterOptions {
   status?: string;

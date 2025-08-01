@@ -84,7 +84,7 @@ export class MockDataInjectionService {
    * Inject facilities for the PG
    */
   private async injectFacilities(pgCommunityId: string, facilities: any[]): Promise<any[]> {
-    const createdFacilities = [];
+    const createdFacilities: any[] = [];
     
     for (const facilityData of facilities) {
       const facility = await prisma.pgFacility.create({
@@ -125,7 +125,7 @@ export class MockDataInjectionService {
         data: {
           title: eventData.title,
           description: `A successful ${eventData.eventType.toLowerCase()} event that brought the community together with great engagement and positive feedback.`,
-          eventType: eventData.eventType as any,
+          eventType: eventData.eventType as any as any,
           startDate: new Date(eventData.startDate),
           endDate: new Date(eventData.endDate),
           location: eventData.location,
