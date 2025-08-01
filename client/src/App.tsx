@@ -8,7 +8,7 @@ import Landing from './pages/Landing/Landing.tsx';
 import Login from './app/Login/Login';
 import Register from './app/Register/Register';
 import OwnerOldDashboard from './pages/Owner/OwnerOldDashboard.tsx';
-import PgOwnerDashboard from './pages/Owner/OnwerDashboard.tsx';
+import PgOwnerDashboard from './pages/Owner/OwnerDashboard.tsx';
 import ResidentDashboard from './pages/Resident/ResidentDashboard.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import LoadingSpinner from './components/ui/loading.tsx';
@@ -17,7 +17,7 @@ import NotFound from './pages/NotFound/NotFound.tsx';
 import CommunityDetailPage from './pages/Owner/CommunityDetailPage.tsx';
 
 function App() {
-  const { setUser, user, clearUser } = userStore();
+  const { setUser, clearUser } = userStore();
   const [isLoading, setIsLoading] = useState(true);
   const [authChecked, setAuthChecked] = useState(false);
 

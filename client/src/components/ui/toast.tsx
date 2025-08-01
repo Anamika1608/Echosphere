@@ -7,8 +7,8 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "../../components/ui/toast";
-import { create } from "@radix-ui/react-toast";
+} from "@radix-ui/react-toast";
+
 import * as React from "react";
 
 const Toaster = ({ ...props }) => {

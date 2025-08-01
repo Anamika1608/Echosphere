@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import { serverUrl } from '@/utils';
 import userStore from '@/store/userStore';
-import LoginPic from '@/assets/LoginPic.jpg'
 
 interface LoginFormData {
   email: string;

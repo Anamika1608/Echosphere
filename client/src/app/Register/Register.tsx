@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Eye, EyeOff, Mail, Lock, User, Building, UserPlus, Search, ChevronDown } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Building, UserPlus, ChevronDown } from 'lucide-react';
 import { serverUrl } from '@/utils';
 import { useMemo } from 'react';
 import { createAvatar } from '@dicebear/core';
 import { thumbs } from '@dicebear/collection';
 import userStore from '@/store/userStore';
-import RegisterPic from '@/assets/RegisterPic.jpg'
 
 interface SignupFormData {
   name: string;
@@ -54,7 +53,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
   const [searchingPg, setSearchingPg] = useState(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
 
-  const { setUser, user } = userStore()
+  const { setUser } = userStore();
 
   const roleOptions = [
     { value: 'PG_OWNER', label: 'PG Owner', description: 'Manage and oversee PG communities' },

@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { PlusIcon, BuildingOfficeIcon, UsersIcon, ChartBarIcon, PencilIcon, TrashIcon, WrenchScrewdriverIcon, CalendarIcon, BellIcon } from '@heroicons/react/24/outline';
-import { LogOut, Home, Settings, User } from 'lucide-react';
+import {
+  PlusIcon,
+  BuildingOfficeIcon,
+  UsersIcon,
+  ChartBarIcon,
+  PencilIcon,
+  TrashIcon,
+  WrenchScrewdriverIcon,
+  BellIcon,
+} from '@heroicons/react/24/outline';
+import { LogOut } from 'lucide-react';
+
 import type { PgCommunity } from '../../types/pgCommunity';
 import { serverUrl } from '@/utils';
 import userStore from '@/store/userStore';
 import { Card, CardHeader, CardTitle } from '../../components/ui/card';
 import CreatePgCommunityForm from '../../app/components/PgCommunity/CreatePgCommunityForm';
 import EditPgCommunityForm from '../../app/components/PgCommunity/EditPgCommunityForm';
+
 
 interface DashboardOverview {
   totalCommunities: number;

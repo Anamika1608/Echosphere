@@ -1,4 +1,4 @@
-import React from 'react';
+
 // import HowItWorksBg from '../../../assets/HowItWorksBg.png';
 // import HowItWorks2 from '../../../assets/HowItWorks2.png';
 // import Icon1 from '../../../assets/Icon1.svg';

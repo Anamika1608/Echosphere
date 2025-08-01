@@ -30,7 +30,7 @@ interface StoreState {
   removeRequestedService: (serviceId: string) => void;
 }
 
-const userStore = create<StoreState>((set, get) => ({
+const userStore = create<StoreState>((set) => ({
   // User state
   user: initialUser,
   isLoading: false,
