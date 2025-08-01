@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../../config';
 
-import type { User, UserRole } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
 
 import { AppError } from '../../utils/errors';
 
@@ -37,7 +37,7 @@ export const authService = {
       throw new AppError('Email already in use', 409);
     }
 
-    let pgCommunityId: string | null = null;
+    let pgCommunityId = null;
 
     // If role is RESIDENT, validate and find pgCommunity by pgCode
     if (data.role === 'RESIDENT') {

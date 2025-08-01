@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma';
-import type { TechnicianField } from '@prisma/client';
+import { TechnicianField } from '@prisma/client';
 import { AppError } from '../../utils/errors';
 
 interface CreateTechnicianData {

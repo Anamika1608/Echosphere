@@ -52,7 +52,7 @@ export class EventSuggestionService {
       const targetDates = getTargetDates();
       
       // Generate suggestions using Gemini AI for each target date
-      const allSuggestions: any[] = [];
+      const allSuggestions = [];
       for (const targetDate of targetDates) {
         const suggestions = await this.generateAISuggestionsForDate(
           pgCommunity,
@@ -104,7 +104,7 @@ export class EventSuggestionService {
       const suggestions = await prisma.eventSuggestion.findMany({
         where: {
           pgCommunityId,
-          ...(status && { status: status as any as any })
+          ...(status && { status: status as any })
         },
         orderBy: [
           { expectedEngagement: 'desc' },

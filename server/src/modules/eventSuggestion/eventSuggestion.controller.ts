@@ -3,7 +3,13 @@ import { eventSuggestionService } from './eventSuggestion.service';
 import { mockDataInjectionService } from '../../mockData/mockDataInjectionService';
 import { AppError } from '../../utils/errors';
 import { ai } from '../../lib/googleGemini';
-import { AuthenticatedRequest } from '../../middleware/authenticate.middleware';
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    userId: string;
+    role: string;
+  };
+}
 
 class EventSuggestionController {
 
