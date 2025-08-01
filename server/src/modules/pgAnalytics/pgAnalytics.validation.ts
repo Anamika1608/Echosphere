@@ -77,6 +77,62 @@ export const getRecentActivitiesSchema = z.object({
   }).optional()
 });
 
+// User-specific validation schemas (without params.id requirement)
+export const getUserIssuesSchema = z.object({
+  query: z.object({
+    page: z.string().regex(/^\d+$/).optional().default('1'),
+    limit: z.string().regex(/^\d+$/).optional().default('10'),
+    status: z.enum(['PENDING', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED']).optional(),
+    priority: z.enum(['P1', 'P2', 'P3', 'P4']).optional(),
+    issueType: z.enum([
+      'PLUMBING', 'ELECTRICAL', 'HEATING_COOLING', 'CLEANING', 
+      'SECURITY', 'INTERNET_WIFI', 'APPLIANCE', 'STRUCTURAL', 
+      'PEST_CONTROL', 'OTHER'
+    ]).optional(),
+    sortBy: z.enum(['createdAt', 'updatedAt', 'priorityLevel', 'status']).optional().default('createdAt'),
+    sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
+  }).optional()
+});
+
+export const getUserServicesSchema = z.object({
+  query: z.object({
+    page: z.string().regex(/^\d+$/).optional().default('1'),
+    limit: z.string().regex(/^\d+$/).optional().default('10'),
+    status: z.enum([
+      'PENDING', 'AWAITING_APPROVAL', 'APPROVED', 
+      'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'REJECTED'
+    ]).optional(),
+    priority: z.enum(['P1', 'P2', 'P3', 'P4']).optional(),
+    serviceType: z.enum([
+      'CLEANING', 'MAINTENANCE', 'REPAIR', 'INSTALLATION', 
+      'UPGRADE', 'INSPECTION', 'OTHER'
+    ]).optional(),
+    sortBy: z.enum(['createdAt', 'updatedAt', 'priorityLevel', 'status']).optional().default('createdAt'),
+    sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
+  }).optional()
+});
+
+export const getUserEventsSchema = z.object({
+  query: z.object({
+    page: z.string().regex(/^\d+$/).optional().default('1'),
+    limit: z.string().regex(/^\d+$/).optional().default('10'),
+    eventType: z.enum([
+      'SOCIAL', 'MAINTENANCE', 'MEETING', 'CELEBRATION', 
+      'WORKSHOP', 'ANNOUNCEMENT', 'OTHER'
+    ]).optional(),
+    upcoming: z.enum(['true', 'false']).optional().default('false'),
+    sortBy: z.enum(['createdAt', 'startDate', 'endDate', 'eventType']).optional().default('createdAt'),
+    sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
+  }).optional()
+});
+
+export const getUserActivitiesSchema = z.object({
+  query: z.object({
+    limit: z.string().regex(/^\d+$/).optional().default('20')
+  }).optional()
+});
+
+
 // Generic validation middleware
 export const validate = (schema: z.ZodSchema<any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -107,9 +163,16 @@ export const validate = (schema: z.ZodSchema<any>) => {
 
 // Export all validation schemas
 export const analyticsValidationSchemas = {
+  // PG Community specific schemas
   getPgAnalyticsSchema,
   getPgIssuesSchema,
   getPgServicesSchema,
   getPgEventsSchema,
-  getRecentActivitiesSchema
+  getRecentActivitiesSchema,
+  
+  // User specific schemas
+  getUserIssuesSchema,
+  getUserServicesSchema,
+  getUserEventsSchema,
+  getUserActivitiesSchema,
 };

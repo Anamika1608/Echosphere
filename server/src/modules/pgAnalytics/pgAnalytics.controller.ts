@@ -4,6 +4,193 @@ import { AppError } from '../../utils/errors';
 import { AuthenticatedRequest } from '@/middleware/authenticate.middleware';
 
 export const pgCommunityAnalyticsController = {
+  // Get user's raised issues
+  async getUserRaisedIssues(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { 
+        page = '1', 
+        limit = '10', 
+        status, 
+        priority, 
+        issueType,
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query;
+
+      const filters = {
+        status: status as string,
+        priority: priority as string,
+        issueType: issueType as string,
+      };
+
+      const pagination = {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc'
+      };
+
+      const result = await pgCommunityAnalyticsService.getUserRaisedIssues(
+        req.user.userId,
+        filters,
+        pagination
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'User issues retrieved successfully',
+        data: result.issues,
+        pagination: result.pagination,
+        summary: result.summary
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get user's requested services
+  async getUserRequestedServices(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { 
+        page = '1', 
+        limit = '10', 
+        status, 
+        priority, 
+        serviceType,
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query;
+
+      const filters = {
+        status: status as string,
+        priority: priority as string,
+        serviceType: serviceType as string,
+      };
+
+      const pagination = {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc'
+      };
+
+      const result = await pgCommunityAnalyticsService.getUserRequestedServices(
+        req.user.userId,
+        filters,
+        pagination
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'User services retrieved successfully',
+        data: result.services,
+        pagination: result.pagination,
+        summary: result.summary
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get user's attended events
+  async getUserAttendedEvents(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { 
+        page = '1', 
+        limit = '10', 
+        eventType,
+        upcoming = 'false',
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query;
+
+      const filters = {
+        eventType: eventType as string,
+        upcoming: upcoming === 'true',
+      };
+
+      const pagination = {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc'
+      };
+
+      const result = await pgCommunityAnalyticsService.getUserAttendedEvents(
+        req.user.userId,
+        filters,
+        pagination
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'User events retrieved successfully',
+        data: result.events,
+        pagination: result.pagination,
+        summary: result.summary
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get user dashboard overview
+  async getUserDashboardOverview(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const overview = await pgCommunityAnalyticsService.getUserDashboardOverview(
+        req.user.userId
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'User dashboard overview retrieved successfully',
+        data: overview
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get user's recent activities
+  async getUserRecentActivities(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { limit = '20' } = req.query;
+
+      const activities = await pgCommunityAnalyticsService.getUserRecentActivities(
+        req.user.userId,
+        parseInt(limit as string)
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'User recent activities retrieved successfully',
+        data: activities
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // Get all raised issues for a specific PG community
   async getPgCommunityIssues(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
