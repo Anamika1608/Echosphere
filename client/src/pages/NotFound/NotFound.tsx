@@ -8,7 +8,7 @@ export default function NotFound() {
 
       <Link
         to="/"
-        className="mt-6 px-6 py-2 text-white bg-orange-500 rounded-lg shadow hover:bg-blue-700 transition"
+        className="mt-6 px-6 py-2 text-white bg-orange-500 rounded-lg shadow hover:bg-orange-700 transition"
       >
         Go Back Home
       </Link>

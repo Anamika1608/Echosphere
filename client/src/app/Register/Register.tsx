@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Eye, EyeOff, Mail, Lock, User, Building, UserPlus, Search } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Building, UserPlus, Search, ChevronDown } from 'lucide-react';
 import { serverUrl } from '@/utils';
 import { useMemo } from 'react';
 import { createAvatar } from '@dicebear/core';
@@ -52,9 +52,14 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
   const [error, setError] = useState('');
   const [pgCommunity, setPgCommunity] = useState<PgCommunity | null>(null);
   const [searchingPg, setSearchingPg] = useState(false);
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
 
   const { setUser, user } = userStore()
 
+  const roleOptions = [
+    { value: 'PG_OWNER', label: 'PG Owner', description: 'Manage and oversee PG communities' },
+    { value: 'RESIDENT', label: 'Resident', description: 'Live in and interact with PG community' }
+  ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -70,6 +75,17 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
       setPgCommunity(null);
       setFormData(prev => ({ ...prev, pgCode: '' }));
     }
+  };
+
+  const handleRoleChange = (roleValue: 'PG_OWNER' | 'RESIDENT') => {
+    setFormData(prev => ({
+      ...prev,
+      role: roleValue,
+      pgCode: roleValue === 'PG_OWNER' ? '' : prev.pgCode
+    }));
+    setIsRoleDropdownOpen(false);
+    setPgCommunity(null);
+    if (error) setError('');
   };
 
   const searchPgCommunity = async (pgCode: string) => {
@@ -100,7 +116,6 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
       size: 128,
     }).toDataUri();
   }, []);
-
 
   // Debounced PG search
   useEffect(() => {
@@ -182,8 +197,6 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
     }
   };
 
-
-
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
       <div className="max-w-md w-full">
@@ -206,21 +219,57 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Role Selection */}
+            {/* Role Selection - Custom Dropdown */}
             <div>
               <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
                 I am a
               </label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleInputChange}
-                className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
-              >
-                <option value="PG_OWNER">PG Owner</option>
-                <option value="RESIDENT">Resident</option>
-              </select>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+                  className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
+                >
+                  <div className="flex items-center">
+                    {formData.role === 'PG_OWNER' ? (
+                      <Building className="h-5 w-5 text-gray-400 mr-3" />
+                    ) : (
+                      <User className="h-5 w-5 text-gray-400 mr-3" />
+                    )}
+                    <span className="text-gray-700">
+                      {roleOptions.find(opt => opt.value === formData.role)?.label}
+                    </span>
+                  </div>
+                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${isRoleDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {isRoleDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10">
+                    {roleOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => handleRoleChange(option.value as 'PG_OWNER' | 'RESIDENT')}
+                        className={`w-full px-4 py-4 text-left hover:bg-orange-50 transition-colors ${
+                          formData.role === option.value ? 'bg-orange-100 text-[#FF4500]' : 'text-gray-700'
+                        } ${option.value === roleOptions[0].value ? 'rounded-t-2xl' : ''} ${option.value === roleOptions[roleOptions.length - 1].value ? 'rounded-b-2xl' : ''}`}
+                      >
+                        <div className="flex items-start">
+                          {option.value === 'PG_OWNER' ? (
+                            <Building className="h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
+                          ) : (
+                            <User className="h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
+                          )}
+                          <div>
+                            <div className="font-medium">{option.label}</div>
+                            <div className="text-sm text-gray-500 mt-1">{option.description}</div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Name Field */}
@@ -239,7 +288,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:border-transparent transition duration-200 bg-white"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition duration-200 bg-white"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -261,7 +310,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-1focus:border-transparent transition duration-200 bg-white"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition duration-200 bg-white"
                   placeholder="Enter your email"
                 />
               </div>
@@ -284,7 +333,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                     required
                     value={formData.pgCode}
                     onChange={handleInputChange}
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:border-transparent transition duration-200 bg-white"
+                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition duration-200 bg-white"
                     placeholder="Enter PG code"
                   />
                   {searchingPg && (
@@ -327,7 +376,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:border-transparent transition duration-200 bg-white"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition duration-200 bg-white"
                   placeholder="Enter your password"
                 />
                 <button
@@ -360,7 +409,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:border-transparent transition duration-200 bg-white"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition duration-200 bg-white"
                   placeholder="Confirm your password"
                 />
                 <button
@@ -381,7 +430,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
             <button
               type="submit"
               disabled={loading || (formData.role === 'RESIDENT' && !pgCommunity)}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-2xl shadow-sm text-sm font-semibold text-white bg-[#FF703C] hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-2xl shadow-sm text-sm font-semibold text-white bg-[#FF703C] hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
             >
               {loading ? (
                 <div className="flex items-center">
