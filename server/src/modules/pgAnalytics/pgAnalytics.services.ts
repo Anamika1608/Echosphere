@@ -52,6 +52,465 @@ export const pgCommunityAnalyticsService = {
     return true;
   },
 
+  // Get user's raised issues
+  async getUserRaisedIssues(
+    userId: string,
+    filters: FilterOptions,
+    pagination: PaginationOptions
+  ) {
+    // Build where clause
+    const where: any = { raisedById: userId };
+    
+    if (filters.status) where.status = filters.status;
+    if (filters.priority) where.priorityLevel = filters.priority;
+    if (filters.issueType) where.issueType = filters.issueType;
+
+    // Calculate pagination
+    const skip = (pagination.page - 1) * pagination.limit;
+
+    // Get total count
+    const totalCount = await prisma.raisedIssue.count({ where });
+
+    // Get issues with pagination
+    const issues = await prisma.raisedIssue.findMany({
+      where,
+      include: {
+        raisedBy: {
+          select: { 
+            id: true, 
+            name: true, 
+            email: true,
+            profilePicture: true 
+          }
+        },
+        assignedTechnician: {
+          select: { 
+            id: true, 
+            name: true, 
+            phoneNumber: true,
+            speciality: true 
+          }
+        },
+        pgCommunity: {
+          select: { id: true, name: true }
+        }
+      },
+      orderBy: {
+        [pagination.sortBy]: pagination.sortOrder
+      },
+      skip,
+      take: pagination.limit
+    });
+
+    // Calculate summary statistics for user's issues
+    const summary = await this.getUserIssuesSummary(userId);
+
+    return {
+      issues,
+      pagination: {
+        page: pagination.page,
+        limit: pagination.limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / pagination.limit),
+        hasNext: pagination.page * pagination.limit < totalCount,
+        hasPrev: pagination.page > 1
+      },
+      summary
+    };
+  },
+
+  // Get user's requested services
+  async getUserRequestedServices(
+    userId: string,
+    filters: FilterOptions,
+    pagination: PaginationOptions
+  ) {
+    // Build where clause
+    const where: any = { requestedById: userId };
+    
+    if (filters.status) where.status = filters.status;
+    if (filters.priority) where.priorityLevel = filters.priority;
+    if (filters.serviceType) where.serviceType = filters.serviceType;
+
+    // Calculate pagination
+    const skip = (pagination.page - 1) * pagination.limit;
+
+    // Get total count
+    const totalCount = await prisma.requestedService.count({ where });
+
+    // Get services with pagination
+    const services = await prisma.requestedService.findMany({
+      where,
+      include: {
+        requestedBy: {
+          select: { 
+            id: true, 
+            name: true, 
+            email: true,
+            profilePicture: true 
+          }
+        },
+        assignedTechnician: {
+          select: { 
+            id: true, 
+            name: true, 
+            phoneNumber: true,
+            speciality: true 
+          }
+        },
+        pgCommunity: {
+          select: { id: true, name: true }
+        }
+      },
+      orderBy: {
+        [pagination.sortBy]: pagination.sortOrder
+      },
+      skip,
+      take: pagination.limit
+    });
+
+    // Calculate summary statistics for user's services
+    const summary = await this.getUserServicesSummary(userId);
+
+    return {
+      services,
+      pagination: {
+        page: pagination.page,
+        limit: pagination.limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / pagination.limit),
+        hasNext: pagination.page * pagination.limit < totalCount,
+        hasPrev: pagination.page > 1
+      },
+      summary
+    };
+  },
+
+  // Get user's attended events
+  async getUserAttendedEvents(
+    userId: string,
+    filters: FilterOptions,
+    pagination: PaginationOptions
+  ) {
+    // Build where clause for event attendance
+    const where: any = { 
+      userId: userId 
+    };
+
+    // Additional filters for the event itself
+    const eventWhere: any = {};
+    if (filters.eventType) eventWhere.eventType = filters.eventType;
+    if (filters.upcoming) {
+      eventWhere.startDate = { gte: new Date() };
+    }
+
+    // If we have event filters, we need to include them in the where clause
+    if (Object.keys(eventWhere).length > 0) {
+      where.event = eventWhere;
+    }
+
+    // Calculate pagination
+    const skip = (pagination.page - 1) * pagination.limit;
+
+    // Get total count
+    const totalCount = await prisma.eventAttendance.count({ 
+      where
+    });
+
+    // Get event attendances with pagination
+    const attendances = await prisma.eventAttendance.findMany({
+      where,
+      include: {
+        event: {
+          include: {
+            createdBy: {
+              select: { 
+                id: true, 
+                name: true, 
+                email: true 
+              }
+            },
+            pgCommunity: {
+              select: { id: true, name: true }
+            },
+            _count: {
+              select: {
+                attendances: true,
+                feedbacks: true
+              }
+            }
+          }
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profilePicture: true
+          }
+        }
+      },
+      orderBy: {
+        event: {
+          [pagination.sortBy === 'createdAt' ? 'createdAt' : pagination.sortBy]: pagination.sortOrder
+        }
+      },
+      skip,
+      take: pagination.limit
+    });
+
+    // Transform data to focus on events
+    const events = attendances.map(attendance => ({
+      ...attendance.event,
+      userAttendanceStatus: attendance.status,
+      userAttendanceId: attendance.id,
+      attendedAt: attendance.attendedAt
+    }));
+
+    // Calculate summary statistics for user's events
+    const summary = await this.getUserEventsSummary(userId);
+
+    return {
+      events,
+      pagination: {
+        page: pagination.page,
+        limit: pagination.limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / pagination.limit),
+        hasNext: pagination.page * pagination.limit < totalCount,
+        hasPrev: pagination.page > 1
+      },
+      summary
+    };
+  },
+
+  // Get user dashboard overview
+  async getUserDashboardOverview(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        pgCommunity: {
+          select: { 
+            id: true, 
+            name: true, 
+            address: true,
+            pgCode: true 
+          }
+        }
+      }
+    });
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    const [
+      issuesSummary,
+      servicesSummary,
+      eventsSummary,
+      recentActivities
+    ] = await Promise.all([
+      this.getUserIssuesSummary(userId),
+      this.getUserServicesSummary(userId),
+      this.getUserEventsSummary(userId),
+      this.getUserRecentActivities(userId, 10)
+    ]);
+
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profilePicture: user.profilePicture,
+        pgCommunity: user.pgCommunity
+      },
+      quickStats: {
+        totalIssuesRaised: issuesSummary.total,
+        totalServicesRequested: servicesSummary.total,
+        totalEventsAttended: eventsSummary.totalAttended,
+        pendingIssues: issuesSummary.pending,
+        pendingServices: servicesSummary.pending,
+        upcomingEvents: eventsSummary.upcoming
+      },
+      summaries: {
+        issues: issuesSummary,
+        services: servicesSummary,
+        events: eventsSummary
+      },
+      recentActivities
+    };
+  },
+
+  // Get user's recent activities
+  async getUserRecentActivities(userId: string, limit: number = 20) {
+    const [recentIssues, recentServices, recentEventAttendances] = await Promise.all([
+      prisma.raisedIssue.findMany({
+        where: { raisedById: userId },
+        include: {
+          pgCommunity: { select: { name: true } }
+        },
+        orderBy: { createdAt: 'desc' },
+        take: Math.ceil(limit / 3)
+      }),
+      prisma.requestedService.findMany({
+        where: { requestedById: userId },
+        include: {
+          pgCommunity: { select: { name: true } }
+        },
+        orderBy: { createdAt: 'desc' },
+        take: Math.ceil(limit / 3)
+      }),
+      prisma.eventAttendance.findMany({
+        where: { userId: userId },
+        include: {
+          event: {
+            include: {
+              pgCommunity: { select: { name: true } }
+            }
+          }
+        },
+        orderBy: {attendedAt : 'desc' },
+        take: Math.ceil(limit / 3)
+      })
+    ]);
+
+    // Combine and format activities
+    const activities = [
+      ...recentIssues.map(issue => ({
+        id: issue.id,
+        type: 'ISSUE' as const,
+        title: issue.title,
+        description: `Issue #${issue.ticketNumber} - ${issue.status}`,
+        createdAt: issue.createdAt,
+        status: issue.status,
+        priority: issue.priorityLevel,
+        pgCommunity: issue.pgCommunity?.name
+      })),
+      ...recentServices.map(service => ({
+        id: service.id,
+        type: 'SERVICE' as const,
+        title: service.title,
+        description: `Service #${service.ticketNumber} - ${service.status}`,
+        createdAt: service.createdAt,
+        status: service.status,
+        priority: service.priorityLevel,
+        pgCommunity: service.pgCommunity?.name
+      })),
+      ...recentEventAttendances.map(attendance => ({
+        id: attendance.event.id,
+        type: 'EVENT_ATTENDANCE' as const,
+        title: `Attended: ${attendance.event.title}`,
+        description: `Event attendance - ${attendance.status}`,
+        createdAt: attendance.attendedAt,
+        eventType: attendance.event.eventType,
+        attendanceStatus: attendance.status,
+        pgCommunity: attendance.event.pgCommunity?.name
+      }))
+    ];
+
+    // Sort by creation date and limit
+    return activities
+      .sort((a, b) => ((b?.createdAt?.getTime?.() ?? 0) - (a?.createdAt?.getTime?.() ?? 0)))
+      .slice(0, limit);
+  },
+
+  // Helper methods for user-specific summaries
+  async getUserIssuesSummary(userId: string) {
+    const issues = await prisma.raisedIssue.findMany({
+      where: { raisedById: userId },
+      select: { status: true, priorityLevel: true, createdAt: true, resolvedAt: true }
+    });
+
+    const resolvedIssues = issues.filter(i => i.status === 'RESOLVED' && i.resolvedAt);
+    const averageResolutionTime = resolvedIssues.length > 0 
+      ? this.calculateAverageResolutionTime(resolvedIssues)
+      : 0;
+
+    return {
+      total: issues.length,
+      pending: issues.filter(i => i.status === 'PENDING').length,
+      assigned: issues.filter(i => i.status === 'ASSIGNED').length,
+      inProgress: issues.filter(i => i.status === 'IN_PROGRESS').length,
+      resolved: issues.filter(i => i.status === 'RESOLVED').length,
+      critical: issues.filter(i => i.priorityLevel === 'P1').length,
+      high: issues.filter(i => i.priorityLevel === 'P2').length,
+      medium: issues.filter(i => i.priorityLevel === 'P3').length,
+      low: issues.filter(i => i.priorityLevel === 'P4').length,
+      averageResolutionTime
+    };
+  },
+
+  async getUserServicesSummary(userId: string) {
+    const services = await prisma.requestedService.findMany({
+      where: { requestedById: userId },
+      select: { status: true, priorityLevel: true, createdAt: true, completedAt: true }
+    });
+
+    const completedServices = services.filter(s => s.status === 'COMPLETED' && s.completedAt);
+    const averageCompletionTime = completedServices.length > 0 
+      ? this.calculateAverageCompletionTime(completedServices)
+      : 0;
+
+    return {
+      total: services.length,
+      pending: services.filter(s => s.status === 'PENDING').length,
+      awaitingApproval: services.filter(s => s.status === 'AWAITING_APPROVAL').length,
+      approved: services.filter(s => s.status === 'APPROVED').length,
+      assigned: services.filter(s => s.status === 'ASSIGNED').length,
+      inProgress: services.filter(s => s.status === 'IN_PROGRESS').length,
+      completed: services.filter(s => s.status === 'COMPLETED').length,
+      rejected: services.filter(s => s.status === 'REJECTED').length,
+      averageCompletionTime
+    };
+  },
+
+  async getUserEventsSummary(userId: string) {
+    const now = new Date();
+    const attendances = await prisma.eventAttendance.findMany({
+      where: { userId: userId },
+      include: {
+        event: {
+          select: {
+            eventType: true,
+            startDate: true,
+            endDate: true,
+            createdAt: true
+          }
+        }
+      }
+    });
+
+    const events = attendances.map(a => a.event);
+    const attendedEvents = attendances.filter(a => a.status === 'ATTENDED');
+
+    return {
+      totalRegistered: attendances.length,
+      totalAttended: attendedEvents.length,
+      upcoming: events.filter(e => e.startDate > now).length,
+      ongoing: events.filter(e => e.startDate <= now && e.endDate >= now).length,
+      completed: events.filter(e => e.endDate < now).length,
+      attendanceRate: attendances.length > 0 
+        ? Math.round((attendedEvents.length / attendances.length) * 100)
+        : 0,
+      typeDistribution: this.getDistribution(events, 'eventType')
+    };
+  },
+
+  // Additional utility method for completion time
+  calculateAverageCompletionTime(completedServices: any[]): number {
+    if (completedServices.length === 0) return 0;
+    
+    const totalHours = completedServices.reduce((sum, service) => {
+      const createdAt = new Date(service.createdAt);
+      const completedAt = new Date(service.completedAt);
+      const diffHours = (completedAt.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+      return sum + diffHours;
+    }, 0);
+
+    return Math.round(totalHours / completedServices.length);
+  },
+
   // Get all raised issues for a PG community
   async getPgCommunityIssues(
     pgId: string, 
