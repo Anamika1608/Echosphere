@@ -129,7 +129,7 @@ const CommunityDetailPage: React.FC = () => {
   return (
     <div className="min-h-screen" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
       {/* Mobile Header */}
-      <div className="bg-white shadow-lg border-b border-orange-100">
+      <div className="bg-white shadow-lg shadow-black/5 border-b border-orange-100">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -162,14 +162,14 @@ const CommunityDetailPage: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleMenu}>
-          <div className="absolute top-0 right-0 h-full w-64 bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 bg-opacity-50 z-40" onClick={toggleMenu}>
+          <div className="absolute top-2 right-2 w-[96%] rounded-xl bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-gray-900">Menu</h2>
                 <button
                   onClick={toggleMenu}
-                  className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100"
+                  className="text-gray-700 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100"
                 >
                   <XMarkIcon className="h-5 w-5" />
                 </button>
@@ -216,7 +216,7 @@ const CommunityDetailPage: React.FC = () => {
       <div className="px-4 py-6">
         {/* Current Tab Indicator */}
         <div className="mb-6">
-          <div className="bg-white rounded-2xl p-4 shadow-lg border border-orange-100">
+          <div className="bg-white rounded-2xl p-4 shadow-gray-200 shadow-md border border-orange-100">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">{getActiveTabLabel()}</h2>
@@ -234,7 +234,7 @@ const CommunityDetailPage: React.FC = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+        <div className="bg-white/50 rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
           {renderTabContent()}
         </div>
       </div>

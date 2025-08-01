@@ -71,15 +71,16 @@ const EditPgCommunityForm: React.FC<EditPgCommunityFormProps> = ({ community, on
     };
 
     return (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Edit PG Community</h2>
-                <button
+        <div className= "min-h-screen pt-10 px-6 pb-8 w-full " style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFFAF3 67.31%,#FFFAF3 100%)' }}>
+            <button
                     onClick={onCancel}
-                    className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="text-gray-700 hover:text-gray-600 pb-4 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                     ✕
                 </button>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Edit PG Community</h2>
+                
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -99,7 +100,7 @@ const EditPgCommunityForm: React.FC<EditPgCommunityFormProps> = ({ community, on
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] ${errors.name ? 'border-red-300' : 'border-gray-300'
+                        className={`w-full px-3 py-2 border rounded-[12px] focus:outline-none focus:ring-1 bg-white/70 focus:ring-[#FF703C] ${errors.name ? 'border-red-300' : 'border-gray-200'
                             }`}
                         placeholder="Enter PG name"
                     />
@@ -116,7 +117,7 @@ const EditPgCommunityForm: React.FC<EditPgCommunityFormProps> = ({ community, on
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] ${errors.address ? 'border-red-300' : 'border-gray-300'
+                        className={`w-full px-3 py-2 border rounded-[12px] focus:outline-none focus:ring-1 bg-white/70 focus:ring-[#FF703C] ${errors.name ? 'border-red-300' : 'border-gray-200'
                             }`}
                         placeholder="Enter complete address"
                     />
@@ -133,7 +134,7 @@ const EditPgCommunityForm: React.FC<EditPgCommunityFormProps> = ({ community, on
                         value={formData.description}
                         onChange={handleChange}
                         rows={4}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF4500] ${errors.description ? 'border-red-300' : 'border-gray-300'
+                        className={`w-full px-3 py-2 border rounded-[12px] focus:outline-none focus:ring-1 bg-white/70 focus:ring-[#FF703C] ${errors.description ? 'border-red-300' : 'border-gray-200'
                             }`}
                         placeholder="Optional description about your PG"
                     />
@@ -144,14 +145,14 @@ const EditPgCommunityForm: React.FC<EditPgCommunityFormProps> = ({ community, on
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors"
+                        className="flex-1 bg-[#D3C3BC] text-gray-900 py-2 px-4 rounded-2xl hover:bg-gray-200 transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={loading}
-                        className="flex-1 bg-[#FF4500] text-white py-2 px-4 rounded-md hover:bg-[#E03E00] disabled:opacity-50 transition-colors"
+                        className="flex-1 bg-[#FF703C] border-orange-300 border-1 text-white hover:bg-[#E03E00] hover:text-white py-2 px-4 rounded-2xl disabled:opacity-50 transition-colors"
                     >
                         {loading ? 'Updating...' : 'Update Community'}
                     </button>

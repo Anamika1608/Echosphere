@@ -103,9 +103,9 @@ const ImportTechnicianModal: React.FC<ImportTechnicianModalProps> = ({
 
   const getSpecialityColor = (speciality: string) => {
     const colors = {
-      PLUMBING: 'bg-blue-100 text-blue-800',
+      PLUMBING: 'bg-orange-100 text-orange-800',
       ELECTRICAL: 'bg-yellow-100 text-yellow-800',
-      CLEANING: 'bg-green-100 text-green-800',
+      CLEANING: 'bg-emerald-100 text-emerald-800',
       MAINTENANCE: 'bg-purple-100 text-purple-800',
       SECURITY: 'bg-red-100 text-red-800',
       GARDENING: 'bg-emerald-100 text-emerald-800',
@@ -118,13 +118,13 @@ const ImportTechnicianModal: React.FC<ImportTechnicianModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[80vh] overflow-hidden">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-2xl mx-4 max-h-[80vh] overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Import Technicians</h2>
+          <h2 className="text-xl font-bold text-gray-900">Import Technicians</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -132,7 +132,7 @@ const ImportTechnicianModal: React.FC<ImportTechnicianModalProps> = ({
 
         {/* Error Display */}
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
+          <div className="mb-4 bg-red-50 border border-red-200 rounded-2xl p-4">
             <div className="text-red-800 text-sm">{error}</div>
           </div>
         )}
@@ -147,7 +147,7 @@ const ImportTechnicianModal: React.FC<ImportTechnicianModalProps> = ({
         {/* Loading State */}
         {loading ? (
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF4500]"></div>
           </div>
         ) : (
           <>
@@ -166,9 +166,9 @@ const ImportTechnicianModal: React.FC<ImportTechnicianModalProps> = ({
                   {availableTechnicians.map((technician) => (
                     <div
                       key={technician.id}
-                      className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                      className={`border rounded-2xl p-4 cursor-pointer transition-colors ${
                         selectedTechnicians.includes(technician.id)
-                          ? 'border-blue-500 bg-blue-50'
+                          ? 'border-[#FF4500] bg-orange-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleTechnicianToggle(technician.id)}
@@ -180,7 +180,7 @@ const ImportTechnicianModal: React.FC<ImportTechnicianModalProps> = ({
                               type="checkbox"
                               checked={selectedTechnicians.includes(technician.id)}
                               onChange={() => handleTechnicianToggle(technician.id)}
-                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                              className="h-4 w-4 text-[#FF4500] focus:ring-[#FF4500] border-gray-300 rounded"
                             />
                             <div>
                               <h4 className="font-medium text-gray-900">{technician.name}</h4>
@@ -227,14 +227,14 @@ const ImportTechnicianModal: React.FC<ImportTechnicianModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-2xl hover:bg-gray-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleImport}
                   disabled={selectedTechnicians.length === 0 || importing}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#FF4500] border border-transparent rounded-2xl hover:bg-[#E03E00] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {importing ? 'Importing...' : `Import ${selectedTechnicians.length} Technician(s)`}
                 </button>
