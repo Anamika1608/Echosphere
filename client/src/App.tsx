@@ -7,7 +7,6 @@ import { Layout } from './app/Layout/Layout.tsx';
 import Landing from './pages/Landing/Landing.tsx';
 import Login from './app/Login/Login';
 import Register from './app/Register/Register';
-import OwnerOldDashboard from './pages/Owner/OwnerOldDashboard.tsx';
 import PgOwnerDashboard from './pages/Owner/OwnerDashboard.tsx';
 import ResidentDashboard from './pages/Resident/ResidentDashboard.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
