@@ -109,9 +109,9 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
   if (loading) {
     return (
       <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 w-full max-w-4xl mx-4">
+        <div className="bg-white rounded-2xl p-6 w-full max-w-4xl mx-4">
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF4500]"></div>
           </div>
         </div>
       </div>
@@ -121,12 +121,12 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
   if (error || !workloadData) {
     return (
       <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
+        <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
             <div className="text-red-800">{error || 'Failed to load data'}</div>
             <button
               onClick={onClose}
-              className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              className="mt-2 bg-[#FF4500] text-white px-4 py-2 rounded-2xl hover:bg-[#E03E00] transition-colors"
             >
               Close
             </button>
@@ -137,17 +137,17 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 bg-opacity-75 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">{workloadData.technician.name}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{workloadData.technician.name}</h2>
             <p className="text-gray-600">{workloadData.technician.speciality} • {workloadData.technician.phoneNumber}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -155,7 +155,7 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
 
         {/* Workload Summary */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
             <div className="flex items-center">
               <BuildingOfficeIcon className="h-8 w-8 text-blue-600" />
               <div className="ml-3">
@@ -164,7 +164,7 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+          <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4">
             <div className="flex items-center">
               <ExclamationTriangleIcon className="h-8 w-8 text-orange-600" />
               <div className="ml-3">
@@ -173,7 +173,7 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
             <div className="flex items-center">
               <WrenchScrewdriverIcon className="h-8 w-8 text-green-600" />
               <div className="ml-3">
@@ -182,7 +182,7 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4">
             <div className="flex items-center">
               <div className="h-8 w-8 bg-purple-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-sm">T</span>
@@ -208,7 +208,7 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
                 </div>
               ) : (
                 workloadData.technician.assignedIssues.map((issue) => (
-                  <div key={issue.id} className="border border-gray-200 rounded-lg p-3">
+                  <div key={issue.id} className="border border-gray-200 rounded-2xl p-3">
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-medium text-gray-900 text-sm">{issue.title}</h4>
                       <div className="flex space-x-1">
@@ -240,7 +240,7 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
                 </div>
               ) : (
                 workloadData.technician.assignedServices.map((service) => (
-                  <div key={service.id} className="border border-gray-200 rounded-lg p-3">
+                  <div key={service.id} className="border border-gray-200 rounded-2xl p-3">
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-medium text-gray-900 text-sm">{service.title}</h4>
                       <div className="flex space-x-1">
@@ -269,7 +269,7 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
             {workloadData.technician.pgAssignments.map((assignment) => (
               <span
                 key={assignment.pgCommunity.id}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800"
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800"
               >
                 {assignment.pgCommunity.name} ({assignment.pgCommunity.pgCode})
               </span>
@@ -281,7 +281,7 @@ const TechnicianWorkloadModal: React.FC<TechnicianWorkloadModalProps> = ({
         <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-2xl hover:bg-gray-200 transition-colors"
           >
             Close
           </button>

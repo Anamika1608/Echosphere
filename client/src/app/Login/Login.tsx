@@ -32,7 +32,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (error) setError('');
   };
 
@@ -50,25 +49,15 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
       });
 
       const { data } = response.data;
-
-      // console.log("data after login", data)
-
       setUser(data)
-
-      // console.log("auth.user", auth.user)
-
-      // Call success callback
       if (onLoginSuccess) {
         onLoginSuccess(data);
       }
-
-      // Redirect based on role
       if (data.role === 'PG_OWNER') {
         window.location.href = '/dashboard/owner';
       } else {
         window.location.href = '/dashboard/resident';
       }
-
     } catch (err: any) {
       console.error('Login error:', err);
       const errorMessage = err.response?.data?.message || 'Login failed. Please try again.';
@@ -79,9 +68,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-200 to-yellow-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-8">
-        <div className="bg-[rgba(255,255,255)] rounded-3xl border border-gray-400  shadow-xl p-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
+      <div className="max-w-md w-full">
+        <div className="bg-white/50 rounded-2xl border border-transparent shadow-lg p-8">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
@@ -116,7 +105,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-[12px] focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-transparent transition duration-200"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-200 bg-white"
                   placeholder="Enter your email"
                 />
               </div>
@@ -138,7 +127,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-[12px] focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-transparent transition duration-200"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-200 bg-white"
                   placeholder="Enter your password"
                 />
                 <button
@@ -159,10 +148,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-[12px] shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-2xl shadow-sm text-sm font-semibold text-white bg-[#FF4500] hover:bg-[#E03E00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
             >
               {loading ? (
-                <div className="flex items-center font-">
+                <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Signing in...
                 </div>
@@ -178,7 +167,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
               Don't have an account?{' '}
               <button
                 onClick={onSwitchToSignup}
-                className="font-medium text-orange-600 hover:text-orange-500 transition duration-200"
+                className="font-semibold text-[#FF703C] hover:text-[#E03E00] transition duration-200"
               >
                 Sign up here
               </button>

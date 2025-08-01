@@ -186,14 +186,14 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
         <div className="flex flex-col gap-3 mb-6">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-[#FF4500] text-white px-4 py-3 rounded-2xl hover:bg-[#E03E00] transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
+            className="bg-orange-100 text-[#FF4500] hover:bg-[#E03E00] hover:text-white px-6 py-4 rounded-2xl transition-colors flex items-center justify-center mx-auto gap-2 mb-4 mt-2 font-semibold"
           >
             <PlusIcon className="h-5 w-5" />
             Add Technician
           </button>
           <button
             onClick={() => setShowImportModal(true)}
-            className="bg-emerald-500 text-white px-4 py-3 rounded-2xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
+            className="bg-purple-100 text-purple-700 hover:bg-[#E03E00] hover:text-white px-6 py-4 rounded-2xl transition-colors flex items-center justify-center mx-auto gap-2 mb-4 font-semibold"
           >
             <UserPlusIcon className="h-5 w-5" />
             Import from Other PGs
@@ -211,7 +211,7 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
             placeholder="Search technicians..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors"
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-2xl focus:border-transparent transition-colors"
           />
         </div>
         
@@ -270,7 +270,7 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
               </button>
               <button
                 onClick={() => setShowImportModal(true)}
-                className="bg-emerald-500 text-white px-6 py-3 rounded-2xl hover:bg-emerald-600 transition-colors font-semibold text-sm"
+                className="bg-purple-500 text-white px-6 py-3 rounded-2xl hover:bg-purple-600 transition-colors font-semibold text-sm"
               >
                 Import from Other PGs
               </button>
@@ -358,9 +358,9 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
                   <button
                     onClick={() => handleToggleAvailability(technician)}
                     className={`p-2 rounded-xl transition-colors ${
-                      technician.isAvailable 
-                        ? 'text-red-600 hover:text-red-500 hover:bg-red-50' 
-                        : 'text-emerald-600 hover:text-emerald-500 hover:bg-emerald-50'
+                      technician.isAvailable
+                        ? 'text-red-600 hover:text-red-500 hover:bg-red-50'
+                        : 'text-purple-600 hover:text-purple-500 hover:bg-purple-50'
                     }`}
                     title={technician.isAvailable ? 'Mark Unavailable' : 'Mark Available'}
                   >
