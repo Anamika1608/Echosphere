@@ -60,7 +60,7 @@ interface Activity {
   description: string;
   userId: string;
   userName: string;
-  timestamp: string;
+  createdAt: string;
   metadata: any;
 }
 
@@ -87,8 +87,8 @@ const PgOwnerDashboard: React.FC = () => {
       setError(null);
 
       // Load communities
-      const communitiesRes = await axios.get(`${serverUrl}/pg-community/my-communities`, { 
-        withCredentials: true 
+      const communitiesRes = await axios.get(`${serverUrl}/pg-community/my-communities`, {
+        withCredentials: true
       });
 
       setCommunities(communitiesRes.data.data);
@@ -96,17 +96,17 @@ const PgOwnerDashboard: React.FC = () => {
       // If there are communities, load dashboard overview and activities
       if (communitiesRes.data.data && communitiesRes.data.data.length > 0) {
         const communityIds = communitiesRes.data.data.map((community: PgCommunity) => community.id);
-        
+
         // Load dashboard overview for the first community (or aggregate if needed)
         const firstCommunityId = communityIds[0];
-        
+
         try {
           const [overviewRes, activitiesRes] = await Promise.all([
-            axios.get(`${serverUrl}/pg-analytics/${firstCommunityId}/dashboard`, { 
-              withCredentials: true 
+            axios.get(`${serverUrl}/pg-analytics/${firstCommunityId}/dashboard`, {
+              withCredentials: true
             }),
-            axios.get(`${serverUrl}/pg-analytics/${firstCommunityId}/activities?limit=10`, { 
-              withCredentials: true 
+            axios.get(`${serverUrl}/pg-analytics/${firstCommunityId}/activities?limit=10`, {
+              withCredentials: true
             })
           ]);
 
@@ -177,8 +177,8 @@ const PgOwnerDashboard: React.FC = () => {
   const handleDelete = async (community: PgCommunity) => {
     if (window.confirm(`Are you sure you want to delete "${community.name}"? This action cannot be undone.`)) {
       try {
-        await axios.delete(`${serverUrl}/pg-community/${community.id}`, { 
-          withCredentials: true 
+        await axios.delete(`${serverUrl}/pg-community/${community.id}`, {
+          withCredentials: true
         });
         setCommunities(communities.filter(c => c.id !== community.id));
         loadDashboardData();
@@ -211,10 +211,10 @@ const PgOwnerDashboard: React.FC = () => {
   const handleLogout = async () => {
     try {
       setLogoutLoading(true);
-      await axios.get(`${serverUrl}/auth/logout`, { 
-        withCredentials: true 
+      await axios.get(`${serverUrl}/auth/logout`, {
+        withCredentials: true
       });
-      
+
       clearUser();
       navigate('/login');
     } catch (err: any) {
@@ -267,7 +267,7 @@ const PgOwnerDashboard: React.FC = () => {
               Manage your <strong className="font-bold">paying guest communities</strong> with smart insights and instant support.
             </p>
           </div>
-          
+
           {/* Action Buttons - Mobile Stacked */}
           <div className="flex flex-col gap-3 mb-6">
             <button
@@ -283,15 +283,15 @@ style={{
               <PlusIcon className="h-5 w-5" />
               Create Community
             </button>
-            
+
             {/* User Profile - Mobile Optimized */}
-            
-            </div>
+
           </div>
         </div>
+      </div>
 
-        {/* Overview Cards - Mobile Grid */}
-        
+      {/* Overview Cards - Mobile Grid */}
+
 
         {/* Main Content - Mobile Stacked */}
         <div className="space-y-6">
@@ -435,7 +435,7 @@ style={{
                 </button>
               </div>
           {/* Recent Activities - Mobile Full Width */}
-          
+
         </div>
       </div>
 <Card className="border-transparent rounded-2xl mt-8 bg-white/80 shadow-lg">

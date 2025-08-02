@@ -39,6 +39,7 @@
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
+    "whatsapp-web.js": "^1.31.0",
     "zustand": "^5.0.6"
   },
   "devDependencies": {

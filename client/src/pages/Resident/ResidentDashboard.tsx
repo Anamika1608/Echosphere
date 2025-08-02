@@ -1084,7 +1084,7 @@ const ResidentDashboard = () => {
               </div>
 
               {/* Voice Assistant Card */}
-              <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-6 text-white">
+              {/* <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-6 text-white">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                     <Mic className="h-6 w-6" />
@@ -1098,7 +1098,7 @@ const ResidentDashboard = () => {
                   <Mic className="h-4 w-4 mr-2 inline-block" />
                   Tap to Speak
                 </button>
-              </div>
+              </div> */}
 
               {/* Recent Activities */}
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-orange-100">

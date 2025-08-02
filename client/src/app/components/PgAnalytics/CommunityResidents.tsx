@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  UsersIcon, 
-  PhoneIcon, 
-  EnvelopeIcon, 
+import {
+  UsersIcon,
+  PhoneIcon,
+  EnvelopeIcon,
   CalendarIcon,
-  MagnifyingGlassIcon 
+  MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
 
 import { serverUrl } from '@/utils';
@@ -16,7 +16,7 @@ interface Resident {
   email: string;
   phone: string;
   roomNumber?: string;
-  joinedDate: string;
+  createdAt: string;
   status: 'ACTIVE' | 'INACTIVE';
   profilePicture?: string;
 }
@@ -62,12 +62,12 @@ const CommunityResidents: React.FC<CommunityResidentsProps> = ({ communityId }) 
 
   const filteredResidents = residentsData?.residents.filter(resident => {
     const matchesSearch = resident.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resident.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resident.phone.includes(searchTerm) ||
-                         (resident.roomNumber && resident.roomNumber.includes(searchTerm));
-    
+      resident.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resident.phone.includes(searchTerm) ||
+      (resident.roomNumber && resident.roomNumber.includes(searchTerm));
+
     const matchesStatus = statusFilter === 'ALL' || resident.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   }) || [];
 
@@ -145,70 +145,79 @@ const CommunityResidents: React.FC<CommunityResidentsProps> = ({ communityId }) 
             {searchTerm || statusFilter !== 'ALL' ? 'No residents found' : 'No residents yet'}
           </h3>
           <p className="mt-1 text-sm text-gray-500">
-            {searchTerm || statusFilter !== 'ALL' 
-              ? 'Try adjusting your search or filter criteria.' 
+            {searchTerm || statusFilter !== 'ALL'
+              ? 'Try adjusting your search or filter criteria.'
               : 'Residents will appear here once they join your community.'}
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredResidents.map((resident) => (
-            <div key={resident.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center space-x-4">
-                {/* Profile Picture */}
-                <div className="flex-shrink-0">
-                  {resident.profilePicture ? (
-                    <img
-                      src={resident.profilePicture}
-                      alt={resident.name}
-                      className="h-12 w-12 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 font-medium text-lg">
-                        {resident.name.charAt(0).toUpperCase()}
+          {filteredResidents.map((resident) => {
+            console.log(resident); 
+
+            return (
+              <div
+                key={resident.id}
+                className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center space-x-4">
+                  {/* Profile Picture */}
+                  <div className="flex-shrink-0">
+                    {resident.profilePicture ? (
+                      <img
+                        src={resident.profilePicture}
+                        alt={resident.name}
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
+                        <span className="text-gray-600 font-medium text-lg">
+                          {resident.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Resident Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-900 truncate">
+                        {resident.name}
+                      </h3>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${resident.status === "ACTIVE"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {resident.status}
                       </span>
                     </div>
-                  )}
-                </div>
 
-                {/* Resident Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900 truncate">
-                      {resident.name}
-                    </h3>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      resident.status === 'ACTIVE' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {resident.status}
-                    </span>
-                  </div>
-                  
-                  {resident.roomNumber && (
-                    <p className="text-sm text-gray-600 mb-2">Room: {resident.roomNumber}</p>
-                  )}
+                    {resident.roomNumber && (
+                      <p className="text-sm text-gray-600 mb-2">
+                        Room: {resident.roomNumber}
+                      </p>
+                    )}
 
-                  <div className="space-y-1">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <EnvelopeIcon className="h-4 w-4 mr-2" />
-                      <span className="truncate">{resident.email}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <PhoneIcon className="h-4 w-4 mr-2" />
-                      <span>{resident.phone}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <CalendarIcon className="h-4 w-4 mr-2" />
-                      <span>Joined {new Date(resident.joinedDate).toLocaleDateString()}</span>
+                    <div className="space-y-1">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <EnvelopeIcon className="h-4 w-4 mr-2" />
+                        <span className="truncate">{resident.email}</span>
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <CalendarIcon className="h-4 w-4 mr-2" />
+                        <span>
+                          Joined {new Date(resident.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+
         </div>
       )}
 
