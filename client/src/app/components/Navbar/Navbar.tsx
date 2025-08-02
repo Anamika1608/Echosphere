@@ -7,7 +7,6 @@ import {
   LogOut,
 } from "lucide-react";
 import { FloatingDock } from "../../../components/ui/floating-dock";
-import { Link } from "react-router-dom";
 
 const navItems = [
   {

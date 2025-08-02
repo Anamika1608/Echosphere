@@ -78,20 +78,20 @@ const CommunityDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#FF4500]"></div>
+      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-500"></div>
       </div>
     );
   }
 
   if (error || !community) {
     return (
-      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
+      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}>
         <div className="bg-white rounded-3xl p-6 shadow-xl w-full max-w-sm">
-          <div className="text-red-600 text-center mb-4 text-sm">{error || 'Community not found'}</div>
+          <div className="text-purple-600 text-center mb-4 text-sm">{error || 'Community not found'}</div>
           <button
             onClick={handleBackToDashboard}
-            className="w-full bg-[#FF4500] text-white px-4 py-3 rounded-2xl hover:bg-[#E03E00] transition-colors text-sm font-semibold"
+            className="w-full bg-purple-500 text-white px-4 py-3 rounded-2xl hover:bg-purple-600 transition-colors text-sm font-semibold"
           >
             Back to Dashboard
           </button>
@@ -127,28 +127,28 @@ const CommunityDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
+    <div className="min-h-screen" style={{ backgroundImage: 'linear-gradient(180deg, #D8B4FE 1.09%, #C4A1FF 18.47%, #B794F6 28.25%, #9F7AEA 47.26%, #9F7AEA 70.08%, #C4A1FF 93.44%, #D8B4FE 111.91%)'}}>
       {/* Mobile Header */}
-      <div className="bg-white shadow-lg shadow-black/5 border-b border-orange-100">
+      <div className=" shadow-lg shadow-black/5 border-b border-purple-100">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={handleBackToDashboard}
-                className="text-gray-600 hover:text-[#FF4500] p-2 rounded-xl hover:bg-orange-50 transition-colors"
+                className="text-white hover:text-purple-600 p-2 rounded-xl hover:bg-purple-50 transition-colors"
               >
                 <ArrowLeftIcon className="h-5 w-5" />
               </button>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">{community.name}</h1>
-                <p className="text-xs text-gray-500">Code: {community.pgCode}</p>
+                <h1 className="text-lg font-bold text-white">{community.name}</h1>
+                <p className="text-xs text-purple-100">Code: {community.pgCode}</p>
               </div>
             </div>
             
             {/* Hamburger Menu Button */}
             <button
               onClick={toggleMenu}
-              className="text-gray-600 hover:text-[#FF4500] p-2 rounded-xl hover:bg-orange-50 transition-colors"
+              className="text-white hover:text-purple-200 p-2 rounded-xl hover:bg-purple-500/30 transition-colors"
             >
               {isMenuOpen ? (
                 <XMarkIcon className="h-6 w-6" />
@@ -166,21 +166,21 @@ const CommunityDetailPage: React.FC = () => {
           <div className="absolute top-2 right-2 w-[96%] rounded-xl bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-gray-900">Menu</h2>
+                <h2 className="text-lg font-bold text-purple-900">Menu</h2>
                 <button
                   onClick={toggleMenu}
-                  className="text-gray-700 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100"
+                  className="text-purple-700 hover:text-purple-600 p-1 rounded-lg hover:bg-purple-100"
                 >
                   <XMarkIcon className="h-5 w-5" />
                 </button>
               </div>
               
               {/* Community Info */}
-              <div className="mb-6 p-4 bg-orange-50 rounded-2xl">
-                <h3 className="font-semibold text-gray-900 mb-2">{community.name}</h3>
-                <p className="text-sm text-gray-600 mb-2">{community.address}</p>
+              <div className="mb-6 p-4 bg-purple-50 rounded-2xl">
+                <h3 className="font-semibold text-purple-900 mb-2">{community.name}</h3>
+                <p className="text-sm text-purple-700 mb-2">{community.address}</p>
                 {community.description && (
-                  <p className="text-sm text-gray-500">{community.description}</p>
+                  <p className="text-sm text-purple-600">{community.description}</p>
                 )}
               </div>
 
@@ -195,8 +195,8 @@ const CommunityDetailPage: React.FC = () => {
                           onClick={() => handleTabChange(tab.id)}
                           className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 ${
                             activeTab === tab.id
-                              ? 'bg-[#FF4500] text-white shadow-lg'
-                              : 'text-gray-600 hover:bg-orange-50 hover:text-[#FF4500]'
+                              ? 'bg-purple-500 text-white shadow-lg'
+                              : 'text-purple-700 hover:bg-purple-50 hover:text-purple-600'
                           }`}
                         >
                           <Icon className="h-5 w-5" />
@@ -216,17 +216,17 @@ const CommunityDetailPage: React.FC = () => {
       <div className="px-4 py-6">
         {/* Current Tab Indicator */}
         <div className="mb-6">
-          <div className="bg-white rounded-2xl p-4 shadow-gray-200 shadow-md border border-orange-100">
+          <div className="bg-white/80 rounded-2xl p-4 shadow-purple-200 shadow-md border border-purple-100">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{getActiveTabLabel()}</h2>
-                <p className="text-sm text-gray-500">Community Management</p>
+                <h2 className="text-xl font-bold text-purple-900">{getActiveTabLabel()}</h2>
+                <p className="text-sm text-purple-600">Community Management</p>
               </div>
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                 {(() => {
                   const activeTabConfig = tabs.find(tab => tab.id === activeTab);
                   const Icon = activeTabConfig?.icon || UsersIcon;
-                  return <Icon className="h-6 w-6 text-[#FF4500]" />;
+                  return <Icon className="h-6 w-6 text-purple-600" />;
                 })()}
               </div>
             </div>
@@ -234,7 +234,7 @@ const CommunityDetailPage: React.FC = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white/50 rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+        <div className="bg-white/70 rounded-2xl shadow-lg border border-purple-100 overflow-hidden">
           {renderTabContent()}
         </div>
       </div>
