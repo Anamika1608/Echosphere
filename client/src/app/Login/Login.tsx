@@ -147,7 +147,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-2xl shadow-sm text-sm font-semibold text-white bg-[#FF4500] hover:bg-[#E03E00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+              className="font-semibold  text-white transition duration-200 px-4 py-2 rounded-[16px]"
+            style={{
+              border: '1px solid #FFF',
+              background: 'linear-gradient(180deg, #FFAB7E 1.09%, #FF955C 18.47%, #FF8B4E 28.25%, #FF610D 47.26%, #FF610D 70.08%, #FF955C 93.44%, #FFAB7E 111.91%)',
+              boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)',
+            }}
             >
               {loading ? (
                 <div className="flex items-center">

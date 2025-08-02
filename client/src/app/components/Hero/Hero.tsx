@@ -23,11 +23,8 @@ const Hero = () => {
 
 
             <div className="relative z-10 mt-[-80px] sm:mt-[-160px]">
-                <h1 className="text-5xl leading-tight  md:text-6xl lg:text-7xl font-bold tracking-tighter max-w-xl sm:max-w-full mx-auto sm:mx-0">
-                    Community Manager{' '}
-                    <span className="text-[#FF6D2E] font-normal tracking-wide text-5xl md:text-7xl lg:text-8xl" style={{ fontFamily: '"Comic Sans MS", "Chalkboard SE", cursive' }}>
-                        AI
-                    </span>
+                <h1 className="text-5xl leading-tight  md:text-6xl lg:text-7xl font-bold tracking-tighter max-w-xl sm:max-w-5xl mx-auto sm:mx-auto ">
+                    One place to manage your community living
                 </h1>
                 <p className="mt-4 text-gray-500 max-w-[500px] mx-8 sm:mx-auto font-light">
                     A faster approach to <strong className='font-bold'>Residential Community</strong> problems. Making <strong className='font-bold'>support instant</strong> and community building effortless.
