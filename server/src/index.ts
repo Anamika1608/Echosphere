@@ -11,6 +11,7 @@ import { pgAnalyticsRouter } from "./modules/pgAnalytics/pgAnalytics.routes";
 import { technicianRouter } from './modules/technician/technician.routes'
 import { eventSuggestionRouter } from './modules/eventSuggestion/eventSuggestion.routes'
 import whatsappService from "./modules/whatsappWeb/whatsapp.service";
+ 
 
 const app = express()
 const port = config.port

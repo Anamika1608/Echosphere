@@ -11,11 +11,11 @@ export const pgCommunityAnalyticsController = {
         throw new AppError('Authentication required', 401);
       }
 
-      const { 
-        page = '1', 
-        limit = '10', 
-        status, 
-        priority, 
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        priority,
         issueType,
         sortBy = 'createdAt',
         sortOrder = 'desc'
@@ -59,11 +59,11 @@ export const pgCommunityAnalyticsController = {
         throw new AppError('Authentication required', 401);
       }
 
-      const { 
-        page = '1', 
-        limit = '10', 
-        status, 
-        priority, 
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        priority,
         serviceType,
         sortBy = 'createdAt',
         sortOrder = 'desc'
@@ -107,9 +107,9 @@ export const pgCommunityAnalyticsController = {
         throw new AppError('Authentication required', 401);
       }
 
-      const { 
-        page = '1', 
-        limit = '10', 
+      const {
+        page = '1',
+        limit = '10',
         eventType,
         upcoming = 'false',
         sortBy = 'createdAt',
@@ -199,11 +199,11 @@ export const pgCommunityAnalyticsController = {
       }
 
       const { id } = req.params;
-      const { 
-        page = '1', 
-        limit = '10', 
-        status, 
-        priority, 
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        priority,
         issueType,
         sortBy = 'createdAt',
         sortOrder = 'desc'
@@ -223,8 +223,8 @@ export const pgCommunityAnalyticsController = {
       };
 
       const result = await pgCommunityAnalyticsService.getPgCommunityIssues(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         filters,
         pagination
@@ -250,11 +250,11 @@ export const pgCommunityAnalyticsController = {
       }
 
       const { id } = req.params;
-      const { 
-        page = '1', 
-        limit = '10', 
-        status, 
-        priority, 
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        priority,
         serviceType,
         sortBy = 'createdAt',
         sortOrder = 'desc'
@@ -274,8 +274,8 @@ export const pgCommunityAnalyticsController = {
       };
 
       const result = await pgCommunityAnalyticsService.getPgCommunityServices(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         filters,
         pagination
@@ -301,9 +301,9 @@ export const pgCommunityAnalyticsController = {
       }
 
       const { id } = req.params;
-      const { 
-        page = '1', 
-        limit = '10', 
+      const {
+        page = '1',
+        limit = '10',
         eventType,
         upcoming = 'false',
         sortBy = 'startDate',
@@ -322,11 +322,11 @@ export const pgCommunityAnalyticsController = {
         sortOrder: sortOrder as 'asc' | 'desc'
       };
 
-      
+
 
       const result = await pgCommunityAnalyticsService.getPgCommunityEvents(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         filters,
         pagination
@@ -355,8 +355,8 @@ export const pgCommunityAnalyticsController = {
       const { timeframe = '30' } = req.query; // days
 
       const analytics = await pgCommunityAnalyticsService.getPgCommunityAnalytics(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         parseInt(timeframe as string)
       );
@@ -382,8 +382,8 @@ export const pgCommunityAnalyticsController = {
       const { timeframe = '30' } = req.query; // days
 
       const eventAnalytics = await pgCommunityAnalyticsService.getEventAnalytics(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         parseInt(timeframe as string)
       );
@@ -408,8 +408,8 @@ export const pgCommunityAnalyticsController = {
       const { id } = req.params;
 
       const overview = await pgCommunityAnalyticsService.getDashboardOverview(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role
       );
 
@@ -434,8 +434,8 @@ export const pgCommunityAnalyticsController = {
       const { limit = '20' } = req.query;
 
       const activities = await pgCommunityAnalyticsService.getRecentActivities(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         parseInt(limit as string)
       );
@@ -444,6 +444,207 @@ export const pgCommunityAnalyticsController = {
         success: true,
         message: 'Recent activities retrieved successfully',
         data: activities
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async registerForEvent(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { eventId } = req.params;
+
+      const result = await pgCommunityAnalyticsService.registerForEvent(
+        req.user.userId,
+        eventId
+      );
+
+      res.status(200).json({
+        success: true,
+        message: result.message,
+        data: result.registration
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  /**
+   * Unregister user from an event
+   */
+  async unregisterFromEvent(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { eventId } = req.params;
+
+      const result = await pgCommunityAnalyticsService.unregisterFromEvent(
+        req.user.userId,
+        eventId
+      );
+
+      res.status(200).json({
+        success: true,
+        message: result.message
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  /**
+   * Get user's registration status for a specific event
+   */
+  async getUserEventRegistrationStatus(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { eventId } = req.params;
+
+      const status = await pgCommunityAnalyticsService.getUserEventRegistrationStatus(
+        req.user.userId,
+        eventId
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Registration status retrieved successfully',
+        data: status
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  /**
+   * Get all user's event registrations
+   */
+  async getUserEventRegistrations(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        eventType,
+        upcoming,
+        sortBy = 'registeredAt',
+        sortOrder = 'desc'
+      } = req.query;
+
+      const filters = {
+        status: status as string,
+        eventType: eventType as string,
+        upcoming: upcoming === 'true'
+      };
+
+      const pagination = {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc'
+      };
+
+      const registrations = await pgCommunityAnalyticsService.getUserEventRegistrations(
+        req.user.userId,
+        filters,
+        pagination
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Event registrations retrieved successfully',
+        data: registrations
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  /**
+   * Get event attendees (for PG owners)
+   */
+  async getEventAttendees(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { eventId } = req.params;
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        sortBy = 'registeredAt',
+        sortOrder = 'desc'
+      } = req.query;
+
+      const filters = {
+        status: status as string
+      };
+
+      const pagination = {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc'
+      };
+
+      const result = await pgCommunityAnalyticsService.getEventAttendees(
+        eventId,
+        req.user.userId,
+        req.user.role,
+        filters,
+        pagination
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Event attendees retrieved successfully',
+        data: result.attendees,
+        pagination: result.pagination,
+        summary: result.summary
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  /**
+   * Mark attendance for an event (for PG owners/staff)
+   */
+  async markEventAttendance(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const { eventId, userId } = req.params;
+      const { status } = req.body;
+
+      const result = await pgCommunityAnalyticsService.markEventAttendance(
+        eventId,
+        userId,
+        status,
+        req.user.userId,
+        req.user.role
+      );
+
+      res.status(200).json({
+        success: true,
+        message: result.message,
+        data: result.attendance
       });
     } catch (error) {
       next(error);

@@ -164,4 +164,76 @@ router.get(
   pgCommunityAnalyticsController.getRecentActivities
 );
 
+/**
+ * @route POST /api/events/:eventId/register
+ * @desc Register user for an event
+ * @access Private (Residents only)
+ */
+router.post(
+  '/events/:eventId/register',
+  authenticateToken,
+  pgCommunityAnalyticsController.registerForEvent
+);
+
+/**
+ * @route DELETE /api/events/:eventId/register
+ * @desc Unregister user from an event
+ * @access Private (Residents only)
+ */
+router.delete(
+  '/events/:eventId/register',
+  authenticateToken,
+  pgCommunityAnalyticsController.unregisterFromEvent
+);
+
+/**
+ * @route GET /api/events/:eventId/registration-status
+ * @desc Get user's registration status for a specific event
+ * @access Private (Residents only)
+ */
+router.get(
+  '/events/:eventId/registration-status',
+  authenticateToken,
+  pgCommunityAnalyticsController.getUserEventRegistrationStatus
+);
+
+/**
+ * @route GET /api/user/event-registrations
+ * @desc Get all user's event registrations with filters and pagination
+ * @query page, limit, status, eventType, upcoming, sortBy, sortOrder
+ * @access Private (Residents only)
+ */
+router.get(
+  '/user/event-registrations',
+  authenticateToken,
+  pgCommunityAnalyticsController.getUserEventRegistrations
+);
+
+/**
+ * @route GET /api/events/:eventId/attendees
+ * @desc Get event attendees (for PG owners)
+ * @query page, limit, status, sortBy, sortOrder
+ * @access Private (PG Owner only)
+ */
+router.get(
+  '/events/:eventId/attendees',
+  authenticateToken,
+  pgCommunityAnalyticsController.getEventAttendees
+);
+
+/**
+ * @route PUT /api/events/:eventId/attendance/:userId
+ * @desc Mark attendance for a specific user in an event
+ * @body { status: 'ATTENDED' | 'NO_SHOW' | 'CANCELLED' }
+ * @access Private (PG Owner only)
+ */
+router.put(
+  '/events/:eventId/attendance/:userId',
+  authenticateToken,
+  pgCommunityAnalyticsController.markEventAttendance
+);
+
+
+
+
 export { router as pgAnalyticsRouter };

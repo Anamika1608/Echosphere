@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import { AppError } from '../../utils/errors';
-import { UserRole } from '@prisma/client';
+import type { UserRole } from '@prisma/client';
 
 interface FilterOptions {
   status?: string;
@@ -23,9 +23,9 @@ export const pgCommunityAnalyticsService = {
   async verifyPgAccess(pgId: string, userId: string, userRole: UserRole) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { 
-        id: true, 
-        role: true, 
+      select: {
+        id: true,
+        role: true,
         pgCommunityId: true,
         ownedPgCommunities: {
           select: { id: true }
@@ -60,7 +60,7 @@ export const pgCommunityAnalyticsService = {
   ) {
     // Build where clause
     const where: any = { raisedById: userId };
-    
+
     if (filters.status) where.status = filters.status;
     if (filters.priority) where.priorityLevel = filters.priority;
     if (filters.issueType) where.issueType = filters.issueType;
@@ -76,19 +76,19 @@ export const pgCommunityAnalyticsService = {
       where,
       include: {
         raisedBy: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             email: true,
-            profilePicture: true 
+            profilePicture: true
           }
         },
         assignedTechnician: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             phoneNumber: true,
-            speciality: true 
+            speciality: true
           }
         },
         pgCommunity: {
@@ -127,7 +127,7 @@ export const pgCommunityAnalyticsService = {
   ) {
     // Build where clause
     const where: any = { requestedById: userId };
-    
+
     if (filters.status) where.status = filters.status;
     if (filters.priority) where.priorityLevel = filters.priority;
     if (filters.serviceType) where.serviceType = filters.serviceType;
@@ -143,19 +143,19 @@ export const pgCommunityAnalyticsService = {
       where,
       include: {
         requestedBy: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             email: true,
-            profilePicture: true 
+            profilePicture: true
           }
         },
         assignedTechnician: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             phoneNumber: true,
-            speciality: true 
+            speciality: true
           }
         },
         pgCommunity: {
@@ -193,8 +193,8 @@ export const pgCommunityAnalyticsService = {
     pagination: PaginationOptions
   ) {
     // Build where clause for event attendance
-    const where: any = { 
-      userId: userId 
+    const where: any = {
+      userId: userId
     };
 
     // Additional filters for the event itself
@@ -213,7 +213,7 @@ export const pgCommunityAnalyticsService = {
     const skip = (pagination.page - 1) * pagination.limit;
 
     // Get total count
-    const totalCount = await prisma.eventAttendance.count({ 
+    const totalCount = await prisma.eventAttendance.count({
       where
     });
 
@@ -224,10 +224,10 @@ export const pgCommunityAnalyticsService = {
         event: {
           include: {
             createdBy: {
-              select: { 
-                id: true, 
-                name: true, 
-                email: true 
+              select: {
+                id: true,
+                name: true,
+                email: true
               }
             },
             pgCommunity: {
@@ -290,11 +290,11 @@ export const pgCommunityAnalyticsService = {
       where: { id: userId },
       include: {
         pgCommunity: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             address: true,
-            pgCode: true 
+            pgCode: true
           }
         }
       }
@@ -370,7 +370,7 @@ export const pgCommunityAnalyticsService = {
             }
           }
         },
-        orderBy: {attendedAt : 'desc' },
+        orderBy: { attendedAt: 'desc' },
         take: Math.ceil(limit / 3)
       })
     ]);
@@ -423,7 +423,7 @@ export const pgCommunityAnalyticsService = {
     });
 
     const resolvedIssues = issues.filter(i => i.status === 'RESOLVED' && i.resolvedAt);
-    const averageResolutionTime = resolvedIssues.length > 0 
+    const averageResolutionTime = resolvedIssues.length > 0
       ? this.calculateAverageResolutionTime(resolvedIssues)
       : 0;
 
@@ -448,7 +448,7 @@ export const pgCommunityAnalyticsService = {
     });
 
     const completedServices = services.filter(s => s.status === 'COMPLETED' && s.completedAt);
-    const averageCompletionTime = completedServices.length > 0 
+    const averageCompletionTime = completedServices.length > 0
       ? this.calculateAverageCompletionTime(completedServices)
       : 0;
 
@@ -490,7 +490,7 @@ export const pgCommunityAnalyticsService = {
       upcoming: events.filter(e => e.startDate > now).length,
       ongoing: events.filter(e => e.startDate <= now && e.endDate >= now).length,
       completed: events.filter(e => e.endDate < now).length,
-      attendanceRate: attendances.length > 0 
+      attendanceRate: attendances.length > 0
         ? Math.round((attendedEvents.length / attendances.length) * 100)
         : 0,
       typeDistribution: this.getDistribution(events, 'eventType')
@@ -500,7 +500,7 @@ export const pgCommunityAnalyticsService = {
   // Additional utility method for completion time
   calculateAverageCompletionTime(completedServices: any[]): number {
     if (completedServices.length === 0) return 0;
-    
+
     const totalHours = completedServices.reduce((sum, service) => {
       const createdAt = new Date(service.createdAt);
       const completedAt = new Date(service.completedAt);
@@ -513,8 +513,8 @@ export const pgCommunityAnalyticsService = {
 
   // Get all raised issues for a PG community
   async getPgCommunityIssues(
-    pgId: string, 
-    userId: string, 
+    pgId: string,
+    userId: string,
     userRole: UserRole,
     filters: FilterOptions,
     pagination: PaginationOptions
@@ -524,7 +524,7 @@ export const pgCommunityAnalyticsService = {
 
     // Build where clause
     const where: any = { pgCommunityId: pgId };
-    
+
     if (filters.status) where.status = filters.status;
     if (filters.priority) where.priorityLevel = filters.priority;
     if (filters.issueType) where.issueType = filters.issueType;
@@ -540,19 +540,19 @@ export const pgCommunityAnalyticsService = {
       where,
       include: {
         raisedBy: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             email: true,
-            profilePicture: true 
+            profilePicture: true
           }
         },
         assignedTechnician: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             phoneNumber: true,
-            speciality: true 
+            speciality: true
           }
         },
         pgCommunity: {
@@ -585,8 +585,8 @@ export const pgCommunityAnalyticsService = {
 
   // Get all requested services for a PG community
   async getPgCommunityServices(
-    pgId: string, 
-    userId: string, 
+    pgId: string,
+    userId: string,
     userRole: UserRole,
     filters: FilterOptions,
     pagination: PaginationOptions
@@ -596,7 +596,7 @@ export const pgCommunityAnalyticsService = {
 
     // Build where clause
     const where: any = { pgCommunityId: pgId };
-    
+
     if (filters.status) where.status = filters.status;
     if (filters.priority) where.priorityLevel = filters.priority;
     if (filters.serviceType) where.serviceType = filters.serviceType;
@@ -612,19 +612,19 @@ export const pgCommunityAnalyticsService = {
       where,
       include: {
         requestedBy: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             email: true,
-            profilePicture: true 
+            profilePicture: true
           }
         },
         assignedTechnician: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             phoneNumber: true,
-            speciality: true 
+            speciality: true
           }
         },
         pgCommunity: {
@@ -657,8 +657,8 @@ export const pgCommunityAnalyticsService = {
 
   // Get all events for a PG community
   async getPgCommunityEvents(
-    pgId: string, 
-    userId: string, 
+    pgId: string,
+    userId: string,
     userRole: UserRole,
     filters: FilterOptions,
     pagination: PaginationOptions
@@ -668,7 +668,7 @@ export const pgCommunityAnalyticsService = {
 
     // Build where clause
     const where: any = { pgCommunityId: pgId };
-    
+
     if (filters.eventType) where.eventType = filters.eventType;
     if (filters.upcoming) {
       where.startDate = { gte: new Date() };
@@ -685,10 +685,10 @@ export const pgCommunityAnalyticsService = {
       where,
       include: {
         createdBy: {
-          select: { 
-            id: true, 
-            name: true, 
-            email: true 
+          select: {
+            id: true,
+            name: true,
+            email: true
           }
         },
         pgCommunity: {
@@ -741,8 +741,8 @@ export const pgCommunityAnalyticsService = {
 
   // Get comprehensive analytics for a PG community
   async getPgCommunityAnalytics(
-    pgId: string, 
-    userId: string, 
+    pgId: string,
+    userId: string,
     userRole: UserRole,
     timeframeDays: number = 30
   ) {
@@ -779,8 +779,8 @@ export const pgCommunityAnalyticsService = {
 
   // Get event-specific analytics
   async getEventAnalytics(
-    pgId: string, 
-    userId: string, 
+    pgId: string,
+    userId: string,
     userRole: UserRole,
     timeframeDays: number = 30
   ) {
@@ -814,15 +814,15 @@ export const pgCommunityAnalyticsService = {
     // Calculate analytics
     const totalEvents = events.length;
     const totalRegistrations = events.reduce((sum, event) => sum + event._count.attendances, 0);
-    const totalAttendances = events.reduce((sum, event) => 
+    const totalAttendances = events.reduce((sum, event) =>
       sum + event.attendances.filter(a => a.status === 'ATTENDED').length, 0
     );
     const totalFeedbacks = events.reduce((sum, event) => sum + event._count.feedbacks, 0);
 
     // Calculate average ratings
     const allRatings = events.flatMap(event => event.feedbacks.map(f => f.rating));
-    const averageRating = allRatings.length > 0 
-      ? allRatings.reduce((sum, rating) => sum + rating, 0) / allRatings.length 
+    const averageRating = allRatings.length > 0
+      ? allRatings.reduce((sum, rating) => sum + rating, 0) / allRatings.length
       : 0;
 
     // Feedback trends
@@ -840,10 +840,10 @@ export const pgCommunityAnalyticsService = {
       const registeredCount = event.attendances.length;
       const attendedCount = event.attendances.filter(a => a.status === 'ATTENDED').length;
       const attendanceRate = registeredCount > 0 ? (attendedCount / registeredCount) * 100 : 0;
-      
+
       const eventRatings = event.feedbacks.map(f => f.rating);
-      const eventAvgRating = eventRatings.length > 0 
-        ? eventRatings.reduce((sum, rating) => sum + rating, 0) / eventRatings.length 
+      const eventAvgRating = eventRatings.length > 0
+        ? eventRatings.reduce((sum, rating) => sum + rating, 0) / eventRatings.length
         : 0;
 
       return {
@@ -884,8 +884,8 @@ export const pgCommunityAnalyticsService = {
 
   // Get dashboard overview
   async getDashboardOverview(
-    pgId: string, 
-    userId: string, 
+    pgId: string,
+    userId: string,
     userRole: UserRole
   ) {
     // Verify access
@@ -950,8 +950,8 @@ export const pgCommunityAnalyticsService = {
 
   // Get recent activities
   async getRecentActivities(
-    pgId: string, 
-    userId: string, 
+    pgId: string,
+    userId: string,
     userRole: UserRole,
     limit: number = 20
   ) {
@@ -1067,9 +1067,9 @@ export const pgCommunityAnalyticsService = {
     const now = new Date();
     const events = await prisma.event.findMany({
       where: { pgCommunityId: pgId },
-      select: { 
-        eventType: true, 
-        startDate: true, 
+      select: {
+        eventType: true,
+        startDate: true,
         endDate: true,
         createdAt: true,
         _count: {
@@ -1173,13 +1173,13 @@ export const pgCommunityAnalyticsService = {
 
     const totalEvents = events.length;
     const totalRegistrations = events.reduce((sum, e) => sum + e.attendances.length, 0);
-    const totalAttendances = events.reduce((sum, e) => 
+    const totalAttendances = events.reduce((sum, e) =>
       sum + e.attendances.filter(a => a.status === 'ATTENDED').length, 0
     );
 
     const allRatings = events.flatMap(e => e.feedbacks.map(f => f.rating));
-    const averageRating = allRatings.length > 0 
-      ? allRatings.reduce((sum, rating) => sum + rating, 0) / allRatings.length 
+    const averageRating = allRatings.length > 0
+      ? allRatings.reduce((sum, rating) => sum + rating, 0) / allRatings.length
       : 0;
 
     return {
@@ -1234,7 +1234,7 @@ export const pgCommunityAnalyticsService = {
       issueReporters: issueParticipation.length,
       serviceRequesters: serviceParticipation.length,
       eventParticipants: eventParticipation.length,
-      averageIssuesPerResident: issueParticipation.length > 0 
+      averageIssuesPerResident: issueParticipation.length > 0
         ? Math.round(issueParticipation.reduce((sum, p) => sum + p._count.id, 0) / issueParticipation.length * 10) / 10
         : 0,
       averageServicesPerResident: serviceParticipation.length > 0
@@ -1242,6 +1242,242 @@ export const pgCommunityAnalyticsService = {
         : 0,
       averageEventAttendancePerResident: eventParticipation.length > 0
         ? Math.round(eventParticipation.reduce((sum, p) => sum + p._count.id, 0) / eventParticipation.length * 10) / 10
+        : 0
+    };
+  },
+
+  // Add these methods to your pgCommunityAnalyticsService
+
+  // Enhanced getUserEventRegistrations with filters and pagination
+  async getUserEventRegistrations(
+    userId: string,
+    filters: FilterOptions,
+    pagination: PaginationOptions
+  ) {
+    // Build where clause for event attendance
+    const where: any = { userId: userId };
+
+    // Additional filters for the event itself
+    const eventWhere: any = {};
+    if (filters.eventType) eventWhere.eventType = filters.eventType;
+    if (filters.upcoming) {
+      eventWhere.startDate = { gte: new Date() };
+    }
+    if (filters.status) where.status = filters.status;
+
+    // If we have event filters, include them in the where clause
+    if (Object.keys(eventWhere).length > 0) {
+      where.event = eventWhere;
+    }
+
+    // Calculate pagination
+    const skip = (pagination.page - 1) * pagination.limit;
+
+    // Get total count
+    const totalCount = await prisma.eventAttendance.count({ where });
+
+    // Get registrations with pagination
+    const registrations = await prisma.eventAttendance.findMany({
+      where,
+      include: {
+        event: {
+          include: {
+            pgCommunity: {
+              select: { id: true, name: true }
+            },
+            createdBy: {
+              select: { id: true, name: true }
+            }
+          }
+        }
+      },
+      orderBy: {
+        [pagination.sortBy === 'eventStartDate' ? 'event' : pagination.sortBy]:
+          pagination.sortBy === 'eventStartDate'
+            ? { startDate: pagination.sortOrder }
+            : pagination.sortOrder
+      },
+      skip,
+      take: pagination.limit
+    });
+
+    return {
+      registrations: registrations.map(reg => ({
+        registrationId: reg.id,
+        status: reg.status,
+        registeredAt: reg.registeredAt,
+        attendedAt: reg.attendedAt,
+        event: reg.event
+      })),
+      pagination: {
+        page: pagination.page,
+        limit: pagination.limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / pagination.limit),
+        hasNext: pagination.page * pagination.limit < totalCount,
+        hasPrev: pagination.page > 1
+      }
+    };
+  },
+
+  // Get event attendees (for PG owners)
+  async getEventAttendees(
+    eventId: string,
+    userId: string,
+    userRole: UserRole,
+    filters: FilterOptions,
+    pagination: PaginationOptions
+  ) {
+    // Get event and verify ownership
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: { pgCommunity: true }
+    });
+
+    if (!event) {
+      throw new AppError('Event not found', 404);
+    }
+
+    // Verify access
+    await this.verifyPgAccess(event.pgCommunityId, userId, userRole);
+
+    // Build where clause
+    const where: any = { eventId };
+    if (filters.status) where.status = filters.status;
+
+    // Calculate pagination
+    const skip = (pagination.page - 1) * pagination.limit;
+
+    // Get total count
+    const totalCount = await prisma.eventAttendance.count({ where });
+
+    // Get attendees with pagination
+    const attendees = await prisma.eventAttendance.findMany({
+      where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profilePicture: true
+          }
+        }
+      },
+      orderBy: {
+        [pagination.sortBy === 'userName' ? 'user' : pagination.sortBy]:
+          pagination.sortBy === 'userName'
+            ? { name: pagination.sortOrder }
+            : pagination.sortOrder
+      },
+      skip,
+      take: pagination.limit
+    });
+
+    // Calculate summary
+    const summary = await this.getEventAttendanceSummary(eventId);
+
+    return {
+      attendees,
+      pagination: {
+        page: pagination.page,
+        limit: pagination.limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / pagination.limit),
+        hasNext: pagination.page * pagination.limit < totalCount,
+        hasPrev: pagination.page > 1
+      },
+      summary,
+      event: {
+        id: event.id,
+        title: event.title,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        maxCapacity: event.maxCapacity
+      }
+    };
+  },
+
+  // Mark attendance for a specific user
+  async markEventAttendance(
+    eventId: string,
+    userId: string,
+    status: string,
+    markingUserId: string,
+    markingUserRole: UserRole
+  ) {
+    // Get event and verify ownership
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: { pgCommunity: true }
+    });
+
+    if (!event) {
+      throw new AppError('Event not found', 404);
+    }
+
+    // Verify access
+    await this.verifyPgAccess(event.pgCommunityId, markingUserId, markingUserRole);
+
+    // Check if attendance record exists
+    const attendance = await prisma.eventAttendance.findUnique({
+      where: {
+        userId_eventId: {
+          userId,
+          eventId
+        }
+      }
+    });
+
+    if (!attendance) {
+      throw new AppError('User is not registered for this event', 404);
+    }
+
+    // Update attendance status
+    const updatedAttendance = await prisma.eventAttendance.update({
+      where: {
+        userId_eventId: {
+          userId,
+          eventId
+        }
+      },
+      data: {
+        status: status as any,
+        attendedAt: status === 'ATTENDED' ? new Date() : null
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
+
+    return {
+      success: true,
+      message: `Attendance marked as ${status.toLowerCase()}`,
+      attendance: updatedAttendance
+    };
+  },
+
+  // Helper method to get event attendance summary
+  async getEventAttendanceSummary(eventId: string) {
+    const attendances = await prisma.eventAttendance.findMany({
+      where: { eventId },
+      select: { status: true }
+    });
+
+    return {
+      total: attendances.length,
+      registered: attendances.filter(a => a.status === 'REGISTERED').length,
+      attended: attendances.filter(a => a.status === 'ATTENDED').length,
+      noShow: attendances.filter(a => a.status === 'NO_SHOW').length,
+      cancelled: attendances.filter(a => a.status === 'CANCELLED').length,
+      attendanceRate: attendances.length > 0
+        ? Math.round((attendances.filter(a => a.status === 'ATTENDED').length / attendances.length) * 100)
         : 0
     };
   },
@@ -1257,7 +1493,7 @@ export const pgCommunityAnalyticsService = {
 
   calculateAverageResolutionTime(resolvedIssues: any[]): number {
     if (resolvedIssues.length === 0) return 0;
-    
+
     const totalHours = resolvedIssues.reduce((sum, issue) => {
       const createdAt = new Date(issue.createdAt);
       const resolvedAt = new Date(issue.resolvedAt);
@@ -1290,10 +1526,10 @@ export const pgCommunityAnalyticsService = {
       const registrations = event.attendances.length;
       const attendances = event.attendances.filter((a: any) => a.status === 'ATTENDED').length;
       const attendanceRate = registrations > 0 ? (attendances / registrations) * 100 : 0;
-      
+
       const ratings = event.feedbacks.map((f: any) => f.rating);
       const avgRating = ratings.length > 0 ? ratings.reduce((sum: number, r: number) => sum + r, 0) / ratings.length : 0;
-      
+
       return {
         date: event.startDate,
         attendanceRate: Math.round(attendanceRate),
@@ -1304,4 +1540,6 @@ export const pgCommunityAnalyticsService = {
 
     return trends.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
+
+
 };
