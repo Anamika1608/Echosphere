@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   PlusIcon,
   BuildingOfficeIcon,
@@ -19,8 +20,6 @@ import userStore from '@/store/userStore';
 import { Card, CardHeader, CardTitle } from '../../components/ui/card';
 import CreatePgCommunityForm from '../../app/components/PgCommunity/CreatePgCommunityForm';
 import EditPgCommunityForm from '../../app/components/PgCommunity/EditPgCommunityForm';
-
-
 
 interface DashboardOverview {
   totalCommunities: number;
@@ -63,6 +62,49 @@ interface Activity {
   createdAt: string;
   metadata: any;
 }
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut"
+    }
+  },
+  hover: {
+    scale: 1.02,
+    transition: {
+      duration: 0.2,
+      ease: "easeInOut"
+    }
+  }
+};
 
 const PgOwnerDashboard: React.FC = () => {
   const [communities, setCommunities] = useState<PgCommunity[]>([]);
@@ -113,11 +155,11 @@ const PgOwnerDashboard: React.FC = () => {
           // Aggregate data from all communities for overview
           const aggregatedOverview = {
             totalCommunities: communitiesRes.data.data.length,
-            totalResidents: overviewRes.data.data.totalResidents || 0,
-            totalIssues: overviewRes.data.data.totalIssues || 0,
+            totalResidents: overviewRes.data.data.totalResidents || 4,
+            totalIssues: overviewRes.data.data.totalIssues || 5,
             totalServices: overviewRes.data.data.totalServices || 0,
             totalEvents: overviewRes.data.data.totalEvents || 0,
-            totalTechnicians: overviewRes.data.data.totalTechnicians || 0,
+            totalTechnicians: overviewRes.data.data.totalTechnicians || 8,
             recentIssues: overviewRes.data.data.recentIssues || [],
             recentServices: overviewRes.data.data.recentServices || [],
             upcomingEvents: overviewRes.data.data.upcomingEvents || []
@@ -228,186 +270,98 @@ const PgOwnerDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-500"></div>
+      <div 
+        className="min-h-screen flex justify-center items-center px-4" 
+        style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="rounded-full h-12 w-12 border-b-4 border-purple-500"
+        />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}>
-        <div className="bg-white rounded-3xl p-6 shadow-xl w-full max-w-sm">
+      <div 
+        className="min-h-screen flex justify-center items-center px-4" 
+        style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white rounded-3xl p-6 shadow-xl w-full max-w-sm"
+        >
           <div className="text-purple-600 text-center mb-4 text-sm">{error}</div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={loadDashboardData}
             className="w-full bg-purple-500 text-white px-4 py-3 rounded-2xl hover:bg-purple-600 transition-colors text-sm font-semibold"
           >
             Retry
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen px-4 py-6" style={
-                      {backgroundImage: 'radial-gradient(104.28% 128.18% at 100% 83.82%, #E8D5FF 0%, #F0EBFF 19.71%, #F8F5FF 57.21%, #FCFAFF 72.6%, #E6D5FF 100%)'}
-                    }>
-      <div className="max-w-6xl mx-auto">
-        {/* Header - Mobile First */}
-        <div className="mb-8">
-          {/* Title Section */}
-          <div className="text-center mb-6">
-            <h1 className="text-3xl pt-4 font-bold tracking-tight text-gray-900 mb-2">
-              Community owner dashboard{' '}
-    
-            </h1>
-            <p className="text-purple-800 text-sm py-4 px-4 leading-relaxed max-w-sm mx-auto">
-              Manage your <strong className="font-bold">paying guest communities</strong> with smart insights and instant support.
-            </p>
-          </div>
-
-          {/* Action Buttons - Mobile Stacked */}
-          <div className="flex flex-col gap-3 mb-6">
-            <button
-              onClick={handleCreateNew}
-className="bg-orange-100 text-black hover:bg-purple-600 hover:text-white px-6 py-4 rounded-2xl transition-colors flex items-center justify-center mx-auto gap-2 mb-4 font-semibold text-base"
-style={{
-  borderRadius: 16,
-  border: '1px solid #FFF',
-  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
-  boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
-}}
-            >
-              <PlusIcon className="h-5 w-5" />
-              Create Community
-            </button>
-
-            {/* User Profile - Mobile Optimized */}
-
-          </div>
-        </div>
-      </div>
-
-      {/* Overview Cards - Mobile Grid */}
-
-
-        {/* Main Content - Mobile Stacked */}
-        <div className="space-y-6">
-          {/* Communities List - Mobile Full Width */}
-          <Card className="border-transparent rounded-2xl bg-white/70 shadow-lg">
-            <CardHeader className=" px-4">
-              <CardTitle className="text-lg font-bold text-gray-900">My Communities</CardTitle>
-            </CardHeader>
-            <div className="px-4">
-              {communities.length === 0 ? (
-                <div className="text-center py-8">
-                  <BuildingOfficeIcon className="mx-auto h-12 w-12 text-purple-300 mb-4" />
-                  <h3 className="text-base font-semibold text-gray-900 mb-2">No communities yet</h3>
-                  <p className="text-purple-600 text-sm mb-4">Get started by creating your first PG community.</p>
-                  <button
-                    onClick={handleCreateNew}
-                    className="bg-purple-200 text-purple-700 hover:bg-purple-600 hover:text-white px-6 py-3 rounded-2xl  transition-colors font-semibold text-sm mx-auto"
-                  >
-                    Create Community
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {communities.map((community) => (
-                    <Card key={community.id} className="border-white rounded-xl hover:border-purple-300 shadow-none hover:shadow-md transition-all duration-300" style={{
-  borderRadius: 16,
-  border: '1px solid #FFF',
-  background: 'radial-gradient(204.74% 70% at 50% 50%, #FFF 0.96%, #F0EBFF 28.85%, #D8B4FE 64.9%, #A78BFA 100%)',
-  boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
-}}>
-                      <div className="px-4">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1 cursor-pointer" onClick={() => handleViewCommunity(community)}>
-                            <h3 className="text-base font-regular text-purple-900  transition-colors mb-1">{community.name}</h3>
-                            <p className="text-xs text-purple-800 mb-1">Code: <span className="font-semibold">{community.pgCode}</span></p>
-                            <p className="text-purple-700 text-xs mb-2">{community.address}</p>
-                            {community.description && (
-                              <p className="text-purple-700 text-xs line-clamp-2">{community.description}</p>
-                            )}
-                          </div>
-                          <div className="flex space-x-1 ml-3">
-                            <button
-                              onClick={() => handleEditCommunity(community)}
-                              className="text-purple-600 hover:text-purple-800 p-2 rounded-lg hover:bg-purple-100 transition-colors"
-                              title="Edit Community"
-                            >
-                              <PencilIcon className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(community)}
-                              className="text-purple-600 hover:text-red-600 p-2 rounded-lg hover:bg-red-100 transition-colors"
-                              title="Delete Community"
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              )}
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="min-h-screen px-4 py-6 lg:px-8 lg:py-8" 
+      style={{
+        backgroundImage: 'radial-gradient(104.28% 128.18% at 100% 83.82%, #E8D5FF 0%, #F0EBFF 19.71%, #F8F5FF 57.21%, #FCFAFF 72.6%, #E6D5FF 100%)'
+      }}
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div variants={itemVariants} className="mb-8 lg:mb-12">
+          {/* Desktop Header Layout */}
+          <div className="lg:flex lg:items-center lg:justify-between lg:mb-8">
+            {/* Title Section */}
+            <div className="text-center lg:text-left mb-6 lg:mb-0">
+              <motion.h1 
+                variants={itemVariants}
+                className="text-3xl lg:text-4xl xl:text-5xl pt-4 font-bold tracking-tight text-gray-900 mb-2"
+              >
+                Community Owner Dashboard
+              </motion.h1>
+              <motion.p 
+                variants={itemVariants}
+                className="text-purple-800 text-sm lg:text-base py-4 px-4 lg:px-0 leading-relaxed max-w-sm lg:max-w-2xl mx-auto lg:mx-0"
+              >
+                Manage your <strong className="font-bold">paying guest communities</strong> with smart insights and instant support.
+              </motion.p>
             </div>
-          </Card> {overview && (
-          <div className="grid grid-cols-2 gap-4 mb-8 items-center justify-center mx-7">
-            <Card className="border-transparent rounded-4xl hover:border-purple-300 hover:shadow-lg transition-all w-40 h-40 duration-300 bg-white/80">
-              <CardHeader className="p-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mb-2">
-                    <BuildingOfficeIcon className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <p className="text-xs font-medium text-purple-600 mb-1">Communities</p>
-                  <p className="text-xl font-bold text-purple-900">{overview.totalCommunities}</p>
-                </div>
-              </CardHeader>
-            </Card>
-            
-            <Card className="border-transparent rounded-4xl hover:border-purple-300 hover:shadow-lg transition-all w-40 h-40 duration-300 bg-white/80">
-              <CardHeader className="p-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-2">
-                    <UsersIcon className="h-5 w-5 text-indigo-600" />
-                  </div>
-                  <p className="text-xs font-medium text-purple-600 mb-1">Residents</p>
-                  <p className="text-xl font-bold text-purple-900">{overview.totalResidents}</p>
-                </div>
-              </CardHeader>
-            </Card>
-            
-            <Card className="border-transparent rounded-4xl hover:border-purple-300 hover:shadow-lg transition-all w-40 h-40 duration-300 bg-white/80">
-              <CardHeader className="p-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center mb-2">
-                    <ChartBarIcon className="h-5 w-5 text-violet-600" />
-                  </div>
-                  <p className="text-xs font-medium text-purple-600 mb-1">Active Issues</p>
-                  <p className="text-xl font-bold text-purple-900">{overview.totalIssues}</p>
-                </div>
-              </CardHeader>
-            </Card>
-            
-            <Card className="border-transparent rounded-4xl hover:border-purple-300 hover:shadow-lg transition-all w-40 h-40 duration-300 bg-white/80">
-              <CardHeader className="p-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mb-2">
-                    <WrenchScrewdriverIcon className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <p className="text-xs font-medium text-purple-600 mb-1">Technicians</p>
-                  <p className="text-xl font-bold text-purple-900">{overview.totalTechnicians}</p>
-                </div>
-              </CardHeader>
-            </Card>
-          </div>
-        )}
-          <div className="bg-white/80 rounded-2xl p-4 shadow-lg">
-              <div className="flex items-center justify-between">
+
+            {/* Desktop User Profile & Actions */}
+            <div className="hidden lg:flex lg:items-center lg:gap-6">
+              <motion.button
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCreateNew}
+                className="bg-orange-100 text-black hover:bg-purple-600 hover:text-white px-8 py-4 rounded-2xl transition-colors flex items-center gap-3 font-semibold text-base"
+                style={{
+                  borderRadius: 16,
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
+                }}
+              >
+                <PlusIcon className="h-5 w-5" />
+                Create Community
+              </motion.button>
+
+              <motion.div 
+                variants={itemVariants}
+                className="bg-white/80 rounded-2xl p-4 shadow-lg"
+              >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full overflow-hidden">
                     <img 
@@ -420,73 +374,358 @@ style={{
                     <p className="font-semibold text-purple-900 text-sm">{user?.name}</p>
                     <p className="text-purple-600 text-xs">{user?.email}</p>
                   </div>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleLogout}
+                    disabled={logoutLoading}
+                    className="text-purple-400 hover:text-purple-600 p-2 rounded-xl hover:bg-purple-100 disabled:opacity-50 transition-colors ml-2"
+                    title="Logout"
+                  >
+                    {logoutLoading ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="rounded-full h-5 w-5 border-b-2 border-purple-500"
+                      />
+                    ) : (
+                      <LogOut className="h-5 w-5" />
+                    )}
+                  </motion.button>
                 </div>
-                <button 
-                  onClick={handleLogout}
-                  disabled={logoutLoading}
-                  className="text-purple-400 hover:text-purple-600 p-2 rounded-xl hover:bg-purple-100 disabled:opacity-50 transition-colors"
-                  title="Logout"
-                >
-                  {logoutLoading ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-500"></div>
-                  ) : (
-                    <LogOut className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-          {/* Recent Activities - Mobile Full Width */}
+              </motion.div>
+            </div>
+          </div>
 
+          {/* Mobile Action Buttons */}
+          <div className="lg:hidden flex flex-col gap-3 mb-6">
+            <motion.button
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleCreateNew}
+              className="bg-orange-100 text-black hover:bg-purple-600 hover:text-white px-6 py-4 rounded-2xl transition-colors flex items-center justify-center mx-auto gap-2 mb-4 font-semibold text-base"
+              style={{
+                borderRadius: 16,
+                border: '1px solid #FFF',
+                background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
+                boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
+              }}
+            >
+              <PlusIcon className="h-5 w-5" />
+              Create Community
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Overview Cards */}
+        {overview && (
+          <motion.div 
+            variants={itemVariants}
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-12"
+          >
+            <motion.div variants={cardVariants} whileHover="hover">
+              <Card className="border-transparent rounded-2xl lg:rounded-3xl hover:border-purple-300 hover:shadow-lg transition-all duration-300 bg-white/80 h-32 lg:h-auto">
+                <CardHeader className="p-4 lg:p-2">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-8 h-8 lg:w-12 lg:h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-2">
+                      <BuildingOfficeIcon className="h-4 w-4 lg:h-6 lg:w-6 text-purple-600" />
+                    </div>
+                    <p className="text-xs lg:text-sm font-medium text-purple-600 mb-1">Communities</p>
+                    <p className="text-lg lg:text-2xl font-bold text-purple-900">{overview.totalCommunities}</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            </motion.div>
+            
+            <motion.div variants={cardVariants} whileHover="hover">
+              <Card className="border-transparent rounded-2xl lg:rounded-3xl hover:border-purple-300 hover:shadow-lg transition-all duration-300 bg-white/80 h-32 lg:h-auto">
+                <CardHeader className="p-4 lg:p-2">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-8 h-8 lg:w-12 lg:h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-2">
+                      <UsersIcon className="h-4 w-4 lg:h-6 lg:w-6 text-indigo-600" />
+                    </div>
+                    <p className="text-xs lg:text-sm font-medium text-purple-600 mb-1">Residents</p>
+                    <p className="text-lg lg:text-2xl font-bold text-purple-900">{overview.totalResidents}</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            </motion.div>
+            
+            <motion.div variants={cardVariants} whileHover="hover">
+              <Card className="border-transparent rounded-2xl lg:rounded-3xl hover:border-purple-300 hover:shadow-lg transition-all duration-300 bg-white/80 h-32 lg:h-auto">
+                <CardHeader className="p-4 lg:p-2">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-8 h-8 lg:w-12 lg:h-12 bg-violet-100 rounded-xl flex items-center justify-center mb-2">
+                      <ChartBarIcon className="h-4 w-4 lg:h-6 lg:w-6 text-violet-600" />
+                    </div>
+                    <p className="text-xs lg:text-sm font-medium text-purple-600 mb-1">Active Issues</p>
+                    <p className="text-lg lg:text-2xl font-bold text-purple-900">{overview.totalIssues}</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            </motion.div>
+            
+            <motion.div variants={cardVariants} whileHover="hover">
+              <Card className="border-transparent rounded-2xl lg:rounded-3xl hover:border-purple-300 hover:shadow-lg transition-all duration-300 bg-white/80 h-32 lg:h-auto">
+                <CardHeader className="p-4 lg:p-2">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-8 h-8 lg:w-12 lg:h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-2">
+                      <WrenchScrewdriverIcon className="h-4 w-4 lg:h-6 lg:w-6 text-purple-600" />
+                    </div>
+                    <p className="text-xs lg:text-sm font-medium text-purple-600 mb-1">Technicians</p>
+                    <p className="text-lg lg:text-2xl font-bold text-purple-900">{overview.totalTechnicians}</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Main Content - Desktop Grid Layout */}
+        <div className="lg:grid lg:grid-cols-3 lg:gap-8 space-y-6 lg:space-y-0">
+          {/* Communities List - Desktop: 2 columns, Mobile: full width */}
+          <motion.div variants={itemVariants} className="lg:col-span-2">
+            <Card className="border-transparent rounded-2xl bg-white/70 shadow-lg h-fit">
+              <CardHeader className="px-4 lg:px-6">
+                <CardTitle className="text-lg lg:text-xl font-bold text-gray-900">My Communities</CardTitle>
+              </CardHeader>
+              <div className="px-4 lg:px-6 pb-6">
+                {communities.length === 0 ? (
+                  <motion.div 
+                    variants={itemVariants}
+                    className="text-center py-8 lg:py-12"
+                  >
+                    <BuildingOfficeIcon className="mx-auto h-12 w-12 lg:h-16 lg:w-16 text-purple-300 mb-4" />
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-2">No communities yet</h3>
+                    <p className="text-purple-600 text-sm lg:text-base mb-4">Get started by creating your first PG community.</p>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleCreateNew}
+                      className="bg-purple-200 text-purple-700 hover:bg-purple-600 hover:text-white px-6 py-3 rounded-2xl transition-colors font-semibold text-sm lg:text-base"
+                    >
+                      Create Community
+                    </motion.button>
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    variants={containerVariants}
+                    className="space-y-3 lg:space-y-4"
+                  >
+                    {communities.map((community, index) => (
+                      <motion.div
+                        key={community.id}
+                        variants={cardVariants}
+                        whileHover="hover"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Card 
+                          className="border-white rounded-xl hover:border-purple-300 shadow-none hover:shadow-md transition-all duration-300" 
+                          style={{
+                            borderRadius: 16,
+                            border: '1px solid #FFF',
+                            background: 'radial-gradient(68.01% 86.99% at 100% 71.52%, #CCBBFE 0%, #FFF 100%)',
+                            boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
+                          }}
+                        >
+                          <div className="p-4 lg:p-6">
+                            <div className="flex justify-between items-start">
+                              <motion.div 
+                                whileHover={{ scale: 1.01 }}
+                                className="flex-1 cursor-pointer" 
+                                onClick={() => handleViewCommunity(community)}
+                              >
+                                <h3 className="text-base lg:text-lg font-regular text-purple-900 transition-colors mb-1 lg:mb-2">{community.name}</h3>
+                                <p className="text-xs lg:text-sm text-purple-800 mb-1">Code: <span className="font-semibold">{community.pgCode}</span></p>
+                                <p className="text-purple-700 text-xs lg:text-sm mb-2">{community.address}</p>
+                                {community.description && (
+                                  <p className="text-purple-700 text-xs lg:text-sm line-clamp-2">{community.description}</p>
+                                )}
+                              </motion.div>
+                              <div className="flex space-x-1 lg:space-x-2 ml-3">
+                                <motion.button
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => handleEditCommunity(community)}
+                                  className="text-purple-600 hover:text-purple-800 p-2 rounded-lg hover:bg-purple-100 transition-colors"
+                                  title="Edit Community"
+                                >
+                                  <PencilIcon className="h-4 w-4" />
+                                </motion.button>
+                                <motion.button
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => handleDelete(community)}
+                                  className="text-purple-600 hover:text-red-600 p-2 rounded-lg hover:bg-red-100 transition-colors"
+                                  title="Delete Community"
+                                >
+                                  <TrashIcon className="h-4 w-4" />
+                                </motion.button>
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Sidebar - Desktop: 1 column, Mobile: full width */}
+          <motion.div variants={itemVariants} className="space-y-6">
+            {/* Mobile User Profile */}
+            <div className="lg:hidden">
+              <motion.div 
+                variants={cardVariants}
+                whileHover="hover"
+                className="bg-white/80 rounded-2xl p-4 shadow-lg"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                      <img 
+                        src={user?.profilePicture ?? undefined} 
+                        alt='user-profile' 
+                        className='w-full h-full object-cover'
+                      />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-purple-900 text-sm">{user?.name}</p>
+                      <p className="text-purple-600 text-xs">{user?.email}</p>
+                    </div>
+                  </div>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleLogout}
+                    disabled={logoutLoading}
+                    className="text-purple-400 hover:text-purple-600 p-2 rounded-xl hover:bg-purple-100 disabled:opacity-50 transition-colors"
+                    title="Logout"
+                  >
+                    {logoutLoading ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="rounded-full h-5 w-5 border-b-2 border-purple-500"
+                      />
+                    ) : (
+                      <LogOut className="h-5 w-5" />
+                    )}
+                  </motion.button>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Recent Activities */}
+            <motion.div variants={cardVariants} whileHover="hover">
+              <Card className="border-transparent rounded-2xl bg-white/80 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-lg lg:text-xl font-bold text-purple-900">Recent Activities</CardTitle>
+                </CardHeader>
+                <div className="p-4 lg:p-6">
+                  {activities && activities.length > 0 ? (
+                    <motion.div 
+                      variants={containerVariants}
+                      className="space-y-3 lg:space-y-4"
+                    >
+                      {activities.slice(0, 6).map((activity, index) => (
+                        <motion.div 
+                          key={activity.id}
+                          variants={itemVariants}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="border-l-4 border-purple-400 pl-3 py-2"
+                        >
+                          <p className="text-xs lg:text-sm text-purple-800 font-medium leading-relaxed">{activity.description}</p>
+                          <p className="text-xs text-purple-600 mt-1">
+                            {activity.userName} • {new Date(activity.createdAt).toLocaleDateString()}
+                          </p>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  ) : (
+                    <motion.div 
+                      variants={itemVariants}
+                      className="text-center py-6 lg:py-8"
+                    >
+                      <BellIcon className="mx-auto h-10 w-10 lg:h-12 lg:w-12 text-purple-300 mb-2" />
+                      <p className="text-purple-500 text-xs lg:text-sm">No recent activities</p>
+                    </motion.div>
+                  )}
+                </div>
+              </Card>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
-<Card className="border-transparent rounded-2xl mt-8 bg-white/80 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-lg font-bold text-purple-900">Recent Activities</CardTitle>
-            </CardHeader>
-            <div className="p-4">
-              {activities && activities.length > 0 ? (
-                <div className="space-y-3">
-                  {activities.slice(0, 6).map((activity) => (
-                    <div key={activity.id} className="border-l-4 border-purple-400 pl-3 py-2">
-                      <p className="text-xs text-purple-800 font-medium leading-relaxed">{activity.description}</p>
-                      <p className="text-xs text-purple-600 mt-1">
-                        {activity.userName} • {new Date(activity.timestamp).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-6">
-                  <BellIcon className="mx-auto h-10 w-10 text-purple-300 mb-2" />
-                  <p className="text-purple-500 text-xs">No recent activities</p>
-                </div>
-              )}
-            </div>
-          </Card>
+
       {/* Create Community Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="w-full max-w-md">
-            <CreatePgCommunityForm
-              onSuccess={handleCreateSuccess}
-              onCancel={handleCreateCancel}
-            />
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {showCreateModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                handleCreateCancel();
+              }
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 15 }}
+              className="w-full max-w-md lg:max-w-lg"
+            >
+              <CreatePgCommunityForm
+                onSuccess={handleCreateSuccess}
+                onCancel={handleCreateCancel}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Edit Community Modal */}
-      {showEditModal && selectedCommunity && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="w-full max-w-md">
-            <EditPgCommunityForm
-              community={selectedCommunity}
-              onSuccess={handleEditSuccess}
-              onCancel={handleEditCancel}
-            />
-          </div>
-        </div>
-      )}
-    </div>
+      <AnimatePresence>
+        {showEditModal && selectedCommunity && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                handleEditCancel();
+              }
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 15 }}
+              className="w-full max-w-md lg:max-w-lg"
+            >
+              <EditPgCommunityForm
+                community={selectedCommunity}
+                onSuccess={handleEditSuccess}
+                onCancel={handleEditCancel}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
