@@ -124,11 +124,10 @@ app.post('/api/whatsapp/broadcast', async (req, res) => {
 
 
 
-// Configure Cloudinary with your credentials
 cloudinary.config({
-  cloud_name: 'dkrajmc8b',
-  api_key: '369389844799862',
-  api_secret: 'eB-DAa5bQavlLkhEEZDIlkXVOpQ'
+  cloud_name: config.CLOUDINARY_CLOUD_NAME,
+  api_key: config.CLOUDINARY_API_KEY,
+  api_secret: config.CLOUDINARY_API_SECRET
 });
 
 // Configure multer for file upload
