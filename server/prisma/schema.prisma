@@ -141,6 +141,7 @@ model EventSuggestion {
   // Suggestion details
   title String
   description String
+  location String?
   suggestedEventType EventType
   suggestedDate DateTime?
   suggestedDuration Int? // in minutes

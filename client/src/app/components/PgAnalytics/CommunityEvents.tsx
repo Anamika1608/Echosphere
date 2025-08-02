@@ -10,6 +10,7 @@ import {
   ClockIcon
 } from '@heroicons/react/24/outline';
 import { serverUrl } from '@/utils';
+import { useWhatsApp } from '@/services/whatsappService';
 
 interface Event {
   id: string;
@@ -35,6 +36,7 @@ interface EventSuggestion {
   id: string;
   title: string;
   description: string;
+  location: string;
   suggestedEventType: string;
   suggestedDate: string;
   expectedEngagement: number;
@@ -88,6 +90,23 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
   const [isEventTypeDropdownOpen, setIsEventTypeDropdownOpen] = useState(false);
   const [isSortByDropdownOpen, setIsSortByDropdownOpen] = useState(false);
   const [isSortOrderDropdownOpen, setIsSortOrderDropdownOpen] = useState(false);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>('');
+  const [showGroupSelector, setShowGroupSelector] = useState(false);
+  const [currentEventSuggestion, setCurrentEventSuggestion] = useState<any>(null);
+
+
+
+  const {
+    isReady,
+    isInitializing,
+    qrCode,
+    groups,
+    loading: whatsappLoading,
+    error: whatsappError,
+    initializeWhatsApp,
+    sendEventBroadcast,
+    clearError
+  } = useWhatsApp();
 
   useEffect(() => {
     loadEvents();
@@ -368,8 +387,100 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
     );
   }
 
+
+  const broadCastEvent = async (eventSuggestion: any) => {
+    // Step 1: Initialize WhatsApp if not ready
+    if (!isReady) {
+      const initialized = await initializeWhatsApp();
+      if (!initialized) {
+        alert('❌ Failed to initialize WhatsApp. Check console.');
+        return;
+      }
+      // Will wait for polling to detect ready state
+      return;
+    }
+
+    // Step 2: Check if groups are available
+    if (groups.length === 0) {
+      alert('❌ No WhatsApp groups found. Make sure you have groups and try refreshing.');
+      return;
+    }
+
+    // Step 3: Store current event and show group selector
+    setCurrentEventSuggestion(eventSuggestion);
+    setShowGroupSelector(true);
+  };
+
+  // Handle the actual broadcast after group selection
+  const handleConfirmBroadcast = async () => {
+    if (!selectedGroupId || !currentEventSuggestion) return;
+
+    try {
+      // Prepare event data for WhatsApp message
+      const eventData = {
+        title: currentEventSuggestion.title,
+        description: currentEventSuggestion.description,
+        date: formatDateTime(currentEventSuggestion.suggestedDate),
+        location: currentEventSuggestion.location,
+        estimatedCost: currentEventSuggestion.estimatedCost,
+        recommendedCapacity: currentEventSuggestion.recommendedCapacity
+      };
+
+      // Send WhatsApp broadcast first
+      const broadcastSuccess = await sendEventBroadcast(selectedGroupId, eventData);
+
+      if (broadcastSuccess) {
+        // Then implement the suggestion (create actual event)
+        await implementSuggestion(currentEventSuggestion.id);
+
+        // Show success message
+        alert('✅ Event broadcasted to WhatsApp and created successfully!');
+
+        // Reset modal state
+        setShowGroupSelector(false);
+        setSelectedGroupId('');
+        setCurrentEventSuggestion(null);
+      } else {
+        alert('❌ Failed to broadcast event to WhatsApp');
+      }
+    } catch (error) {
+      console.error('Failed to broadcast and create event:', error);
+      alert('❌ Error occurred while broadcasting event');
+    }
+  };
+
+  const handleCancelModal = () => {
+    setShowGroupSelector(false);
+    setSelectedGroupId('');
+    setCurrentEventSuggestion(null);
+  };
   return (
     <div className="p-4">
+
+      {!isReady && (
+        <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-yellow-800">
+                {isInitializing
+                  ? '📱 WhatsApp connecting... Check your backend console for QR code'
+                  : '📱 WhatsApp not connected. Click "Broadcast Event" to setup.'
+                }
+              </p>
+              {qrCode && (
+                <p className="text-xs text-yellow-600 mt-1">
+                  QR Code available in backend console - scan with your phone
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* AI Event Suggestion Section */}
       {eventSuggestion && (
@@ -380,13 +491,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
               <h3 className="text-lg font-bold text-gray-900">AI Event Suggestion</h3>
             </div>
             <div className="flex space-x-2">
-              <button
-                onClick={() => setShowAllSuggestions(true)}
-                className="flex items-center text-purple-600 hover:text-purple-800 text-sm font-medium transition-colors"
-              >
-                <EyeIcon className="h-4 w-4 mr-1" />
-                Read More
-              </button>
               <button
                 onClick={handleGenerateNewSuggestions}  // NEW
                 disabled={suggestionLoading}
@@ -401,7 +505,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
           <div className="space-y-3">
             <div>
               <h4 className="font-semibold text-gray-900 mb-1">{eventSuggestion.title}</h4>
-              <p className="text-gray-600 text-sm line-clamp-2">{eventSuggestion.description}</p>
+              <p className="text-gray-600 text-sm ">{eventSuggestion.description}</p>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -424,22 +528,92 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
                 </span>
                 <span>₹{eventSuggestion.estimatedCost}</span>
                 <span>{eventSuggestion.recommendedCapacity} people</span>
+                <span>{eventSuggestion.location}</span>
               </div>
 
               {eventSuggestion.status === 'PENDING' && (
                 <button
-                  onClick={() => implementSuggestion(eventSuggestion.id)}
-                  disabled={suggestionLoading}
-                  className="flex items-center bg-[#FF4500] text-white px-3 py-1 rounded-lg hover:bg-[#E03E00] transition-colors text-sm font-semibold disabled:opacity-50"
+                  onClick={() => broadCastEvent(eventSuggestion)}
+                  disabled={suggestionLoading || whatsappLoading}
+                  className="flex items-center bg-[#25D366] text-white px-3 py-1 rounded-lg hover:bg-[#20BA5A] transition-colors text-sm font-semibold disabled:opacity-50"
                 >
-                  <PlusIcon className="h-4 w-4 mr-1" />
-                  Create Event
+                  {isReady ? (
+                    <>
+                      <svg className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488z" />
+                      </svg>
+                      Broadcast Event
+                    </>
+                  ) : (
+                    <>
+                      <PlusIcon className="h-4 w-4 mr-1" />
+                      {isInitializing ? 'Connecting...' : 'Setup WhatsApp'}
+                    </>
+                  )}
                 </button>
               )}
+
+
             </div>
           </div>
         </div>
       )}
+
+      {/* Group Selection Modal */}
+      {showGroupSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">Select WhatsApp Group</h3>
+
+            {groups.length === 0 ? (
+              <p className="text-gray-600 mb-4">
+                No WhatsApp groups found. Make sure you're added to some groups.
+              </p>
+            ) : (
+              <>
+                <div className="mb-4 max-h-60 overflow-y-auto">
+                  {groups.map((group) => (
+                    <div
+                      key={group.id}
+                      className={`p-3 border rounded-lg cursor-pointer mb-2 transition-colors ${selectedGroupId === group.id
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      onClick={() => setSelectedGroupId(group.id)}
+                    >
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 mr-3">
+                          {selectedGroupId === group.id && (
+                            <div className="w-full h-full bg-green-500 rounded-full"></div>
+                          )}
+                        </div>
+                        <span className="font-medium">{group.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <div className="flex space-x-3">
+              <button
+                onClick={handleCancelModal}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmBroadcast}
+                disabled={!selectedGroupId || whatsappLoading}
+                className="flex-1 px-4 py-2 bg-[#25D366] text-white rounded-lg hover:bg-[#20BA5A] disabled:opacity-50 transition-colors"
+              >
+                {whatsappLoading ? 'Sending...' : 'Send & Create Event'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {!eventSuggestion && !suggestionLoading && (
         <div className="mb-6 bg-gray-50 border border-gray-200 rounded-2xl p-4">

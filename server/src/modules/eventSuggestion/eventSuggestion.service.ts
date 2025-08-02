@@ -13,7 +13,7 @@ interface EventSuggestionFilters {
 }
 
 export class EventSuggestionService {
-  
+
   /**
    * Generate AI-powered event suggestions for specific target dates
    * Auto-injects mock data if needed
@@ -47,10 +47,10 @@ export class EventSuggestionService {
 
       // Get PG community data with injected mock data
       const pgCommunity = await this.getPgCommunityWithHistory(pgCommunityId);
-      
+
       // Get target dates for suggestions
       const targetDates = getTargetDates();
-      
+
       // Generate suggestions using Gemini AI for each target date
       const allSuggestions = [];
       for (const targetDate of targetDates) {
@@ -62,10 +62,10 @@ export class EventSuggestionService {
         );
         allSuggestions.push(...suggestions);
       }
-      
+
       // Save suggestions to database
       const savedSuggestions = await this.saveSuggestions(pgCommunityId, allSuggestions);
-      
+
       // Cache the results
       const result = {
         suggestions: savedSuggestions,
@@ -79,9 +79,9 @@ export class EventSuggestionService {
       };
 
       await this.cacheSuggestions(pgCommunityId, result);
-      
+
       return result;
-      
+
     } catch (error) {
       throw new AppError(`Failed to generate event suggestions: ${error}`, 500);
     }
@@ -199,12 +199,12 @@ export class EventSuggestionService {
       }
 
       const residents = suggestion.pgCommunity.residents;
-      const broadcastMessage = broadcastData.message || 
+      const broadcastMessage = broadcastData.message ||
         `🎉 New Event Suggestion: ${suggestion.title}\n\n${suggestion.description}\n\nSuggested Date: ${suggestion.suggestedDate?.toDateString()}\nExpected Engagement: ${suggestion.expectedEngagement}%\n\nWhat do you think? Let us know your interest!`;
 
       // Create broadcast record (you can create a separate Broadcast model)
       const broadcastId = `broadcast_${Date.now()}`;
-      
+
       // Store broadcast info in Redis for now
       await redis.setex(`broadcast:${broadcastId}`, 3600 * 24 * 7, JSON.stringify({
         suggestionId,
@@ -455,6 +455,7 @@ ${pastEvents.slice(0, 3).map(e => `
   "reasoning": "Why this event will be successful based on past data and context",
   "contextFactors": ["${targetDate.context}", "Based on past ${pastEvents[0]?.title || 'successful events'}"],
   "requiredFacilities": ["Facility ID needed"],
+ "location": "Clearly specify the name of the place where this event will be organized. Do not include any ID—just mention the location name (e.g., inside the PG or outside PG)."
   "recommendedCapacity": 50,
   "estimatedCost": 2000,
   "expectedEngagement": 85,
@@ -473,11 +474,12 @@ Focus on ONE perfect event that leverages this PG's past successes and fits the 
       }
 
       const parsedResponse = JSON.parse(jsonMatch[0]);
-      
+
       return [{
         pgCommunityId,
         title: parsedResponse.title,
         description: parsedResponse.description,
+        location: parsedResponse.location,
         suggestedEventType: parsedResponse.eventType,
         suggestedDate: new Date(targetDate.date),
         suggestedDuration: parsedResponse.duration || 180,
@@ -490,7 +492,7 @@ Focus on ONE perfect event that leverages this PG's past successes and fits the 
         estimatedCost: parsedResponse.estimatedCost,
         status: 'PENDING'
       }];
-      
+
     } catch (error) {
       console.error('Error parsing AI response:', error);
       return this.getFallbackSuggestion(pgCommunityId, targetDate);
@@ -518,7 +520,7 @@ Focus on ONE perfect event that leverages this PG's past successes and fits the 
 
   private async saveSuggestions(pgCommunityId: string, suggestions: any[]) {
     const savedSuggestions = await Promise.all(
-      suggestions.map(suggestion => 
+      suggestions.map(suggestion =>
         prisma.eventSuggestion.create({
           data: suggestion
         })
