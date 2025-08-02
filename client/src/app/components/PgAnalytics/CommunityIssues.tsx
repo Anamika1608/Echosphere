@@ -4,9 +4,11 @@ import axios from 'axios';
 import { 
   ExclamationTriangleIcon,
   MagnifyingGlassIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  PhoneIcon
 } from '@heroicons/react/24/outline';
 import { serverUrl } from '@/utils';
+import userStore from '@/store/userStore';
 
 interface Issue {
   id: string;
@@ -90,6 +92,8 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+    const { user } = userStore(); 
+  const [callingTechnician, setCallingTechnician] = useState<string | null>(null);
   
   // Filters and pagination
   const [searchTerm, setSearchTerm] = useState('');
@@ -150,6 +154,64 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
   const handleSearch = () => {
     setCurrentPage(1);
     loadIssues();
+  };
+
+  const callTechnician = async (issue: Issue) => {
+    if (!issue.assignedTechnician?.phoneNumber) {
+      alert('No technician phone number available for this issue.');
+      return;
+    }
+
+    setCallingTechnician(issue.id);
+
+    try {
+      const callPayload = {
+        agent_id: 8982,
+        to_number: issue.assignedTechnician.phoneNumber,
+        call_context: {
+          issue_id: issue.id,
+          ticket_number: issue.ticketNumber || 'N/A',
+          issue_title: issue.title,
+          issue_details: issue.description,
+          issue_type: issue.issueType.replace('_', ' '),
+          location: issue.location || 'Not specified',
+          priority: issue.priorityLevel,
+          status: issue.status,
+          customer_name: issue.raisedBy.name,
+          customer_email: issue.raisedBy.email,
+          technician_name: issue.assignedTechnician.name,
+          technician_speciality: issue.assignedTechnician.speciality,
+          pg_owner_name: user.name,
+          community_name: issue.pgCommunity?.name || 'Community',
+          created_at: new Date(issue.createdAt).toLocaleString(),
+          updated_at: new Date(issue.updatedAt).toLocaleString(),
+          resolved_at: issue.resolvedAt ? new Date(issue.resolvedAt).toLocaleString() : null
+        }
+      };
+
+      const response = await fetch('https://backend.omnidim.io/api/v1/calls/dispatch', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer cRx-Y_3QNQIA8lGEO9T9xX8GT02uEa6tiiCvtLmHXGY', // Replace with your actual token
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(callPayload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`Call dispatched successfully to ${issue.assignedTechnician.name}!`);
+      } else {
+        console.log("response", response )
+        throw new Error(result.message || 'Failed to dispatch call');
+      }
+    } catch (err: any) {
+      console.error('Error dispatching call:', err);
+      alert(`Failed to dispatch call: ${err.message}`);
+    } finally {
+      setCallingTechnician(null);
+    }
   };
 
   const getPriorityColor = (priority: string) => {
@@ -491,7 +553,10 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
       ) : (
         <div className="space-y-4">
           {issues.map((issue) => (
-            <div key={issue.id} className="bg-white border border-orange-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300">
+            <div 
+              key={issue.id} 
+              className="bg-white border border-orange-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300"
+            >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
@@ -501,11 +566,13 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                     )}
                   </div>
                   <p className="text-gray-600 text-sm mb-3">{issue.description}</p>
+
                   {issue.location && (
                     <p className="text-xs text-gray-500 mb-2">
                       <span className="font-medium">Location:</span> {issue.location}
                     </p>
                   )}
+
                   <div className="flex flex-wrap gap-2 mb-3">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(issue.status)}`}>
                       {issue.status.replace('_', ' ')}
@@ -514,6 +581,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                       {issue.priorityLevel}
                     </span>
                   </div>
+
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">
                     <span>Reported by: {issue.raisedBy.name}</span>
                     <span>•</span>
@@ -527,6 +595,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                       </>
                     )}
                   </div>
+
                   {issue.resolvedAt && (
                     <div className="text-xs text-gray-500 mt-1">
                       <span>Resolved: {new Date(issue.resolvedAt).toLocaleDateString()}</span>
@@ -534,6 +603,20 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                   )}
                 </div>
               </div>
+
+              {/* Call Technician Button */}
+              {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <button
+                    onClick={() => callTechnician(issue)}
+                    disabled={callingTechnician === issue.id}
+                    className="w-full flex items-center justify-center gap-2 bg-[#FF4500] text-white px-4 py-3 rounded-2xl hover:bg-[#E03E00] transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <PhoneIcon className="h-4 w-4" />
+                    {callingTechnician === issue.id ? 'Calling...' : `Call ${issue.assignedTechnician.name}`}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

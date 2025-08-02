@@ -175,6 +175,7 @@ model Technician {
   id          String          @id @default(cuid())
   name        String
   phoneNumber String
+  qrCode      String?
   speciality  TechnicianField
   isAvailable Boolean         @default(true)
 

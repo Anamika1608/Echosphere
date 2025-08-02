@@ -3,6 +3,8 @@ import db from "./config/dbConnection";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import config from "./config"
+import { v2 as cloudinary } from 'cloudinary';
+import multer from 'multer';
 
 import { authRouter } from "./modules/auth/auth.routes";
 import { voiceChatRouter } from "./modules/voiceChat/voiceChat.routes";
@@ -117,4 +119,46 @@ app.post('/api/whatsapp/broadcast', async (req, res) => {
             details: error instanceof Error ? error.message : 'Unknown error'
         });
     }
+});
+
+
+
+
+// Configure Cloudinary with your credentials
+cloudinary.config({
+  cloud_name: 'dkrajmc8b',
+  api_key: '369389844799862',
+  api_secret: 'eB-DAa5bQavlLkhEEZDIlkXVOpQ'
+});
+
+// Configure multer for file upload
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
+app.post('/api/upload/image', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    // Upload to Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: 'technician-qr-codes',
+          resource_type: 'image'
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
+
+    res.json({ imageUrl: result.secure_url });
+  } catch (error) {
+    res.status(500).json({ message: 'Upload failed', error: error.message });
+  }
 });
