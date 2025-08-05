@@ -317,7 +317,6 @@ const CommunityDetailPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <h2 className="text-2xl font-bold text-purple-900 mb-2">{getActiveTabLabel()}</h2>
-                        <p className="text-purple-600">{getActiveTabDescription()}</p>
                       </div>
                       <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
                         {(() => {
