@@ -1,8 +1,6 @@
-# Community AI - Repository Index
-
 ## 📋 Project Overview
 
-**Community AI** is a comprehensive property management platform that connects residents, property owners, and maintenance staff through an AI-powered interface. The application facilitates issue reporting, service requests, and community management with voice-enabled features.
+**Echosphere** is a comprehensive property management platform that connects residents, property owners, and maintenance staff through an AI-powered interface. The application facilitates issue reporting, service requests, and community management with voice-enabled features.
 
 ## 🏗️ Architecture
 
