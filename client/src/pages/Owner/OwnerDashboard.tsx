@@ -346,7 +346,7 @@ const PgOwnerDashboard: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleCreateNew}
-                className="bg-orange-100 text-black hover:bg-purple-600 hover:text-white px-8 py-4 rounded-2xl transition-colors flex items-center gap-3 font-semibold text-base"
+                className="bg-orange-100 text-black hover:bg-purple-600 hover:text-black px-8 py-4 rounded-2xl transition-colors flex items-center gap-3 font-semibold text-base"
                 style={{
                   borderRadius: 16,
                   border: '1px solid #FFF',

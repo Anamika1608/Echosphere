@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import { serverUrl } from '@/utils';
 import userStore from '@/store/userStore';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginFormData {
   email: string;
@@ -14,7 +15,9 @@ interface LoginProps {
   onSwitchToSignup?: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
+ 
+
+const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -32,6 +35,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
       [name]: value
     }));
     if (error) setError('');
+  };
+
+  const navigate = useNavigate();
+
+  const handleSwitchToSignup = () => {
+    navigate('/register');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,7 +179,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
               <button
-                onClick={onSwitchToSignup}
+                onClick={handleSwitchToSignup}
                 className="font-semibold text-[#FF703C] hover:text-[#E03E00] transition duration-200"
               >
                 Sign up here

@@ -130,7 +130,6 @@ cloudinary.config({
   api_secret: config.CLOUDINARY_API_SECRET
 });
 
-// Configure multer for file upload
 const upload = multer({ 
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
