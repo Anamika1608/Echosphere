@@ -309,21 +309,92 @@ const PgOwnerDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen px-4 py-6" style={
-                      {backgroundImage: 'radial-gradient(104.28% 128.18% at 100% 83.82%, #E8D5FF 0%, #F0EBFF 19.71%, #F8F5FF 57.21%, #FCFAFF 72.6%, #E6D5FF 100%)'}
-                    }>
-      <div className="max-w-6xl mx-auto">
-        {/* Header - Mobile First */}
-        <div className="mb-8">
-          {/* Title Section */}
-          <div className="text-center mb-6">
-            <h1 className="text-3xl pt-4 font-bold tracking-tight text-gray-900 mb-2">
-              Community owner dashboard{' '}
-    
-            </h1>
-            <p className="text-purple-800 text-sm py-4 px-4 leading-relaxed max-w-sm mx-auto">
-              Manage your <strong className="font-bold">paying guest communities</strong> with smart insights and instant support.
-            </p>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="min-h-screen px-4 py-6 lg:px-8 lg:py-8" 
+      style={{
+        backgroundImage: 'radial-gradient(104.28% 128.18% at 100% 83.82%, #E8D5FF 0%, #F0EBFF 19.71%, #F8F5FF 57.21%, #FCFAFF 72.6%, #E6D5FF 100%)'
+      }}
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div variants={itemVariants} className="mb-8 lg:mb-12">
+          {/* Desktop Header Layout */}
+          <div className="lg:flex lg:items-center lg:justify-between lg:mb-8">
+            {/* Title Section */}
+            <div className="text-center lg:text-left mb-6 lg:mb-0">
+              <motion.h1 
+                variants={itemVariants}
+                className="text-3xl lg:text-4xl xl:text-5xl pt-4 font-bold tracking-tight text-gray-900 mb-2"
+              >
+                Community Owner Dashboard
+              </motion.h1>
+              <motion.p 
+                variants={itemVariants}
+                className="text-purple-800 text-sm lg:text-base py-4 px-4 lg:px-0 leading-relaxed max-w-sm lg:max-w-2xl mx-auto lg:mx-0"
+              >
+                Manage your <strong className="font-bold">paying guest communities</strong> with smart insights and instant support.
+              </motion.p>
+            </div>
+
+            {/* Desktop User Profile & Actions */}
+            <div className="hidden lg:flex lg:items-center lg:gap-6">
+              <motion.button
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCreateNew}
+                className="bg-orange-100 text-black hover:bg-purple-600 hover:text-black px-8 py-4 rounded-2xl transition-colors flex items-center gap-3 font-semibold text-base"
+                style={{
+                  borderRadius: 16,
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
+                }}
+              >
+                <PlusIcon className="h-5 w-5" />
+                Create Community
+              </motion.button>
+
+              <motion.div 
+                variants={itemVariants}
+                className="bg-white/80 rounded-2xl p-4 shadow-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full overflow-hidden">
+                    <img 
+                      src={user?.profilePicture ?? undefined} 
+                      alt='user-profile' 
+                      className='w-full h-full object-cover'
+                    />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-purple-900 text-sm">{user?.name}</p>
+                    <p className="text-purple-600 text-xs">{user?.email}</p>
+                  </div>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleLogout}
+                    disabled={logoutLoading}
+                    className="text-purple-400 hover:text-purple-600 p-2 rounded-xl hover:bg-purple-100 disabled:opacity-50 transition-colors ml-2"
+                    title="Logout"
+                  >
+                    {logoutLoading ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="rounded-full h-5 w-5 border-b-2 border-purple-500"
+                      />
+                    ) : (
+                      <LogOut className="h-5 w-5" />
+                    )}
+                  </motion.button>
+                </div>
+              </motion.div>
+            </div>
           </div>
 
           {/* Mobile Action Buttons */}
