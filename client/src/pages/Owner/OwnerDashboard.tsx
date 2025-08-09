@@ -19,8 +19,7 @@ import userStore from '@/store/userStore';
 import { Card, CardHeader, CardTitle } from '../../components/ui/card';
 import CreatePgCommunityForm from '../../app/components/PgCommunity/CreatePgCommunityForm';
 import EditPgCommunityForm from '../../app/components/PgCommunity/EditPgCommunityForm';
-
-
+import cardgradient from '../../assets/cardgradient.svg'
 
 interface DashboardOverview {
   totalCommunities: number;
@@ -228,20 +227,30 @@ const PgOwnerDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-500"></div>
+      <div className="min-h-screen flex justify-center items-center px-4 bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-orange-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}>
-        <div className="bg-white rounded-3xl p-6 shadow-xl w-full max-w-sm">
-          <div className="text-purple-600 text-center mb-4 text-sm">{error}</div>
+      <div className="min-h-screen flex justify-center items-center px-4 bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100">
+        <div 
+          className="bg-white rounded-2xl p-6 w-full max-w-sm"
+          style={{
+            boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+            border: '1px solid rgba(255,255,255,0.95)'
+          }}
+        >
+          <div className="text-orange-600 text-center mb-4 text-sm">{error}</div>
           <button
             onClick={loadDashboardData}
-            className="w-full bg-purple-500 text-white px-4 py-3 rounded-2xl hover:bg-purple-600 transition-colors text-sm font-semibold"
+            className="w-full text-white px-4 py-3 rounded-xl hover:shadow-lg transition-all text-sm font-semibold"
+            style={{
+              background: 'linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)',
+              boxShadow: '1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)'
+            }}
           >
             Retry
           </button>
@@ -251,98 +260,192 @@ const PgOwnerDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen px-4 py-6" style={
-                      {backgroundImage: 'radial-gradient(104.28% 128.18% at 100% 83.82%, #E8D5FF 0%, #F0EBFF 19.71%, #F8F5FF 57.21%, #FCFAFF 72.6%, #E6D5FF 100%)'}
-                    }>
+    <div className="min-h-screen px-4 py-6 bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100">
       <div className="max-w-6xl mx-auto">
         {/* Header - Mobile First */}
         <div className="mb-8">
           {/* Title Section */}
           <div className="text-center mb-6">
-            <h1 className="text-3xl pt-4 font-bold tracking-tight text-gray-900 mb-2">
-              Community owner dashboard{' '}
-    
+            <h1 className="text-4xl sm:text-5xl md:text-6xl pt-4 font-bold tracking-tighter text-gray-900 mb-4 leading-tight">
+              Community Owner{' '}
+              <span className="text-orange-400">Dashboard</span>
             </h1>
-            <p className="text-purple-800 text-sm py-4 px-4 leading-relaxed max-w-sm mx-auto">
+            <p className="text-gray-500 text-sm sm:text-base py-4 px-4 leading-relaxed max-w-md mx-auto font-light">
               Manage your <strong className="font-bold">paying guest communities</strong> with smart insights and instant support.
             </p>
           </div>
 
-          {/* Action Buttons - Mobile Stacked */}
-          <div className="flex flex-col gap-3 mb-6">
+          {/* Action Button - Hero Style */}
+          <div className="flex flex-col items-center gap-4 mb-8">
             <button
               onClick={handleCreateNew}
-className="bg-orange-100 text-black hover:bg-purple-600 hover:text-white px-6 py-4 rounded-2xl transition-colors flex items-center justify-center mx-auto gap-2 mb-4 font-semibold text-base"
-style={{
-  borderRadius: 16,
-  border: '1px solid #FFF',
-  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
-  boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
-}}
+              className="text-white px-8 py-4 rounded-xl transition-all flex items-center gap-3 font-semibold text-base hover:shadow-lg transform hover:scale-105"
+              style={{
+                background: 'linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)',
+                boxShadow: '1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)'
+              }}
             >
               <PlusIcon className="h-5 w-5" />
               Create Community
             </button>
-
-            {/* User Profile - Mobile Optimized */}
-
           </div>
         </div>
-      </div>
 
-      {/* Overview Cards - Mobile Grid */}
-
+        {/* Overview Cards - Mobile Responsive Grid */}
+        {overview && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-8">
+            <Card 
+              className="border-0 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              style={{
+                background: '#F4F4F4',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                border: '2px solid rgba(255,255,255,0.95)'
+              }}
+            >
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex flex-col items-center text-center">
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
+                    style={{ background: 'linear-gradient(135deg, #FFE4CC 0%, #FFB366 100%)' }}
+                  >
+                    <BuildingOfficeIcon className="h-6 w-6 text-orange-700" />
+                  </div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Communities</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{overview.totalCommunities}</p>
+                </div>
+              </CardHeader>
+            </Card>
+            
+            <Card 
+              className="border-0 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              style={{
+                background: '#F4F4F4',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                border: '2px solid rgba(255,255,255,0.95)'
+              }}
+            >
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex flex-col items-center text-center">
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
+                    style={{ background: 'linear-gradient(135deg, #FFE4CC 0%, #FFB366 100%)' }}
+                  >
+                    <UsersIcon className="h-6 w-6 text-orange-700" />
+                  </div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Residents</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{overview.totalResidents}</p>
+                </div>
+              </CardHeader>
+            </Card>
+            
+            <Card 
+              className="border-0 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              style={{
+                background: '#F4F4F4',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                border: '2px solid rgba(255,255,255,0.95)'
+              }}
+            >
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex flex-col items-center text-center">
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
+                    style={{ background: 'linear-gradient(135deg, #FFE4CC 0%, #FFB366 100%)' }}
+                  >
+                    <ChartBarIcon className="h-6 w-6 text-orange-700" />
+                  </div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Active Issues</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{overview.totalIssues}</p>
+                </div>
+              </CardHeader>
+            </Card>
+            
+            <Card 
+              className="border-0 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              style={{
+                background: '#F4F4F4',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                border: '2px solid rgba(255,255,255,0.95)'
+              }}
+            >
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex flex-col items-center text-center">
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
+                    style={{ background: 'linear-gradient(135deg, #FFE4CC 0%, #FFB366 100%)' }}
+                  >
+                    <WrenchScrewdriverIcon className="h-6 w-6 text-orange-700" />
+                  </div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Technicians</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{overview.totalTechnicians}</p>
+                </div>
+              </CardHeader>
+            </Card>
+          </div>
+        )}
 
         {/* Main Content - Mobile Stacked */}
         <div className="space-y-6">
-          {/* Communities List - Mobile Full Width */}
-          <Card className="border-transparent rounded-2xl bg-white/70 shadow-lg">
-            <CardHeader className=" px-4">
-              <CardTitle className="text-lg font-bold text-gray-900">My Communities</CardTitle>
+          {/* Communities List */}
+          <Card 
+            className="border-0 rounded-2xl"
+            style={{
+              background: '#F4F4F4',
+              boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+              border: '2px solid rgba(255,255,255,0.95)'
+            }}
+          >
+            <CardHeader className="px-4 sm:px-6">
+              <CardTitle className="text-lg sm:text-xl font-bold text-gray-900">My Communities</CardTitle>
             </CardHeader>
-            <div className="px-4">
+            <div className="px-4 sm:px-6 pb-6">
               {communities.length === 0 ? (
                 <div className="text-center py-8">
-                  <BuildingOfficeIcon className="mx-auto h-12 w-12 text-purple-300 mb-4" />
-                  <h3 className="text-base font-semibold text-gray-900 mb-2">No communities yet</h3>
-                  <p className="text-purple-600 text-sm mb-4">Get started by creating your first PG community.</p>
+                  
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No communities yet</h3>
+                  <p className="text-gray-500 text-sm sm:text-base mb-6">Get started by creating your first PG community.</p>
                   <button
                     onClick={handleCreateNew}
-                    className="bg-purple-200 text-purple-700 hover:bg-purple-600 hover:text-white px-6 py-3 rounded-2xl  transition-colors font-semibold text-sm mx-auto"
+                    className="bg-orange-100 text-orange-600 hover:bg-orange-200 px-6 py-3 rounded-xl transition-colors font-semibold text-sm"
                   >
                     Create Community
                   </button>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {communities.map((community) => (
-                    <Card key={community.id} className="border-white rounded-xl hover:border-purple-300 shadow-none hover:shadow-md transition-all duration-300" style={{
-  borderRadius: 16,
-  border: '1px solid #FFF',
-  background: 'radial-gradient(204.74% 70% at 50% 50%, #FFF 0.96%, #F0EBFF 28.85%, #D8B4FE 64.9%, #A78BFA 100%)',
-  boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
-}}>
-                      <div className="px-4">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1 cursor-pointer" onClick={() => handleViewCommunity(community)}>
-                            <h3 className="text-base font-regular text-purple-900  transition-colors mb-1">{community.name}</h3>
-                            <p className="text-xs text-purple-800 mb-1">Code: <span className="font-semibold">{community.pgCode}</span></p>
-                            <p className="text-purple-700 text-xs mb-2">{community.address}</p>
+                    <Card 
+                      key={community.id} 
+                      className="border-0 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-102"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                        border: '1px solid rgba(255,255,255,0.95)'
+            
+                      }}
+                    >
+                      <div className="p-4 sm:p-5">
+                        <div className="flex justify-between items-start z-10" >
+                          
+                          <div className="flex-1 cursor-pointer" onClick={() => handleViewCommunity(community)} >
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 hover:text-orange-600 transition-colors mb-2">{community.name}</h3>
+                            <p className="text-xs sm:text-sm text-gray-600 mb-1">Code: <span className="font-semibold text-orange-600">{community.pgCode}</span></p>
+                            <p className="text-gray-600 text-xs sm:text-sm mb-2">{community.address}</p>
                             {community.description && (
-                              <p className="text-purple-700 text-xs line-clamp-2">{community.description}</p>
+                              <p className="text-gray-600 text-xs sm:text-sm line-clamp-2">{community.description}</p>
                             )}
                           </div>
-                          <div className="flex space-x-1 ml-3">
+                          <div className="flex space-x-2 ml-4">
                             <button
                               onClick={() => handleEditCommunity(community)}
-                              className="text-purple-600 hover:text-purple-800 p-2 rounded-lg hover:bg-purple-100 transition-colors"
+                              className="text-orange-600 hover:text-orange-800 p-2 rounded-lg hover:bg-orange-100 transition-colors"
                               title="Edit Community"
                             >
                               <PencilIcon className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleDelete(community)}
-                              className="text-purple-600 hover:text-red-600 p-2 rounded-lg hover:bg-red-100 transition-colors"
+                              className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-100 transition-colors"
                               title="Delete Community"
                             >
                               <TrashIcon className="h-4 w-4" />
@@ -355,61 +458,21 @@ style={{
                 </div>
               )}
             </div>
-          </Card> {overview && (
-          <div className="grid grid-cols-2 gap-4 mb-8 items-center justify-center mx-7">
-            <Card className="border-transparent rounded-4xl hover:border-purple-300 hover:shadow-lg transition-all w-40 h-40 duration-300 bg-white/80">
-              <CardHeader className="p-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mb-2">
-                    <BuildingOfficeIcon className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <p className="text-xs font-medium text-purple-600 mb-1">Communities</p>
-                  <p className="text-xl font-bold text-purple-900">{overview.totalCommunities}</p>
-                </div>
-              </CardHeader>
-            </Card>
-            
-            <Card className="border-transparent rounded-4xl hover:border-purple-300 hover:shadow-lg transition-all w-40 h-40 duration-300 bg-white/80">
-              <CardHeader className="p-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-2">
-                    <UsersIcon className="h-5 w-5 text-indigo-600" />
-                  </div>
-                  <p className="text-xs font-medium text-purple-600 mb-1">Residents</p>
-                  <p className="text-xl font-bold text-purple-900">{overview.totalResidents}</p>
-                </div>
-              </CardHeader>
-            </Card>
-            
-            <Card className="border-transparent rounded-4xl hover:border-purple-300 hover:shadow-lg transition-all w-40 h-40 duration-300 bg-white/80">
-              <CardHeader className="p-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center mb-2">
-                    <ChartBarIcon className="h-5 w-5 text-violet-600" />
-                  </div>
-                  <p className="text-xs font-medium text-purple-600 mb-1">Active Issues</p>
-                  <p className="text-xl font-bold text-purple-900">{overview.totalIssues}</p>
-                </div>
-              </CardHeader>
-            </Card>
-            
-            <Card className="border-transparent rounded-4xl hover:border-purple-300 hover:shadow-lg transition-all w-40 h-40 duration-300 bg-white/80">
-              <CardHeader className="p-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mb-2">
-                    <WrenchScrewdriverIcon className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <p className="text-xs font-medium text-purple-600 mb-1">Technicians</p>
-                  <p className="text-xl font-bold text-purple-900">{overview.totalTechnicians}</p>
-                </div>
-              </CardHeader>
-            </Card>
-          </div>
-        )}
-          <div className="bg-white/80 rounded-2xl p-4 shadow-lg">
+          </Card>
+
+          {/* User Profile Card */}
+          <Card 
+            className="border-0 rounded-2xl"
+            style={{
+              background: '#F4F4F4',
+              boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+              border: '2px solid rgba(255,255,255,0.95)'
+            }}
+          >
+            <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full overflow-hidden">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden ring-2 ring-orange-200">
                     <img 
                       src={user?.profilePicture ?? undefined} 
                       alt='user-profile' 
@@ -417,51 +480,61 @@ style={{
                     />
                   </div>
                   <div>
-                    <p className="font-semibold text-purple-900 text-sm">{user?.name}</p>
-                    <p className="text-purple-600 text-xs">{user?.email}</p>
+                    <p className="font-semibold text-gray-900 text-sm sm:text-base">{user?.name}</p>
+                    <p className="text-gray-600 text-xs sm:text-sm">{user?.email}</p>
                   </div>
                 </div>
                 <button 
                   onClick={handleLogout}
                   disabled={logoutLoading}
-                  className="text-purple-400 hover:text-purple-600 p-2 rounded-xl hover:bg-purple-100 disabled:opacity-50 transition-colors"
+                  className="text-orange-500 hover:text-orange-700 p-2 sm:p-3 rounded-xl hover:bg-orange-100 disabled:opacity-50 transition-colors"
                   title="Logout"
                 >
                   {logoutLoading ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-500"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
                   ) : (
                     <LogOut className="h-5 w-5" />
                   )}
                 </button>
               </div>
-          {/* Recent Activities - Mobile Full Width */}
+            </div>
+          </Card>
 
-        </div>
-      </div>
-<Card className="border-transparent rounded-2xl mt-8 bg-white/80 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-lg font-bold text-purple-900">Recent Activities</CardTitle>
+          {/* Recent Activities */}
+          <Card 
+            className="border-0 rounded-2xl"
+            style={{
+              background: '#F4F4F4',
+              boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+              border: '2px solid rgba(255,255,255,0.95)'
+            }}
+          >
+            <CardHeader className="px-4 sm:px-6">
+              <CardTitle className="text-lg sm:text-xl font-bold text-gray-900">Recent Activities</CardTitle>
             </CardHeader>
-            <div className="p-4">
+            <div className="px-4 sm:px-6 pb-6">
               {activities && activities.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {activities.slice(0, 6).map((activity) => (
-                    <div key={activity.id} className="border-l-4 border-purple-400 pl-3 py-2">
-                      <p className="text-xs text-purple-800 font-medium leading-relaxed">{activity.description}</p>
-                      <p className="text-xs text-purple-600 mt-1">
-                        {activity.userName} • {new Date(activity.timestamp).toLocaleDateString()}
+                    <div key={activity.id} className="border-l-4 border-orange-400 pl-4 py-3 bg-white/50 rounded-r-lg">
+                      <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">{activity.description}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {activity.userName} • {new Date(activity.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-6">
-                  <BellIcon className="mx-auto h-10 w-10 text-purple-300 mb-2" />
-                  <p className="text-purple-500 text-xs">No recent activities</p>
+                <div className="text-center py-8">
+                  <BellIcon className="mx-auto h-10 w-10 text-orange-300 mb-3" />
+                  <p className="text-gray-500 text-sm">No recent activities</p>
                 </div>
               )}
             </div>
           </Card>
+        </div>
+      </div>
+
       {/* Create Community Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

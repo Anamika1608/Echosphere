@@ -19,6 +19,7 @@ import {
 } from '@heroicons/react/24/outline';
 import type { PgCommunity } from '../../types/pgCommunity';
 import { serverUrl } from '@/utils';
+import bgimage from '../../assets/bgimage.png';
 
 type TabType = 'stats' | 'residents' | 'issues' | 'services' | 'events' | 'technicians';
 
@@ -78,20 +79,49 @@ const CommunityDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-500"></div>
+      <div 
+        className="min-h-screen flex justify-center items-center px-4"
+        style={{ 
+          backgroundImage: `url(${bgimage})`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-orange-500"></div>
       </div>
     );
   }
 
   if (error || !community) {
     return (
-      <div className="min-h-screen flex justify-center items-center px-4" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F8F5FF 0%, #F0EBFF 21.63%, #E8D5FF 45.15%, #E6D5FF 67.31%, #F7F3FF 100%)' }}>
-        <div className="bg-white rounded-3xl p-6 shadow-xl w-full max-w-sm">
-          <div className="text-purple-600 text-center mb-4 text-sm">{error || 'Community not found'}</div>
+      <div 
+        className="min-h-screen flex justify-center items-center px-4"
+        style={{ 
+          backgroundImage: `url(${bgimage})`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div 
+          className="rounded-2xl p-8 w-full max-w-md text-center"
+          style={{
+            background: '#F4F4F4',
+            boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+            border: '8px solid rgba(255,255,255,0.95)'
+          }}
+        >
+          <div className="text-gray-600 mb-6 text-base font-medium">{error || 'Community not found'}</div>
           <button
             onClick={handleBackToDashboard}
-            className="w-full bg-purple-500 text-white px-4 py-3 rounded-2xl hover:bg-purple-600 transition-colors text-sm font-semibold"
+            className="w-full text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all transform hover:scale-105 text-base font-semibold"
+            style={{
+              borderRadius: "12px",
+              border: "1.26px solid #FFAA67",
+              background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
+              boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
+            }}
           >
             Back to Dashboard
           </button>
@@ -127,115 +157,337 @@ const CommunityDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundImage: 'linear-gradient(180deg, #D8B4FE 1.09%, #C4A1FF 18.47%, #B794F6 28.25%, #9F7AEA 47.26%, #9F7AEA 70.08%, #C4A1FF 93.44%, #D8B4FE 111.91%)'}}>
-      {/* Mobile Header */}
-      <div className=" shadow-lg shadow-black/5 border-b border-purple-100">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleBackToDashboard}
-                className="text-white hover:text-purple-600 p-2 rounded-xl hover:bg-purple-50 transition-colors"
+    <div 
+      className="min-h-screen"
+      style={{ 
+        backgroundImage: `url(${bgimage})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Desktop Layout */}
+      <div className="hidden lg:flex min-h-screen">
+        {/* Desktop Sidebar */}
+        <div 
+          className="w-80 flex flex-col shadow-2xl border-r relative overflow-hidden"
+          style={{
+            background: '#F4F4F4',
+            borderColor: 'rgba(255,255,255,0.95)',
+            boxShadow: '0 15px 30px rgba(0,0,0,0.12)'
+          }}
+        >
+          {/* Gradient Overlay */}
+          <div 
+            className="absolute inset-0 opacity-10"
+            style={{
+              background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)"
+            }}
+          />
+          
+          {/* Sidebar Header */}
+          <div className="relative z-10 p-8 border-b border-gray-200/30">
+            <button
+              onClick={handleBackToDashboard}
+              className="flex items-center gap-3 text-gray-600 hover:text-orange-500 p-3 rounded-xl hover:bg-orange-50/50 transition-all duration-300 mb-6 group"
+            >
+              <ArrowLeftIcon className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+              <span className="text-sm font-medium">Back to Dashboard</span>
+            </button>
+            
+            <div>
+              <h1 className="text-3xl font-bold tracking-tighter text-gray-900 mb-3">{community.name}</h1>
+              <div 
+                className="inline-block px-4 py-2 rounded-xl mb-4"
+                style={{
+                  background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
+                  boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
+                }}
               >
-                <ArrowLeftIcon className="h-5 w-5" />
-              </button>
-              <div>
-                <h1 className="text-lg font-bold text-white">{community.name}</h1>
-                <p className="text-xs text-purple-100">Code: {community.pgCode}</p>
+                <p className="text-sm font-semibold text-white">Code: {community.pgCode}</p>
+              </div>
+              <p className="text-sm text-gray-500 leading-relaxed font-light mb-3">{community.address}</p>
+              {community.description && (
+                <p className="text-sm text-gray-500 leading-relaxed font-light bg-white/50 p-4 rounded-xl">{community.description}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="relative z-10 flex-1 p-6">
+            <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-6">Community Management</h2>
+            <ul className="space-y-3">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <li key={tab.id}>
+                    <button
+                      onClick={() => handleTabChange(tab.id)}
+                      className={`w-full flex items-center gap-4 px-6 py-4 font-medium rounded-xl transition-all duration-300 group ${
+                        activeTab === tab.id
+                          ? 'text-white shadow-lg transform scale-105'
+                          : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50/50 hover:scale-102'
+                      }`}
+                      style={activeTab === tab.id ? {
+                        borderRadius: "12px",
+                        border: "1.26px solid #FFAA67",
+                        background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
+                        boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
+                      } : {}}
+                    >
+                      <Icon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                      <span className="font-light">{tab.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          {/* Sidebar Footer */}
+          <div className="relative z-10 p-6 border-t border-gray-200/30">
+            <div 
+              className="rounded-xl p-6"
+              style={{ 
+                background: '#F4F4F4',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                border: '2px solid rgba(255,255,255,0.95)'
+              }}
+            >
+              <h3 className="text-sm font-bold text-gray-900 mb-3">Quick Stats</h3>
+              <div className="space-y-2">
+                <p className="text-xs text-gray-500 font-light">Active Management Portal</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <p className="text-xs text-gray-600 font-medium">Online</p>
+                </div>
               </div>
             </div>
-            
-            {/* Hamburger Menu Button */}
-            <button
-              onClick={toggleMenu}
-              className="text-white hover:text-purple-200 p-2 rounded-xl hover:bg-purple-500/30 transition-colors"
-            >
-              {isMenuOpen ? (
-                <XMarkIcon className="h-6 w-6" />
-              ) : (
-                <Bars3Icon className="h-6 w-6" />
-              )}
-            </button>
+          </div>
+        </div>
+
+        {/* Desktop Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Desktop Header */}
+          <div 
+            className="px-8 py-8 shadow-lg border-b"
+            style={{
+              background: '#F4F4F4',
+              borderColor: 'rgba(255,255,255,0.95)',
+              boxShadow: '0 15px 30px rgba(0,0,0,0.12)'
+            }}
+          >
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-8">
+                <h1 className="text-5xl md:text-6xl font-bold tracking-tighter text-gray-900 mb-4 leading-tight">
+                  {getActiveTabLabel()} for{' '}
+                  <span className="text-orange-400">{community.name}</span>
+                </h1>
+                <p className="text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
+                  A comprehensive approach to <strong className="font-bold">Community Management</strong>. Making 
+                  <strong className="font-bold"> operations seamless</strong> and resident experience effortless.
+                </p>
+              </div>
+
+              <div className="flex justify-center">
+                <div 
+                  className="w-20 h-20 rounded-2xl flex items-center justify-center"
+                  style={{
+                    borderRadius: "15px",
+                    background: '#F4F4F4',
+                    boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+                    border: '8px solid rgba(255,255,255,0.95)'
+                  }}
+                >
+                  {(() => {
+                    const activeTabConfig = tabs.find(tab => tab.id === activeTab);
+                    const Icon = activeTabConfig?.icon || UsersIcon;
+                    return <Icon className="h-10 w-10 text-orange-500" />;
+                  })()}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Content Area */}
+          <div className="flex-1 p-8">
+            <div className="max-w-7xl mx-auto">
+              <div 
+                className="rounded-2xl overflow-hidden min-h-[600px]"
+                style={{
+                  borderRadius: "15px",
+                  background: '#F4F4F4',
+                  boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+                  border: '8px solid rgba(255,255,255,0.95)'
+                }}
+              >
+                {renderTabContent()}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 bg-opacity-50 z-40" onClick={toggleMenu}>
-          <div className="absolute top-2 right-2 w-[96%] rounded-xl bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-purple-900">Menu</h2>
+      {/* Mobile Layout */}
+      <div className="lg:hidden">
+        {/* Mobile Header */}
+        <div 
+          className="shadow-lg border-b"
+          style={{
+            borderRadius: "0 0 12px 12px",
+            border: "1.26px solid #FFAA67",
+            background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
+            boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
+          }}
+        >
+          <div className="px-4 py-6 sm:py-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={toggleMenu}
-                  className="text-purple-700 hover:text-purple-600 p-1 rounded-lg hover:bg-purple-100"
+                  onClick={handleBackToDashboard}
+                  className="text-white hover:text-orange-100 p-2 rounded-xl hover:bg-white/20 transition-all duration-300"
                 >
-                  <XMarkIcon className="h-5 w-5" />
+                  <ArrowLeftIcon className="h-5 w-5" />
                 </button>
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">{community.name}</h1>
+                  <p className="text-sm text-orange-100 font-light">Code: {community.pgCode}</p>
+                </div>
               </div>
               
-              {/* Community Info */}
-              <div className="mb-6 p-4 bg-purple-50 rounded-2xl">
-                <h3 className="font-semibold text-purple-900 mb-2">{community.name}</h3>
-                <p className="text-sm text-purple-700 mb-2">{community.address}</p>
-                {community.description && (
-                  <p className="text-sm text-purple-600">{community.description}</p>
+              {/* Hamburger Menu Button */}
+              <button
+                onClick={toggleMenu}
+                className="text-white hover:text-orange-100 p-3 rounded-xl hover:bg-white/20 transition-all duration-300"
+              >
+                {isMenuOpen ? (
+                  <XMarkIcon className="h-6 w-6" />
+                ) : (
+                  <Bars3Icon className="h-6 w-6" />
                 )}
-              </div>
-
-              {/* Navigation Tabs */}
-              <nav>
-                <ul className="space-y-2">
-                  {tabs.map((tab) => {
-                    const Icon = tab.icon;
-                    return (
-                      <li key={tab.id}>
-                        <button
-                          onClick={() => handleTabChange(tab.id)}
-                          className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 ${
-                            activeTab === tab.id
-                              ? 'bg-purple-500 text-white shadow-lg'
-                              : 'text-purple-700 hover:bg-purple-50 hover:text-purple-600'
-                          }`}
-                        >
-                          <Icon className="h-5 w-5" />
-                          {tab.label}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </nav>
+              </button>
             </div>
           </div>
         </div>
-      )}
 
-      {/* Main Content */}
-      <div className="px-4 py-6">
-        {/* Current Tab Indicator */}
-        <div className="mb-6">
-          <div className="bg-white/80 rounded-2xl p-4 shadow-purple-200 shadow-md border border-purple-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold text-purple-900">{getActiveTabLabel()}</h2>
-                <p className="text-sm text-purple-600">Community Management</p>
+        {/* Mobile Menu Overlay */}
+        {isMenuOpen && (
+          <div className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm" onClick={toggleMenu}>
+            <div 
+              className="absolute top-4 right-4 w-[92%] rounded-2xl shadow-2xl" 
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                borderRadius: "15px",
+                background: '#F4F4F4',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+                border: '8px solid rgba(255,255,255,0.95)'
+              }}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-xl font-bold tracking-tight text-gray-900">Navigation</h2>
+                  <button
+                    onClick={toggleMenu}
+                    className="text-gray-600 hover:text-gray-800 p-2 rounded-xl hover:bg-gray-100 transition-all duration-300"
+                  >
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                {/* Community Info */}
+                <div 
+                  className="mb-8 p-6 rounded-2xl"
+                  style={{
+                    background: "linear-gradient(135deg, #FFE4CC 0%, #FFB366 100%)",
+                    boxShadow: "0 8px 20px rgba(255, 180, 102, 0.3)"
+                  }}
+                >
+                  <h3 className="font-bold text-orange-900 text-lg mb-3 tracking-tight">{community.name}</h3>
+                  <p className="text-sm text-orange-800 mb-3 font-light leading-relaxed">{community.address}</p>
+                  {community.description && (
+                    <p className="text-sm text-orange-700 font-light leading-relaxed bg-white/30 p-3 rounded-lg">{community.description}</p>
+                  )}
+                </div>
+
+                {/* Navigation Tabs */}
+                <nav>
+                  <ul className="space-y-3">
+                    {tabs.map((tab) => {
+                      const Icon = tab.icon;
+                      return (
+                        <li key={tab.id}>
+                          <button
+                            onClick={() => handleTabChange(tab.id)}
+                            className={`w-full flex items-center gap-4 px-6 py-4 font-medium rounded-xl transition-all duration-300 ${
+                              activeTab === tab.id
+                                ? 'text-white shadow-lg transform scale-105'
+                                : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:scale-102'
+                            }`}
+                            style={activeTab === tab.id ? {
+                              borderRadius: "12px",
+                              border: "1.26px solid #FFAA67",
+                              background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
+                              boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
+                            } : {}}
+                          >
+                            <Icon className="h-5 w-5" />
+                            <span className="font-light">{tab.label}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Main Content */}
+        <div className="px-4 py-8">
+          {/* Current Tab Indicator - Hero Style */}
+          <div className="mb-8">
+            <div className="text-center mb-6">
+              <h1 className="text-4xl sm:text-5xl font-bold tracking-tighter text-gray-900 mb-4 leading-tight">
+                {getActiveTabLabel()} for{' '}
+                <span className="text-orange-400">{community.name}</span>
+              </h1>
+              <p className="text-gray-500 max-w-md mx-auto font-light leading-relaxed px-4">
+                Comprehensive <strong className="font-bold">Community Management</strong> at your fingertips.
+              </p>
+            </div>
+
+            <div className="flex justify-center">
+              <div 
+                className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                style={{
+                  borderRadius: "15px",
+                  background: '#F4F4F4',
+                  boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+                  border: '4px solid rgba(255,255,255,0.95)'
+                }}
+              >
                 {(() => {
                   const activeTabConfig = tabs.find(tab => tab.id === activeTab);
                   const Icon = activeTabConfig?.icon || UsersIcon;
-                  return <Icon className="h-6 w-6 text-purple-600" />;
+                  return <Icon className="h-8 w-8 text-orange-500" />;
                 })()}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Tab Content */}
-        <div className="bg-white/70 rounded-2xl shadow-lg border border-purple-100 overflow-hidden">
-          {renderTabContent()}
+          {/* Mobile Tab Content */}
+          <div 
+            className="rounded-2xl overflow-hidden"
+            style={{
+              borderRadius: "15px",
+              background: '#F4F4F4',
+              boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+              border: '4px solid rgba(255,255,255,0.95)'
+            }}
+          >
+            {renderTabContent()}
+          </div>
         </div>
       </div>
     </div>
