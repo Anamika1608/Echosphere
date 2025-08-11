@@ -494,8 +494,14 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
               <button
                 onClick={handleGenerateNewSuggestions}  // NEW
                 disabled={suggestionLoading}
-                className="flex items-center bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold disabled:opacity-50"
+                className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
+                  borderRadius: '16px',
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF9A72 113%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                }}
               >
+               
                 <SparklesIcon className="h-4 w-4 mr-1" />
                 {suggestionLoading ? 'Generating...' : 'New Ideas'}
               </button>
