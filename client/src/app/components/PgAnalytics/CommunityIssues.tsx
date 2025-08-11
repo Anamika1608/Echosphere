@@ -202,7 +202,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
       const response = await fetch('https://backend.omnidim.io/api/v1/calls/dispatch', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer xyz', 
+          'Authorization': 'Bearer cRx-Y_3QNQIA8lGEO9T9xX8GT02uEa6tiiCvtLmHXGY', // Replace with your actual token
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(callPayload)

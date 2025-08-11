@@ -436,6 +436,7 @@ const PgOwnerDashboard: React.FC = () => {
       initial="hidden"
       animate="visible"
     >
+
       <div className="max-w-6xl mx-auto">
         {/* Header - Mobile First */}
         <motion.div className="mb-8" variants={itemVariants}>
@@ -453,6 +454,51 @@ const PgOwnerDashboard: React.FC = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
+
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div variants={itemVariants} className="mb-8 lg:mb-12">
+          {/* Desktop Header Layout */}
+          <div className="lg:flex lg:items-center lg:justify-between lg:mb-8">
+            {/* Title Section */}
+            <div className="text-center lg:text-left mb-6 lg:mb-0">
+              <motion.h1 
+                variants={itemVariants}
+                className="text-3xl lg:text-4xl xl:text-5xl pt-4 font-bold tracking-tight text-gray-900 mb-2"
+              >
+                Community Owner Dashboard
+              </motion.h1>
+              <motion.p 
+                variants={itemVariants}
+                className="text-purple-800 text-sm lg:text-base py-4 px-4 lg:px-0 leading-relaxed max-w-sm lg:max-w-2xl mx-auto lg:mx-0"
+              >
+                Manage your <strong className="font-bold">paying guest communities</strong> with smart insights and instant support.
+              </motion.p>
+            </div>
+
+            {/* Desktop User Profile & Actions */}
+            <div className="hidden lg:flex lg:items-center lg:gap-6">
+              <motion.button
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCreateNew}
+                className="bg-orange-100 text-black hover:bg-purple-600 hover:text-black px-8 py-4 rounded-2xl transition-colors flex items-center gap-3 font-semibold text-base"
+                style={{
+                  borderRadius: 16,
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(138, 43, 226, 0.20)'
+                }}
+              >
+                <PlusIcon className="h-5 w-5" />
+                Create Community
+              </motion.button>
+
+              <motion.div 
+                variants={itemVariants}
+                className="bg-white/80 rounded-2xl p-4 shadow-lg"
+
               >
                 Dashboard
               </motion.span>

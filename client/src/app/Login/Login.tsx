@@ -4,10 +4,14 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { serverUrl } from '@/utils';
 import userStore from '@/store/userStore';
+
 import Loginpic from '../../assets/LoginPic.jpg';
 import Loginillus from '../../assets/loginillus.svg';
 import { Link } from 'react-router-dom';
 import Logo from '../../../src/assets/logo.svg';
+
+import { useNavigate } from 'react-router-dom';
+
 
 interface LoginFormData {
   email: string;
@@ -19,7 +23,9 @@ interface LoginProps {
   onSwitchToSignup?: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
+ 
+
+const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -37,6 +43,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
       [name]: value
     }));
     if (error) setError('');
+  };
+
+  const navigate = useNavigate();
+
+  const handleSwitchToSignup = () => {
+    navigate('/register');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -335,6 +347,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
               className="mt-6 text-center"
               variants={itemVariants}
             >
+
               <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
                 <motion.button
@@ -348,6 +361,31 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
               </p>
             </motion.div>
           </motion.div>
+
+              {loading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                'Sign In'
+              )}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{' '}
+              <button
+                onClick={handleSwitchToSignup}
+                className="font-semibold text-[#FF703C] hover:text-[#E03E00] transition duration-200"
+              >
+                Sign up here
+              </button>
+            </p>
+          </div>
+
         </div>
       </motion.div>
 

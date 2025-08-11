@@ -399,6 +399,31 @@ const CommunityDetailPage: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
               >
+
+
+                {/* Desktop Tab Header */}
+                <motion.div 
+                  variants={itemVariants}
+                  className="mb-6"
+                >
+                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-purple-100">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-2xl font-bold text-purple-900 mb-2">{getActiveTabLabel()}</h2>
+                      </div>
+                      <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
+                        {(() => {
+                          const activeTabConfig = tabs.find(tab => tab.id === activeTab);
+                          const Icon = activeTabConfig?.icon || UsersIcon;
+                          return <Icon className="h-8 w-8 text-purple-600" />;
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Desktop Tab Content */}
+
                 <motion.div 
                   className="w-20 h-20 rounded-2xl flex items-center justify-center"
                   style={{
