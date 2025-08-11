@@ -9,7 +9,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
   return (
-    <nav className={`sticky top-0 z-50 bg-transparent border-b border-gray-200/20 ${className}`}>
+    <nav className={`sticky scroll:backdrop-blur-50 top-0 z-50 bg-transparent border-b border-gray-200/20 ${className}`}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
