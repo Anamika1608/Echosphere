@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import { serverUrl } from '@/utils';
 import userStore from '@/store/userStore';
-
-import Loginpic from '../../assets/LoginPic.jpg';
-import Loginillus from '../../assets/loginillus.svg';
-import { Link } from 'react-router-dom';
-import Logo from '../../../src/assets/logo.svg';
-
 import { useNavigate } from 'react-router-dom';
-
 
 interface LoginFormData {
   email: string;
@@ -34,7 +26,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { setUser } = userStore()
+  const { setUser} = userStore()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -83,285 +75,94 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const formVariants = {
-    hidden: { x: -50, opacity: 0 },
-    visible: {
-      x: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const imageVariants = {
-    hidden: { x: 50, opacity: 0, scale: 0.9 },
-    visible: {
-      x: 0,
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const buttonVariants = {
-    idle: { scale: 1 },
-    hover: { 
-      scale: 1.02,
-      transition: { duration: 0.2 }
-    },
-    tap: { scale: 0.98 }
-  };
-
-  const inputFocusVariants = {
-    focus: { 
-      scale: 1.02,
-      transition: { duration: 0.2 }
-    }
-  };
-
   return (
-    <motion.div 
-      className="min-h-screen flex"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      {/* Left Side - Form */}
-      <motion.div 
-        className="w-full lg:w-1/2 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8"
-        style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}
-        variants={formVariants}
-      >
-        <div className="max-w-md w-full">
-          <motion.div 
-            className="bg-white/50 rounded-2xl border border-transparent shadow-lg p-6 sm:p-8"
-            whileHover={{ 
-              boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
-              transition: { duration: 0.3 }
-            }}
-          >
-            {/* Header */}
-            <motion.div 
-              className="text-center mb-8"
-              variants={itemVariants}
-            >
-              <div className="flex mb-10 items-center space-x-2">
-            <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-              <img src={Logo} alt="Logo" />
+    <div className="min-h-screen flex items-center justify-center px-4 py-8" style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}>
+      <div className="max-w-md w-full">
+        <div className="bg-white/50 rounded-2xl border border-transparent shadow-lg p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+              <LogIn className="w-8 h-8 text-orange-600" />
             </div>
-            <span className="text-gray-900 font-semibold text-lg">Echo</span>
+            <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
+            <p className="text-gray-600 mt-2">Sign in to your account</p>
           </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome Back</h2>
 
-              <motion.p 
-                className="text-gray-600 mt-2 text-sm sm:text-base"
-                initial={{ y: -10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-              >
-                Sign in to your account
-              </motion.p>
-            </motion.div>
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
 
-            {/* Error Message */}
-            <AnimatePresence>
-              {error && (
-                <motion.div 
-                  className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-200 bg-white"
+                  placeholder="Enter your email"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-200 bg-white"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
-                  <p className="text-red-600 text-sm">{error}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Form */}
-            <motion.form 
-              onSubmit={handleSubmit} 
-              className="space-y-6"
-              variants={itemVariants}
-            >
-              {/* Email Field */}
-              <motion.div variants={itemVariants}>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <motion.div 
-                  className="relative"
-                  whileFocusWithin={inputFocusVariants.focus}
-                >
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <motion.div
-                      animate={{ 
-                        color: formData.email ? '#FF703C' : '#9CA3AF',
-                        transition: { duration: 0.2 }
-                      }}
-                    >
-                      <Mail className="h-5 w-5" />
-                    </motion.div>
-                  </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-200 bg-white"
-                    placeholder="Enter your email"
-                  />
-                </motion.div>
-              </motion.div>
-
-              {/* Password Field */}
-              <motion.div variants={itemVariants}>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <motion.div 
-                  className="relative"
-                  whileFocusWithin={inputFocusVariants.focus}
-                >
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <motion.div
-                      animate={{ 
-                        color: formData.password ? '#FF703C' : '#9CA3AF',
-                        transition: { duration: 0.2 }
-                      }}
-                    >
-                      <Lock className="h-5 w-5" />
-                    </motion.div>
-                  </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-200 bg-white"
-                    placeholder="Enter your password"
-                  />
-                  <motion.button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <motion.div
-                      animate={{ 
-                        rotate: showPassword ? 180 : 0,
-                        transition: { duration: 0.3 }
-                      }}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                      ) : (
-                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                      )}
-                    </motion.div>
-                  </motion.button>
-                </motion.div>
-              </motion.div>
-
-              {/* Submit Button */}
-              <motion.button
-                type="submit"
-                disabled={loading}
-                className="w-full font-semibold text-white transition duration-200 px-4 py-3 rounded-[16px]"
-                style={{
-                  border: '1px solid #FFF',
-                  background: 'linear-gradient(180deg, #FFAB7E 1.09%, #FF955C 18.47%, #FF8B4E 28.25%, #FF610D 47.26%, #FF610D 70.08%, #FF955C 93.44%, #FFAB7E 111.91%)',
-                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)',
-                }}
-                variants={buttonVariants}
-                initial="idle"
-                whileHover="hover"
-                whileTap="tap"
-              >
-                <AnimatePresence mode="wait">
-                  {loading ? (
-                    <motion.div 
-                      className="flex items-center justify-center"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      key="loading"
-                    >
-                      <motion.div 
-                        className="rounded-full h-4 w-4 border-b-2 border-white mr-2"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      />
-                      Signing in...
-                    </motion.div>
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      key="signin"
-                    >
-                      Sign In
-                    </motion.span>
+                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   )}
-                </AnimatePresence>
-              </motion.button>
-            </motion.form>
+                </button>
+              </div>
+            </div>
 
-            {/* Footer */}
-            <motion.div 
-              className="mt-6 text-center"
-              variants={itemVariants}
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="font-semibold  text-white transition duration-200 px-4 py-2 rounded-[16px]"
+            style={{
+              border: '1px solid #FFF',
+              background: 'linear-gradient(180deg, #FFAB7E 1.09%, #FF955C 18.47%, #FF8B4E 28.25%, #FF610D 47.26%, #FF610D 70.08%, #FF955C 93.44%, #FFAB7E 111.91%)',
+              boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)',
+            }}
             >
-
-              <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <motion.button
-                  onClick={onSwitchToSignup}
-                  className="font-semibold text-[#FF703C] hover:text-[#E03E00] transition duration-200"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Link to="/register"> Register here</Link>
-                </motion.button>
-              </p>
-            </motion.div>
-          </motion.div>
-
               {loading ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -385,52 +186,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               </button>
             </p>
           </div>
-
         </div>
-      </motion.div>
-
-      {/* Right Side - Image */}
-      <motion.div 
-        className="hidden lg:flex lg:w-1/2 relative overflow-hidden" 
-        style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}
-        variants={imageVariants}
-      >
-        <motion.img
-          src={Loginpic}
-          alt="Login"
-          className="w-full h-[740px] object-cover p-5 rounded-[32px]"
-          whileHover={{ 
-            scale: 1.02,
-            transition: { duration: 0.4 }
-          }}
-        />
-        <motion.img
-          src={Loginillus}
-          alt="Login Illustration"
-          className="absolute top-1/2 left-1/2 w-[400px] h-[400px] object-contain transform -translate-x-1/2 -translate-y-1/2"
-          initial={{ 
-            opacity: 0, 
-            y: 50,
-            rotate: -10
-          }}
-          animate={{ 
-            opacity: 1, 
-            y: 0,
-            rotate: 0,
-            transition: { 
-              delay: 0.5, 
-              duration: 0.8,
-              ease: "easeOut"
-            }
-          }}
-          whileHover={{ 
-            y: -10,
-            rotate: 5,
-            transition: { duration: 0.3 }
-          }}
-        />
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
