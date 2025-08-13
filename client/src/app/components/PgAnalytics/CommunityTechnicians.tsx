@@ -186,18 +186,26 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
         <div className="flex flex-col gap-3 mb-6">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-orange-100 text-[#FF4500] hover:bg-[#E03E00] hover:text-white px-6 py-4 rounded-2xl transition-colors flex items-center justify-center mx-auto gap-2 mb-4 mt-2 font-semibold"
-          >
-            <PlusIcon className="h-5 w-5" />
-            Add Technician
-          </button>
+            className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
+                  borderRadius: '16px',
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF9A72 113%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                }}
+              >
+                Add New Technician
+              </button>
           <button
             onClick={() => setShowImportModal(true)}
-            className="bg-purple-100 text-purple-700 hover:bg-[#E03E00] hover:text-white px-6 py-4 rounded-2xl transition-colors flex items-center justify-center mx-auto gap-2 mb-4 font-semibold"
-          >
-            <UserPlusIcon className="h-5 w-5" />
-            Import from Other PGs
-          </button>
+            className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
+                  borderRadius: '16px',
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                }}
+              >
+                Import from Other PGs
+              </button>
         </div>
       </div>
 
@@ -264,13 +272,23 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-[#FF4500] text-white px-6 py-3 rounded-2xl hover:bg-[#E03E00] transition-colors font-semibold text-sm"
+                className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
+                  borderRadius: '16px',
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF9A72 113%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                }}
               >
                 Add New Technician
               </button>
               <button
                 onClick={() => setShowImportModal(true)}
-                className="bg-purple-500 text-white px-6 py-3 rounded-2xl hover:bg-purple-600 transition-colors font-semibold text-sm"
+                className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
+                  borderRadius: '16px',
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                }}
               >
                 Import from Other PGs
               </button>

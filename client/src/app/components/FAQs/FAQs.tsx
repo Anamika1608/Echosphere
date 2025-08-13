@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "../../../components/ui/accordion.tsx";
 import Spline from '@splinetool/react-spline';
+import { motion } from 'framer-motion';
 
 const faqs = [
   {
@@ -26,33 +27,107 @@ const faqs = [
 ];
 
 export function FAQs() {
+  // Animation variants
+  const containerVariants = {
+    initial: {},
+    animate: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const accordionVariants = {
+    initial: { opacity: 0, y: 30 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  };
+
   return (
     <section id="faq" className="grid grid-cols-1 mx-auto px-4 py-8 sm:py-16 gap-4">
-
-      <div className="sm:mx-auto mx-10 px-0 text-center">
-        <div className="text-center py-4 sm:mb-8">
+      {/* Header Section */}
+      <motion.div 
+        className="sm:mx-auto mx-10 px-0 text-center"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true, amount: 0.3 }}
+      >
+        <motion.div 
+          className="text-center py-4 sm:mb-8"
+          variants={fadeInUp}
+        >
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-          Frequently Asked Questions
+            Frequently Asked Questions
           </h2>
-        </div>
-        <div className="flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative">
-  <Spline scene="../../../../../public/spline.spline" />
-  
-  {/* Overlay div to disable interaction */}
-  <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
-</div>
-      </div>
-      <div className="max-w-3xl mx-4 sm:mx-auto sm:w-xl overflow-visible">
+        </motion.div>
 
+        {/* Spline Container */}
+        <motion.div 
+          className="flex justify-center mb-6 items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative"
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+        >
+          <Spline scene="../../../../../public/spline.spline" />
+          <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
+        </motion.div>
+      </motion.div>
+
+      {/* FAQ Accordion */}
+      <motion.div 
+        className="max-w-3xl mx-4 sm:mx-auto sm:w-xl mb-20 overflow-visible"
+        variants={containerVariants}
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, index) => (
-            <AccordionItem value={`item-${index}`} key={index}>
-              <AccordionTrigger>{faq.q}</AccordionTrigger>
-              <AccordionContent className="text-gray-500">{faq.a}</AccordionContent>
-            </AccordionItem>
+            <motion.div
+              key={index}
+              variants={accordionVariants}
+              whileHover={{ 
+                scale: 1.01,
+                transition: { duration: 0.2 }
+              }}
+            >
+              <AccordionItem value={`item-${index}`} className="border-b">
+                <motion.div
+                  whileHover={{ x: 5, transition: { duration: 0.2 } }}
+                >
+                  <AccordionTrigger className="hover:text-orange-500 transition-colors duration-200">
+                    {faq.q}
+                  </AccordionTrigger>
+                </motion.div>
+                <AccordionContent className="text-gray-500">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                  >
+                    {faq.a}
+                  </motion.div>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
           ))}
         </Accordion>
-      </div>
+      </motion.div>
     </section>
   );
 }

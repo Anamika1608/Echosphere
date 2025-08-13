@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import CommunityStats from '../../app/components/PgAnalytics/CommunityStats';
 import CommunityResidents from '../../app/components/PgAnalytics/CommunityResidents';
@@ -19,6 +20,7 @@ import {
 } from '@heroicons/react/24/outline';
 import type { PgCommunity } from '../../types/pgCommunity';
 import { serverUrl } from '@/utils';
+import bgimage from '../../assets/bgimage.png';
 
 type TabType = 'stats' | 'residents' | 'issues' | 'services' | 'events' | 'technicians';
 
@@ -26,64 +28,15 @@ interface TabConfig {
   id: TabType;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  description: string;
 }
 
 const tabs: TabConfig[] = [
-  { id: 'residents', label: 'Residents', icon: UsersIcon, description: 'Manage community residents' },
-  { id: 'issues', label: 'Raised Issues', icon: ExclamationTriangleIcon, description: 'Track and resolve issues' },
-  { id: 'services', label: 'Requested Services', icon: WrenchScrewdriverIcon, description: 'Service requests management' },
-  { id: 'events', label: 'Events', icon: CalendarIcon, description: 'Community events and activities' },
-  { id: 'technicians', label: 'Technicians', icon: WrenchScrewdriverIcon, description: 'Technician management' },
+  { id: 'residents', label: 'Residents', icon: UsersIcon },
+  { id: 'issues', label: 'Raised Issues', icon: ExclamationTriangleIcon },
+  { id: 'services', label: 'Requested Services', icon: WrenchScrewdriverIcon },
+  { id: 'events', label: 'Events', icon: CalendarIcon },
+  { id: 'technicians', label: 'Technicians', icon: WrenchScrewdriverIcon },
 ];
-
-// Animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 0.6,
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut"
-    }
-  }
-};
-
-const tabVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut"
-    }
-  }
-};
-
-const contentVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-      ease: "easeOut"
-    }
-  }
-};
 
 const CommunityDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -127,7 +80,7 @@ const CommunityDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div 
+      <motion.div 
         className="min-h-screen flex justify-center items-center px-4"
         style={{ 
           backgroundImage: `url(${bgimage})`, 
@@ -135,15 +88,22 @@ const CommunityDetailPage: React.FC = () => {
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
         }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
       >
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-orange-500"></div>
-      </div>
+        <motion.div 
+          className="rounded-full h-16 w-16 border-b-4 border-orange-500"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+      </motion.div>
     );
   }
 
   if (error || !community) {
     return (
-      <div 
+      <motion.div 
         className="min-h-screen flex justify-center items-center px-4"
         style={{ 
           backgroundImage: `url(${bgimage})`, 
@@ -151,52 +111,86 @@ const CommunityDetailPage: React.FC = () => {
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
         }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
       >
-        <div 
+        <motion.div 
           className="rounded-2xl p-8 w-full max-w-md text-center"
           style={{
             background: '#F4F4F4',
             boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
             border: '8px solid rgba(255,255,255,0.95)'
           }}
+          initial={{ scale: 0.8, y: 50 }}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
-          <div className="text-gray-600 mb-6 text-base font-medium">{error || 'Community not found'}</div>
-          <button
+          <motion.div 
+            className="text-gray-600 mb-6 text-base font-medium"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            {error || 'Community not found'}
+          </motion.div>
+          <motion.button
             onClick={handleBackToDashboard}
-            className="w-full text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all transform hover:scale-105 text-base font-semibold"
+            className="w-full text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all text-base font-semibold"
             style={{
               borderRadius: "12px",
               border: "1.26px solid #FFAA67",
               background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
               boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
             }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
           >
             Back to Dashboard
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
     );
   }
 
   const renderTabContent = () => {
     if (!id) return null;
 
-    switch (activeTab) {
-      case 'stats':
-        return <CommunityStats communityId={id} />;
-      case 'residents':
-        return <CommunityResidents communityId={id} />;
-      case 'issues':
-        return <CommunityIssues communityId={id} />;
-      case 'services':
-        return <CommunityServices communityId={id} />;
-      case 'events':
-        return <CommunityEvents communityId={id} />;
-      case 'technicians':
-        return <CommunityTechnicians communityId={id} />;
-      default:
-        return <CommunityResidents communityId={id} />;
-    }
+    const content = (() => {
+      switch (activeTab) {
+        case 'stats':
+          return <CommunityStats communityId={id} />;
+        case 'residents':
+          return <CommunityResidents communityId={id} />;
+        case 'issues':
+          return <CommunityIssues communityId={id} />;
+        case 'services':
+          return <CommunityServices communityId={id} />;
+        case 'events':
+          return <CommunityEvents communityId={id} />;
+        case 'technicians':
+          return <CommunityTechnicians communityId={id} />;
+        default:
+          return <CommunityResidents communityId={id} />;
+      }
+    })();
+
+    return (
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          {content}
+        </motion.div>
+      </AnimatePresence>
+    );
   };
 
   const getActiveTabLabel = () => {
@@ -204,28 +198,32 @@ const CommunityDetailPage: React.FC = () => {
     return activeTabConfig?.label || 'Residents';
   };
 
-  const getActiveTabDescription = () => {
-    const activeTabConfig = tabs.find(tab => tab.id === activeTab);
-    return activeTabConfig?.description || 'Manage community residents';
-  };
-
   return (
-    <div 
+    <motion.div 
       className="min-h-screen"
       style={{ 
-        backgroundImage: 'linear-gradient(180deg, #D8B4FE 1.09%, #C4A1FF 18.47%, #B794F6 28.25%, #9F7AEA 47.26%, #9F7AEA 70.08%, #C4A1FF 93.44%, #D8B4FE 111.91%)'
+        backgroundImage: `url(${bgimage})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
       {/* Desktop Layout */}
       <div className="hidden lg:flex min-h-screen">
         {/* Desktop Sidebar */}
-        <div 
+        <motion.div 
           className="w-80 flex flex-col shadow-2xl border-r relative overflow-hidden"
           style={{
             background: '#F4F4F4',
             borderColor: 'rgba(255,255,255,0.95)',
             boxShadow: '0 15px 30px rgba(0,0,0,0.12)'
           }}
+          initial={{ x: -320 }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
           {/* Gradient Overlay */}
           <div 
@@ -236,47 +234,76 @@ const CommunityDetailPage: React.FC = () => {
           />
           
           {/* Sidebar Header */}
-          <div className="relative z-10 p-8 border-b border-gray-200/30">
-            <button
+          <motion.div 
+            className="relative z-10 p-8 border-b border-gray-200/30"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <motion.button
               onClick={handleBackToDashboard}
               className="flex items-center gap-3 text-gray-600 hover:text-orange-500 p-3 rounded-xl hover:bg-orange-50/50 transition-all duration-300 mb-6 group"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <ArrowLeftIcon className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
               <span className="text-sm font-medium">Back to Dashboard</span>
-            </button>
+            </motion.button>
             
-            <div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
               <h1 className="text-3xl font-bold tracking-tighter text-gray-900 mb-3">{community.name}</h1>
-              <div 
+              <motion.div 
                 className="inline-block px-4 py-2 rounded-xl mb-4"
                 style={{
                   background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
                   boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
                 }}
+                whileHover={{ scale: 1.05 }}
               >
                 <p className="text-sm font-semibold text-white">Code: {community.pgCode}</p>
-              </div>
+              </motion.div>
               <p className="text-sm text-gray-500 leading-relaxed font-light mb-3">{community.address}</p>
               {community.description && (
-                <p className="text-sm text-gray-500 leading-relaxed font-light bg-white/50 p-4 rounded-xl">{community.description}</p>
+                <motion.p 
+                  className="text-sm text-gray-500 leading-relaxed font-light bg-white/50 p-4 rounded-xl"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  {community.description}
+                </motion.p>
               )}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Desktop Navigation */}
-          <nav className="relative z-10 flex-1 p-6">
+          <motion.nav 
+            className="relative z-10 flex-1 p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
             <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-6">Community Management</h2>
             <ul className="space-y-3">
-              {tabs.map((tab) => {
+              {tabs.map((tab, index) => {
                 const Icon = tab.icon;
                 return (
-                  <li key={tab.id}>
-                    <button
+                  <motion.li 
+                    key={tab.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * index + 0.5 }}
+                  >
+                    <motion.button
                       onClick={() => handleTabChange(tab.id)}
                       className={`w-full flex items-center gap-4 px-6 py-4 font-medium rounded-xl transition-all duration-300 group ${
                         activeTab === tab.id
-                          ? 'text-white shadow-lg transform scale-105'
-                          : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50/50 hover:scale-102'
+                          ? 'text-white shadow-lg'
+                          : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50/50'
                       }`}
                       style={activeTab === tab.id ? {
                         borderRadius: "12px",
@@ -284,63 +311,95 @@ const CommunityDetailPage: React.FC = () => {
                         background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
                         boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
                       } : {}}
+                      whileHover={{ scale: 1.02, x: 5 }}
+                      whileTap={{ scale: 0.98 }}
+                      animate={activeTab === tab.id ? { scale: 1.05 } : { scale: 1 }}
                     >
                       <Icon className="h-5 w-5 group-hover:scale-110 transition-transform" />
                       <span className="font-light">{tab.label}</span>
-                    </button>
-                  </li>
+                    </motion.button>
+                  </motion.li>
                 );
               })}
             </ul>
-          </nav>
+          </motion.nav>
 
           {/* Sidebar Footer */}
-          <div className="relative z-10 p-6 border-t border-gray-200/30">
-            <div 
+          <motion.div 
+            className="relative z-10 p-6 border-t border-gray-200/30"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+          >
+            <motion.div 
               className="rounded-xl p-6"
               style={{ 
                 background: '#F4F4F4',
                 boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
                 border: '2px solid rgba(255,255,255,0.95)'
               }}
+              whileHover={{ scale: 1.02 }}
             >
               <h3 className="text-sm font-bold text-gray-900 mb-3">Quick Stats</h3>
               <div className="space-y-2">
                 <p className="text-xs text-gray-500 font-light">Active Management Portal</p>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <motion.div 
+                    className="w-2 h-2 bg-green-400 rounded-full"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
                   <p className="text-xs text-gray-600 font-medium">Online</p>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
 
         {/* Desktop Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Desktop Header */}
-          <div 
+          <motion.div 
             className="px-8 py-8 shadow-lg border-b"
             style={{
               background: '#F4F4F4',
               borderColor: 'rgba(255,255,255,0.95)',
               boxShadow: '0 15px 30px rgba(0,0,0,0.12)'
             }}
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-8">
-                <h1 className="text-5xl md:text-6xl font-bold tracking-tighter text-gray-900 mb-4 leading-tight">
+              <motion.div 
+                className="text-center mb-8"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <motion.h1 
+                  className="text-5xl md:text-6xl font-bold tracking-tighter text-gray-900 mb-4 leading-tight"
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
                   {getActiveTabLabel()} for{' '}
                   <span className="text-orange-400">{community.name}</span>
-                </h1>
+                </motion.h1>
                 <p className="text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
                   A comprehensive approach to <strong className="font-bold">Community Management</strong>. Making 
                   <strong className="font-bold"> operations seamless</strong> and resident experience effortless.
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="flex justify-center">
-                <div 
+              <motion.div 
+                className="flex justify-center"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
+              >
+                <motion.div 
                   className="w-20 h-20 rounded-2xl flex items-center justify-center"
                   style={{
                     borderRadius: "15px",
@@ -348,21 +407,30 @@ const CommunityDetailPage: React.FC = () => {
                     boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
                     border: '8px solid rgba(255,255,255,0.95)'
                   }}
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  key={activeTab}
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 0.5 }}
                 >
                   {(() => {
                     const activeTabConfig = tabs.find(tab => tab.id === activeTab);
                     const Icon = activeTabConfig?.icon || UsersIcon;
                     return <Icon className="h-10 w-10 text-orange-500" />;
                   })()}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Desktop Content Area */}
-          <div className="flex-1 p-8">
+          <motion.div 
+            className="flex-1 p-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
             <div className="max-w-7xl mx-auto">
-              <div 
+              <motion.div 
                 className="rounded-2xl overflow-hidden min-h-[600px]"
                 style={{
                   borderRadius: "15px",
@@ -370,18 +438,21 @@ const CommunityDetailPage: React.FC = () => {
                   boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
                   border: '8px solid rgba(255,255,255,0.95)'
                 }}
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6 }}
               >
                 {renderTabContent()}
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Mobile Layout */}
       <div className="lg:hidden">
         {/* Mobile Header */}
-        <div 
+        <motion.div 
           className="shadow-lg border-b"
           style={{
             borderRadius: "0 0 12px 12px",
@@ -389,126 +460,193 @@ const CommunityDetailPage: React.FC = () => {
             background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
             boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
           }}
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
           <div className="px-4 py-6 sm:py-8">
-            <div className="flex items-center justify-between">
+            <motion.div 
+              className="flex items-center justify-between"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
               <div className="flex items-center gap-3">
-                <button
+                <motion.button
                   onClick={handleBackToDashboard}
                   className="text-white hover:text-orange-100 p-2 rounded-xl hover:bg-white/20 transition-all duration-300"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <ArrowLeftIcon className="h-5 w-5" />
-                </button>
+                </motion.button>
                 <div>
-                  <h1 className="text-lg font-bold text-white">{community.name}</h1>
-                  <p className="text-xs text-purple-100">Code: {community.pgCode}</p>
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">{community.name}</h1>
+                  <p className="text-sm text-orange-100 font-light">Code: {community.pgCode}</p>
                 </div>
               </div>
               
               {/* Hamburger Menu Button */}
-              <button
+              <motion.button
                 onClick={toggleMenu}
                 className="text-white hover:text-orange-100 p-3 rounded-xl hover:bg-white/20 transition-all duration-300"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                animate={isMenuOpen ? { rotate: 90 } : { rotate: 0 }}
+                transition={{ duration: 0.3 }}
               >
                 {isMenuOpen ? (
                   <XMarkIcon className="h-6 w-6" />
                 ) : (
                   <Bars3Icon className="h-6 w-6" />
                 )}
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Mobile Menu Overlay */}
-        {isMenuOpen && (
-          <div className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm" onClick={toggleMenu}>
-            <div 
-              className="absolute top-4 right-4 w-[92%] rounded-2xl shadow-2xl" 
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                borderRadius: "15px",
-                background: '#F4F4F4',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                border: '8px solid rgba(255,255,255,0.95)'
-              }}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div 
+              className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm" 
+              onClick={toggleMenu}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-xl font-bold tracking-tight text-gray-900">Navigation</h2>
-                  <button
-                    onClick={toggleMenu}
-                    className="text-gray-600 hover:text-gray-800 p-2 rounded-xl hover:bg-gray-100 transition-all duration-300"
+              <motion.div 
+                className="absolute top-4 right-4 w-[92%] rounded-2xl shadow-2xl" 
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  borderRadius: "15px",
+                  background: '#F4F4F4',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+                  border: '8px solid rgba(255,255,255,0.95)'
+                }}
+                initial={{ x: 300, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 300, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <div className="p-6">
+                  <motion.div 
+                    className="flex items-center justify-between mb-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
                   >
-                    <XMarkIcon className="h-5 w-5" />
-                  </button>
-                </div>
-                
-                {/* Community Info */}
-                <div 
-                  className="mb-8 p-6 rounded-2xl"
-                  style={{
-                    background: "linear-gradient(135deg, #FFE4CC 0%, #FFB366 100%)",
-                    boxShadow: "0 8px 20px rgba(255, 180, 102, 0.3)"
-                  }}
-                >
-                  <h3 className="font-bold text-orange-900 text-lg mb-3 tracking-tight">{community.name}</h3>
-                  <p className="text-sm text-orange-800 mb-3 font-light leading-relaxed">{community.address}</p>
-                  {community.description && (
-                    <p className="text-sm text-orange-700 font-light leading-relaxed bg-white/30 p-3 rounded-lg">{community.description}</p>
-                  )}
-                </div>
+                    <h2 className="text-xl font-bold tracking-tight text-gray-900">Navigation</h2>
+                    <motion.button
+                      onClick={toggleMenu}
+                      className="text-gray-600 hover:text-gray-800 p-2 rounded-xl hover:bg-gray-100 transition-all duration-300"
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <XMarkIcon className="h-5 w-5" />
+                    </motion.button>
+                  </motion.div>
+                  
+                  {/* Community Info */}
+                  <motion.div 
+                    className="mb-8 p-6 rounded-2xl"
+                    style={{
+                      background: "linear-gradient(135deg, #FFE4CC 0%, #FFB366 100%)",
+                      boxShadow: "0 8px 20px rgba(255, 180, 102, 0.3)"
+                    }}
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    <h3 className="font-bold text-orange-900 text-lg mb-3 tracking-tight">{community.name}</h3>
+                    <p className="text-sm text-orange-800 mb-3 font-light leading-relaxed">{community.address}</p>
+                    {community.description && (
+                      <p className="text-sm text-orange-700 font-light leading-relaxed bg-white/30 p-3 rounded-lg">{community.description}</p>
+                    )}
+                  </motion.div>
 
-                {/* Navigation Tabs */}
-                <nav>
-                  <ul className="space-y-3">
-                    {tabs.map((tab) => {
-                      const Icon = tab.icon;
-                      return (
-                        <li key={tab.id}>
-                          <button
-                            onClick={() => handleTabChange(tab.id)}
-                            className={`w-full flex items-center gap-4 px-6 py-4 font-medium rounded-xl transition-all duration-300 ${
-                              activeTab === tab.id
-                                ? 'text-white shadow-lg transform scale-105'
-                                : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:scale-102'
-                            }`}
-                            style={activeTab === tab.id ? {
-                              borderRadius: "12px",
-                              border: "1.26px solid #FFAA67",
-                              background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
-                              boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
-                            } : {}}
+                  {/* Navigation Tabs */}
+                  <nav>
+                    <ul className="space-y-3">
+                      {tabs.map((tab, index) => {
+                        const Icon = tab.icon;
+                        return (
+                          <motion.li 
+                            key={tab.id}
+                            initial={{ x: -50, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.1 * index + 0.4 }}
                           >
-                            <Icon className="h-5 w-5" />
-                            <span className="font-light">{tab.label}</span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </nav>
-              </div>
-            </div>
-          </div>
-        )}
+                            <motion.button
+                              onClick={() => handleTabChange(tab.id)}
+                              className={`w-full flex items-center gap-4 px-6 py-4 font-medium rounded-xl transition-all duration-300 ${
+                                activeTab === tab.id
+                                  ? 'text-white shadow-lg'
+                                  : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+                              }`}
+                              style={activeTab === tab.id ? {
+                                borderRadius: "12px",
+                                border: "1.26px solid #FFAA67",
+                                background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
+                                boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)"
+                              } : {}}
+                              whileHover={{ scale: 1.02, x: 5 }}
+                              whileTap={{ scale: 0.98 }}
+                              animate={activeTab === tab.id ? { scale: 1.05 } : { scale: 1 }}
+                            >
+                              <Icon className="h-5 w-5" />
+                              <span className="font-light">{tab.label}</span>
+                            </motion.button>
+                          </motion.li>
+                        );
+                      })}
+                    </ul>
+                  </nav>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Mobile Main Content */}
-        <div className="px-4 py-8">
+        <motion.div 
+          className="px-4 py-8"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
           {/* Current Tab Indicator - Hero Style */}
           <div className="mb-8">
-            <div className="text-center mb-6">
-              <h1 className="text-4xl sm:text-5xl font-bold tracking-tighter text-gray-900 mb-4 leading-tight">
+            <motion.div 
+              className="text-center mb-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <motion.h1 
+                className="text-4xl sm:text-5xl font-bold tracking-tighter text-gray-900 mb-4 leading-tight"
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
                 {getActiveTabLabel()} for{' '}
                 <span className="text-orange-400">{community.name}</span>
-              </h1>
+              </motion.h1>
               <p className="text-gray-500 max-w-md mx-auto font-light leading-relaxed px-4">
                 Comprehensive <strong className="font-bold">Community Management</strong> at your fingertips.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="flex justify-center">
-              <div 
+            <motion.div 
+              className="flex justify-center"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
+            >
+              <motion.div 
                 className="w-16 h-16 rounded-2xl flex items-center justify-center"
                 style={{
                   borderRadius: "15px",
@@ -516,18 +654,22 @@ const CommunityDetailPage: React.FC = () => {
                   boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
                   border: '4px solid rgba(255,255,255,0.95)'
                 }}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                key={activeTab}
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 0.5 }}
               >
                 {(() => {
                   const activeTabConfig = tabs.find(tab => tab.id === activeTab);
                   const Icon = activeTabConfig?.icon || UsersIcon;
                   return <Icon className="h-8 w-8 text-orange-500" />;
                 })()}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Mobile Tab Content */}
-          <div 
+          <motion.div 
             className="rounded-2xl overflow-hidden"
             style={{
               borderRadius: "15px",
@@ -535,12 +677,15 @@ const CommunityDetailPage: React.FC = () => {
               boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
               border: '4px solid rgba(255,255,255,0.95)'
             }}
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.7 }}
           >
             {renderTabContent()}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
