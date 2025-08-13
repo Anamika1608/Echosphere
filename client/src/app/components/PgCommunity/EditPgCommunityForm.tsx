@@ -71,120 +71,93 @@ const EditPgCommunityForm: React.FC<EditPgCommunityFormProps> = ({ community, on
     };
 
     return (
-        <div className="fixed inset-0 bg-white/50 bg-opacity-75 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-2xl mx-4 max-h-[80vh] overflow-hidden">
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gray-900">Edit PG Community</h2>
-                    <button
-                        onClick={onCancel}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                        ✕
-                    </button>
-                </div>
+        <div className= "min-h-screen pt-10 px-6 pb-8 w-full " style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFFAF3 67.31%,#FFFAF3 100%)' }}>
+            <button
+                    onClick={onCancel}
+                    className="text-gray-700 hover:text-gray-600 pb-4 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                    ✕
+                </button>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Edit PG Community</h2>
+                
+            </div>
 
-                {/* Error Display */}
+            <form onSubmit={handleSubmit} className="space-y-6">
                 {errors.submit && (
-                    <div className="mb-4 bg-red-50 border border-red-200 rounded-2xl p-4">
+                    <div className="bg-red-50 border border-red-200 rounded-md p-3">
                         <div className="text-red-800 text-sm">{errors.submit}</div>
                     </div>
                 )}
 
-                {/* Content */}
-                <div className="mb-6">
-                    <p className="text-gray-600 text-sm">
-                        Update your PG community information and settings.
-                    </p>
+                <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                        PG Name
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className={`w-full px-3 py-2 border rounded-[12px] focus:outline-none focus:ring-1 bg-white/70 focus:ring-[#FF703C] ${errors.name ? 'border-red-300' : 'border-gray-200'
+                            }`}
+                        placeholder="Enter PG name"
+                    />
+                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                            PG Name
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-2xl focus:outline-none focus:ring-1 ${
-                                errors.name 
-                                    ? 'border-red-300 focus:ring-red-500' 
-                                    : 'border-gray-300 focus:ring-[#FF4500]'
+                <div>
+                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                        Address
+                    </label>
+                    <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        className={`w-full px-3 py-2 border rounded-[12px] focus:outline-none focus:ring-1 bg-white/70 focus:ring-[#FF703C] ${errors.name ? 'border-red-300' : 'border-gray-200'
                             }`}
-                            placeholder="Enter PG name"
-                        />
-                        {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
-                    </div>
-
-                    <div>
-                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                            Address
-                        </label>
-                        <input
-                            type="text"
-                            id="address"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-2xl focus:outline-none focus:ring-1 ${
-                                errors.address 
-                                    ? 'border-red-300 focus:ring-red-500' 
-                                    : 'border-gray-300 focus:ring-[#FF4500]'
-                            }`}
-                            placeholder="Enter complete address"
-                        />
-                        {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
-                    </div>
-
-                    <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                            Description
-                        </label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows={4}
-                            className={`w-full px-3 py-2 border rounded-2xl focus:outline-none focus:ring-1 resize-none ${
-                                errors.description 
-                                    ? 'border-red-300 focus:ring-red-500' 
-                                    : 'border-gray-300 focus:ring-[#FF4500]'
-                            }`}
-                            placeholder="Optional description about your PG"
-                        />
-                        {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
-                    </div>
-
-                </form>
-
-                {/* Actions */}
-                <div className="flex justify-between items-center pt-4 border-t border-gray-200 mt-6">
-                    <div className="text-sm text-gray-600">
-                        Update your community information
-                    </div>
-                    <div className="flex space-x-3">
-                        <button
-                            type="button"
-                            onClick={onCancel}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-2xl hover:bg-gray-200 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSubmit}
-                            disabled={loading}
-                            className="px-4 py-2 text-sm font-medium text-white bg-[#FF4500] border border-transparent rounded-2xl hover:bg-[#E03E00] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                            {loading ? 'Updating...' : 'Update Community'}
-                        </button>
-                    </div>
+                        placeholder="Enter complete address"
+                    />
+                    {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
                 </div>
-            </div>
+
+                <div>
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                        Description
+                    </label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        rows={4}
+                        className={`w-full px-3 py-2 border rounded-[12px] focus:outline-none focus:ring-1 bg-white/70 focus:ring-[#FF703C] ${errors.description ? 'border-red-300' : 'border-gray-200'
+                            }`}
+                        placeholder="Optional description about your PG"
+                    />
+                    {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+                </div>
+
+                <div className="flex space-x-4">
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        className="flex-1 bg-[#D3C3BC] text-gray-900 py-2 px-4 rounded-2xl hover:bg-gray-200 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="flex-1 bg-[#FF703C] border-orange-300 border-1 text-white hover:bg-[#E03E00] hover:text-white py-2 px-4 rounded-2xl disabled:opacity-50 transition-colors"
+                    >
+                        {loading ? 'Updating...' : 'Update Community'}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 };

@@ -1,15 +1,44 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '../../../components/ui/button';
-import Logo from '../../../assets/logo.svg';
+import React from "react";
+import {
+  Home,
+  Calendar,
+  User,
+  MessageCircle,
+  LogOut,
+} from "lucide-react";
+import { FloatingDock } from "../../../components/ui/floating-dock";
 
-interface NavbarProps {
-  className?: string;
-}
+const navItems = [
+  {
+    title: "Home",
+    icon: <Home className="text-[#FF4500]" />,
+    href: "/home",
+  },
+  {
+    title: "Schedule",
+    icon: <Calendar className="text-[#FF4500]" />,
+    href: "/schedule",
+  },
+  {
+    title: "Messages",
+    icon: <MessageCircle className="text-[#FF4500]" />,
+    href: "/messages",
+  },
+  {
+    title: "Profile",
+    icon: <User className="text-[#FF4500]" />,
+    href: "/profile",
+  },
+  {
+    title: "Sign Out",
+    icon: <LogOut className="text-[#FF4500]" />,
+    href: "/logout",
+  },
+];
 
-const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
+const Navbar: React.FC = () => {
   return (
-    <nav className={`sticky scroll:backdrop-blur-50 top-0 z-50 bg-transparent border-b border-gray-200/20 ${className}`}>
+    <nav className={`sticky top-0 z-50 bg-transparent border-b border-gray-200/20 ${className}`}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
