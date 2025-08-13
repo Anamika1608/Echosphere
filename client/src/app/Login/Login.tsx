@@ -3,7 +3,10 @@ import axios from 'axios';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import { serverUrl } from '@/utils';
 import userStore from '@/store/userStore';
-import { useNavigate } from 'react-router-dom';
+import Loginpic from '../../assets/LoginPic.jpg';
+import Loginillus from '../../assets/loginillus.svg';
+import { Link } from 'react-router-dom';
+import Logo from '../../../src/assets/logo.svg';
 
 interface LoginFormData {
   email: string;
@@ -15,9 +18,7 @@ interface LoginProps {
   onSwitchToSignup?: () => void;
 }
 
- 
-
-const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -35,12 +36,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       [name]: value
     }));
     if (error) setError('');
-  };
-
-  const navigate = useNavigate();
-
-  const handleSwitchToSignup = () => {
-    navigate('/register');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -152,40 +147,69 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               </div>
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="font-semibold  text-white transition duration-200 px-4 py-2 rounded-[16px]"
-            style={{
-              border: '1px solid #FFF',
-              background: 'linear-gradient(180deg, #FFAB7E 1.09%, #FF955C 18.47%, #FF8B4E 28.25%, #FF610D 47.26%, #FF610D 70.08%, #FF955C 93.44%, #FFAB7E 111.91%)',
-              boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)',
-            }}
-            >
-              {loading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Signing in...
-                </div>
-              ) : (
-                'Sign In'
-              )}
-            </button>
-          </form>
-
-          {/* Footer */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <button
-                onClick={handleSwitchToSignup}
-                className="font-semibold text-[#FF703C] hover:text-[#E03E00] transition duration-200"
+              {/* Submit Button */}
+              <motion.button
+                type="submit"
+                disabled={loading}
+                className="w-full font-semibold text-white transition duration-200 px-4 py-3 rounded-[16px]"
+                style={{
+                  border: '1px solid #FFF',
+                  background: 'linear-gradient(180deg, #FFAB7E 1.09%, #FF955C 18.47%, #FF8B4E 28.25%, #FF610D 47.26%, #FF610D 70.08%, #FF955C 93.44%, #FFAB7E 111.91%)',
+                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)',
+                }}
+                variants={buttonVariants}
+                initial="idle"
+                whileHover="hover"
+                whileTap="tap"
               >
-                Sign up here
-              </button>
-            </p>
-          </div>
+                <AnimatePresence mode="wait">
+                  {loading ? (
+                    <motion.div 
+                      className="flex items-center justify-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      key="loading"
+                    >
+                      <motion.div 
+                        className="rounded-full h-4 w-4 border-b-2 border-white mr-2"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      />
+                      Signing in...
+                    </motion.div>
+                  ) : (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      key="signin"
+                    >
+                      Sign In
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            </motion.form>
+
+            {/* Footer */}
+            <motion.div 
+              className="mt-6 text-center"
+              variants={itemVariants}
+            >
+              <p className="text-sm text-gray-600">
+                Don't have an account?{' '}
+                <motion.button
+                  onClick={onSwitchToSignup}
+                  className="font-semibold text-[#FF703C] hover:text-[#E03E00] transition duration-200"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link to="/register"> Register here</Link>
+                </motion.button>
+              </p>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </div>
