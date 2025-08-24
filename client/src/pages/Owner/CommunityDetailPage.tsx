@@ -81,7 +81,7 @@ const CommunityDetailPage: React.FC = () => {
   if (loading) {
     return (
       <motion.div 
-        className="min-h-screen flex justify-center items-center px-4"
+        className="fixed inset-0 flex justify-center items-center px-4"
         style={{ 
           backgroundImage: `url(${bgimage})`, 
           backgroundSize: 'cover', 
@@ -104,7 +104,7 @@ const CommunityDetailPage: React.FC = () => {
   if (error || !community) {
     return (
       <motion.div 
-        className="min-h-screen flex justify-center items-center px-4"
+        className="fixed inset-0 flex justify-center items-center px-4"
         style={{ 
           backgroundImage: `url(${bgimage})`, 
           backgroundSize: 'cover', 
@@ -136,7 +136,7 @@ const CommunityDetailPage: React.FC = () => {
           </motion.div>
           <motion.button
             onClick={handleBackToDashboard}
-            className="w-full text-white px-6 py-4 rounded-xl hover:shadow-lg transition-all text-base font-semibold"
+            className="w-full text-white px-6 rounded-xl hover:shadow-lg transition-all text-base font-semibold"
             style={{
               borderRadius: "12px",
               border: "1.26px solid #FFAA67",
@@ -193,29 +193,13 @@ const CommunityDetailPage: React.FC = () => {
     );
   };
 
-  const getActiveTabLabel = () => {
-    const activeTabConfig = tabs.find(tab => tab.id === activeTab);
-    return activeTabConfig?.label || 'Residents';
-  };
-
   return (
-    <motion.div 
-      className="min-h-screen"
-      style={{ 
-        backgroundImage: `url(${bgimage})`, 
-        backgroundSize: 'cover', 
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="h-screen overflow-hidden">
       {/* Desktop Layout */}
-      <div className="hidden lg:flex min-h-screen">
-        {/* Desktop Sidebar */}
+      <div className="hidden lg:flex h-full">
+        {/* Fixed Desktop Sidebar */}
         <motion.div 
-          className="w-80 flex flex-col shadow-2xl border-r relative overflow-hidden"
+          className="w-80 h-full flex flex-col shadow-2xl border-r relative overflow-hidden"
           style={{
             background: '#F4F4F4',
             borderColor: 'rgba(255,255,255,0.95)',
@@ -235,7 +219,7 @@ const CommunityDetailPage: React.FC = () => {
           
           {/* Sidebar Header */}
           <motion.div 
-            className="relative z-10 p-8 border-b border-gray-200/30"
+            className="relative z-10 p-8 border-b border-gray-200/30 flex-shrink-0"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -280,9 +264,9 @@ const CommunityDetailPage: React.FC = () => {
             </motion.div>
           </motion.div>
 
-          {/* Desktop Navigation */}
+          {/* Scrollable Navigation */}
           <motion.nav 
-            className="relative z-10 flex-1 p-6"
+            className="relative z-10 flex-1 -mt-4 p-6 overflow-y-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
@@ -300,7 +284,7 @@ const CommunityDetailPage: React.FC = () => {
                   >
                     <motion.button
                       onClick={() => handleTabChange(tab.id)}
-                      className={`w-full flex items-center gap-4 px-6 py-4 font-medium rounded-xl transition-all duration-300 group ${
+                      className={`w-full flex items-center gap-4 px-4 py-4 font-medium rounded-xl transition-all duration-300 group ${
                         activeTab === tab.id
                           ? 'text-white shadow-lg'
                           : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50/50'
@@ -323,108 +307,14 @@ const CommunityDetailPage: React.FC = () => {
               })}
             </ul>
           </motion.nav>
-
-          {/* Sidebar Footer */}
-          <motion.div 
-            className="relative z-10 p-6 border-t border-gray-200/30"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <motion.div 
-              className="rounded-xl p-6"
-              style={{ 
-                background: '#F4F4F4',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
-                border: '2px solid rgba(255,255,255,0.95)'
-              }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <h3 className="text-sm font-bold text-gray-900 mb-3">Quick Stats</h3>
-              <div className="space-y-2">
-                <p className="text-xs text-gray-500 font-light">Active Management Portal</p>
-                <div className="flex items-center gap-2">
-                  <motion.div 
-                    className="w-2 h-2 bg-green-400 rounded-full"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                  <p className="text-xs text-gray-600 font-medium">Online</p>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
         </motion.div>
 
-        {/* Desktop Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Desktop Header */}
+        {/* Desktop Main Content - Scrollable */}
+        <div 
+          className="flex-1 h-full overflow-y-auto"
+        >
           <motion.div 
-            className="px-8 py-8 shadow-lg border-b"
-            style={{
-              background: '#F4F4F4',
-              borderColor: 'rgba(255,255,255,0.95)',
-              boxShadow: '0 15px 30px rgba(0,0,0,0.12)'
-            }}
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          >
-            <div className="max-w-7xl mx-auto">
-              <motion.div 
-                className="text-center mb-8"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <motion.h1 
-                  className="text-5xl md:text-6xl font-bold tracking-tighter text-gray-900 mb-4 leading-tight"
-                  key={activeTab}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {getActiveTabLabel()} for{' '}
-                  <span className="text-orange-400">{community.name}</span>
-                </motion.h1>
-                <p className="text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
-                  A comprehensive approach to <strong className="font-bold">Community Management</strong>. Making 
-                  <strong className="font-bold"> operations seamless</strong> and resident experience effortless.
-                </p>
-              </motion.div>
-
-              <motion.div 
-                className="flex justify-center"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
-              >
-                <motion.div 
-                  className="w-20 h-20 rounded-2xl flex items-center justify-center"
-                  style={{
-                    borderRadius: "15px",
-                    background: '#F4F4F4',
-                    boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
-                    border: '8px solid rgba(255,255,255,0.95)'
-                  }}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  key={activeTab}
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {(() => {
-                    const activeTabConfig = tabs.find(tab => tab.id === activeTab);
-                    const Icon = activeTabConfig?.icon || UsersIcon;
-                    return <Icon className="h-10 w-10 text-orange-500" />;
-                  })()}
-                </motion.div>
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Desktop Content Area */}
-          <motion.div 
-            className="flex-1 p-8"
+            className="p-8 min-h-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
@@ -434,9 +324,6 @@ const CommunityDetailPage: React.FC = () => {
                 className="rounded-2xl overflow-hidden min-h-[600px]"
                 style={{
                   borderRadius: "15px",
-                  background: '#F4F4F4',
-                  boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
-                  border: '8px solid rgba(255,255,255,0.95)'
                 }}
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -450,10 +337,10 @@ const CommunityDetailPage: React.FC = () => {
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden">
-        {/* Mobile Header */}
+      <div className="lg:hidden h-full overflow-hidden">
+        {/* Mobile Header - Fixed */}
         <motion.div 
-          className="shadow-lg border-b"
+          className="shadow-lg border-b flex-shrink-0"
           style={{
             borderRadius: "0 0 12px 12px",
             border: "1.26px solid #FFAA67",
@@ -505,7 +392,7 @@ const CommunityDetailPage: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Mobile Menu Overlay */}
+        {/* Mobile Menu Overlay - Fixed */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div 
@@ -517,7 +404,7 @@ const CommunityDetailPage: React.FC = () => {
               transition={{ duration: 0.3 }}
             >
               <motion.div 
-                className="absolute top-4 right-4 w-[92%] rounded-2xl shadow-2xl" 
+                className="absolute top-4 right-4 w-[92%] rounded-2xl shadow-2xl max-h-[calc(100vh-2rem)] overflow-y-auto" 
                 onClick={(e) => e.stopPropagation()}
                 style={{
                   borderRadius: "15px",
@@ -581,7 +468,7 @@ const CommunityDetailPage: React.FC = () => {
                           >
                             <motion.button
                               onClick={() => handleTabChange(tab.id)}
-                              className={`w-full flex items-center gap-4 px-6 py-4 font-medium rounded-xl transition-all duration-300 ${
+                              className={`w-full flex items-center gap-4 px-4 py-2 font-medium rounded-xl transition-all duration-300 ${
                                 activeTab === tab.id
                                   ? 'text-white shadow-lg'
                                   : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
@@ -610,82 +497,35 @@ const CommunityDetailPage: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Mobile Main Content */}
-        <motion.div 
-          className="px-4 py-8"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+        {/* Mobile Main Content - Scrollable */}
+        <div 
+          className="flex-1 overflow-y-auto"
         >
-          {/* Current Tab Indicator - Hero Style */}
-          <div className="mb-8">
-            <motion.div 
-              className="text-center mb-6"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <motion.h1 
-                className="text-4xl sm:text-5xl font-bold tracking-tighter text-gray-900 mb-4 leading-tight"
-                key={activeTab}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {getActiveTabLabel()} for{' '}
-                <span className="text-orange-400">{community.name}</span>
-              </motion.h1>
-              <p className="text-gray-500 max-w-md mx-auto font-light leading-relaxed px-4">
-                Comprehensive <strong className="font-bold">Community Management</strong> at your fingertips.
-              </p>
-            </motion.div>
-
-            <motion.div 
-              className="flex justify-center"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-            >
-              <motion.div 
-                className="w-16 h-16 rounded-2xl flex items-center justify-center"
-                style={{
-                  borderRadius: "15px",
-                  background: '#F4F4F4',
-                  boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
-                  border: '4px solid rgba(255,255,255,0.95)'
-                }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                key={activeTab}
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 0.5 }}
-              >
-                {(() => {
-                  const activeTabConfig = tabs.find(tab => tab.id === activeTab);
-                  const Icon = activeTabConfig?.icon || UsersIcon;
-                  return <Icon className="h-8 w-8 text-orange-500" />;
-                })()}
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Mobile Tab Content */}
           <motion.div 
-            className="rounded-2xl overflow-hidden"
-            style={{
-              borderRadius: "15px",
-              background: '#F4F4F4',
-              boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
-              border: '4px solid rgba(255,255,255,0.95)'
-            }}
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            {renderTabContent()}
+            className="px-4 py-8"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >          
+            {/* Mobile Tab Content */}
+            <motion.div 
+              className="rounded-2xl overflow-hidden"
+              style={{
+                borderRadius: "15px",
+                background: '#F4F4F4',
+                boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
+                border: '4px solid rgba(255,255,255,0.95)'
+              }}
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              {renderTabContent()}
+            </motion.div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
