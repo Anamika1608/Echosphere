@@ -31,9 +31,10 @@ import {
   BellIcon
 } from 'lucide-react';
 import userStore from '@/store/userStore';
-import { handleUserLogout } from '@/services/authService';
+import useModalStore from '@/store/modalStore';
 import Spline from '@splinetool/react-spline';
-
+import { useNavigate } from 'react-router-dom';
+import ManualRequestForm from './ManualRequestForm';
 const serverUrl = 'http://localhost:3000/api';
 
 // Simple Badge Component
@@ -146,7 +147,7 @@ const tabs: TabConfig[] = [
 ];
 
 const ResidentDashboard = () => {
-  const { user } = userStore();
+  const { user, clearUser } = userStore();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [userIssues, setUserIssues] = useState<Issue[]>([]);
   const [userServices, setUserServices] = useState<Service[]>([]);
@@ -155,6 +156,14 @@ const ResidentDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const {
+    formRequestModal,
+    openFormRequestModal,
+    closeFormRequestModal,
+  } = useModalStore();
+
+  const navigate = useNavigate();
 
   // Fetch dashboard data
   useEffect(() => {
@@ -241,15 +250,29 @@ const ResidentDashboard = () => {
     setIsMenuOpen(false);
   };
 
+  const handleUserLogout = async () => {
+    try {
+      await axios.get(`${serverUrl}/auth/logout`, {
+        withCredentials: true
+      });
+      clearUser();
+      navigate('/login');
+    } catch (err: any) {
+      console.error('Logout error:', err);
+      clearUser();
+      navigate('/login');
+    }
+  };
+
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         className="min-h-screen flex justify-center items-center px-4 bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <motion.div 
+        <motion.div
           className="rounded-full h-12 w-12 border-b-4 border-orange-500"
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -259,7 +282,7 @@ const ResidentDashboard = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="min-h-screen px-4 py-6 bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -267,7 +290,7 @@ const ResidentDashboard = () => {
     >
       <div className="max-w-5xl mx-auto">
         {/* Header - Desktop & Mobile */}
-        <motion.div 
+        <motion.div
           className="mb-8"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -275,13 +298,13 @@ const ResidentDashboard = () => {
         >
           {/* Desktop Header */}
           <div className="hidden lg:block">
-            <motion.div 
+            <motion.div
               className="flex justify-between items-center mb-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <motion.div 
+              <motion.div
                 className="py-10"
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -313,7 +336,7 @@ const ResidentDashboard = () => {
                 >
                   <div className="flex items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
-                      <motion.div 
+                      <motion.div
                         className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-orange-200"
                         whileHover={{ scale: 1.1, rotate: 5 }}
                       >
@@ -349,7 +372,7 @@ const ResidentDashboard = () => {
             </motion.div>
 
             {/* Desktop Navigation */}
-            <motion.div 
+            <motion.div
               className="flex gap-2 mb-8"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -362,8 +385,8 @@ const ResidentDashboard = () => {
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id)}
                     className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${activeTab === tab.id
-                        ? 'text-white shadow-lg'
-                        : 'bg-white/70 text-gray-600 hover:bg-white hover:shadow-md'
+                      ? 'text-white shadow-lg'
+                      : 'bg-white/70 text-gray-600 hover:bg-white hover:shadow-md'
                       }`}
                     style={activeTab === tab.id ? {
                       background: 'linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)',
@@ -385,7 +408,7 @@ const ResidentDashboard = () => {
 
           {/* Mobile Header */}
           <div className="lg:hidden">
-            <motion.div 
+            <motion.div
               className="bg-white rounded-2xl p-4 mb-6 shadow-lg shadow-black/5 border border-orange-100"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -393,7 +416,7 @@ const ResidentDashboard = () => {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <motion.div 
+                  <motion.div
                     className="w-10 h-10 rounded-xl overflow-hidden"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                   >
@@ -434,7 +457,7 @@ const ResidentDashboard = () => {
             </motion.div>
 
             {/* Mobile Tab Indicator */}
-            <motion.div 
+            <motion.div
               className="mb-6"
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -453,7 +476,7 @@ const ResidentDashboard = () => {
                 >
                   <div className="flex items-center justify-between ">
                     <div>
-                      <motion.h2 
+                      <motion.h2
                         className="text-xl font-bold text-gray-900"
                         key={activeTab}
                         initial={{ opacity: 0, y: 10 }}
@@ -464,7 +487,7 @@ const ResidentDashboard = () => {
                       </motion.h2>
                       <p className="text-sm text-gray-500">Resident Dashboard</p>
                     </div>
-                    <motion.div 
+                    <motion.div
                       className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center"
                       key={activeTab}
                       animate={{ rotate: [0, 10, -10, 0] }}
@@ -487,16 +510,16 @@ const ResidentDashboard = () => {
         {/* Mobile Menu Overlay */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div 
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+            <motion.div
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
               onClick={toggleMenu}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <motion.div 
-                className="absolute top-2 right-2 w-[96%] rounded-xl bg-white shadow-xl" 
+              <motion.div
+                className="absolute top-2 right-2 w-[96%] rounded-xl bg-white shadow-xl"
                 onClick={(e) => e.stopPropagation()}
                 initial={{ x: 300, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -504,7 +527,7 @@ const ResidentDashboard = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 <div className="p-6">
-                  <motion.div 
+                  <motion.div
                     className="flex items-center justify-between mb-6"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -527,7 +550,7 @@ const ResidentDashboard = () => {
                       {tabs.map((tab, index) => {
                         const Icon = tab.icon;
                         return (
-                          <motion.li 
+                          <motion.li
                             key={tab.id}
                             initial={{ x: -50, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
@@ -536,8 +559,8 @@ const ResidentDashboard = () => {
                             <motion.button
                               onClick={() => handleTabChange(tab.id)}
                               className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200 ${activeTab === tab.id
-                                  ? 'text-white shadow-lg'
-                                  : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600'
+                                ? 'text-white shadow-lg'
+                                : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600'
                                 }`}
                               style={activeTab === tab.id ? {
                                 background: 'linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)'
@@ -555,13 +578,13 @@ const ResidentDashboard = () => {
                   </nav>
 
                   {/* Quick Actions */}
-                  <motion.div 
+                  <motion.div
                     className="space-y-3"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
                   >
-                    <motion.button 
+                    <motion.button
                       className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-orange-600 rounded-2xl transition-all duration-200"
                       whileHover={{ scale: 1.02, x: 5 }}
                       whileTap={{ scale: 0.98 }}
@@ -586,7 +609,7 @@ const ResidentDashboard = () => {
         </AnimatePresence>
 
         {/* Tab Content */}
-        <motion.div 
+        <motion.div
           className="space-y-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -603,7 +626,7 @@ const ResidentDashboard = () => {
               {activeTab === 'overview' && (
                 <>
                   {/* Quick Stats Grid */}
-                  <motion.div 
+                  <motion.div
                     className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8"
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -664,7 +687,7 @@ const ResidentDashboard = () => {
                                   <Icon className="h-6 w-6 text-orange-700" />
                                 </motion.div>
                                 <p className="text-xs lg:text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                                <motion.p 
+                                <motion.p
                                   className="text-xl lg:text-2xl font-bold text-gray-900"
                                   initial={{ scale: 0 }}
                                   animate={{ scale: 1 }}
@@ -673,7 +696,7 @@ const ResidentDashboard = () => {
                                   {stat.value}
                                 </motion.p>
                                 {stat.pending ? (
-                                  <motion.p 
+                                  <motion.p
                                     className="text-xs text-orange-600 mt-1"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
@@ -691,48 +714,12 @@ const ResidentDashboard = () => {
                   </motion.div>
 
                   {/* Main Content Grid */}
-                  <motion.div 
+                  <motion.div
                     className="grid grid-cols-1 lg:grid-cols-2 gap-6"
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    {/* Voice Assistant Card */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 }}
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <Card
-                        className="border-0 rounded-2xl"
-                        style={{
-                          background: 'white',
-                          boxShadow: '0 15px 30px rgba(255, 88, 53, 0.3)',
-                        }}
-                      >
-                        <div className="p-6 text-black ">    
-                          <div className='flex flex-col items-center'>
-                            <h3 className=" text-lg">Voice Assistant</h3>
-                            <div className="flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative">
-                              <Spline scene="../../../../../public/spline.spline" />
-
-                              {/* Overlay div to disable interaction */}
-                              <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
-                            </div>
-                            <motion.button 
-                              className=" bg-orange-100 hover:bg-white/30  text-black px-4 py-3 rounded-xl transition-colors font-medium"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <Mic className="h-4 w-4 mr-2 inline-block" />
-                              Tap to Speak
-                            </motion.button>
-                          </div>
-                        </div>
-                      </Card>
-                    </motion.div>
-
                     {/* Recent Activities */}
                     <motion.div
                       initial={{ opacity: 0, x: 50 }}
@@ -762,8 +749,8 @@ const ResidentDashboard = () => {
                         <div className="px-6 pb-6">
                           <div className="space-y-3">
                             {dashboardData?.recentActivities.slice(0, 4).map((activity, index) => (
-                              <motion.div 
-                                key={index} 
+                              <motion.div
+                                key={index}
                                 className="border-l-4 border-orange-400 pl-4 py-3 bg-white/50 rounded-r-lg"
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -777,7 +764,7 @@ const ResidentDashboard = () => {
                               </motion.div>
                             ))}
                             {!dashboardData?.recentActivities.length && (
-                              <motion.div 
+                              <motion.div
                                 className="text-center py-8"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -825,6 +812,7 @@ const ResidentDashboard = () => {
                           }}
                           whileHover={{ scale: 1.05, y: -2 }}
                           whileTap={{ scale: 0.95 }}
+                          onClick={openFormRequestModal}
                         >
                           <PlusCircle className="h-4 w-4 mr-2 inline-block" />
                           Raise Issue
@@ -833,7 +821,7 @@ const ResidentDashboard = () => {
                     </CardHeader>
                     <div className="px-4 lg:px-6 pb-6">
                       {userIssues.length === 0 ? (
-                        <motion.div 
+                        <motion.div
                           className="text-center py-8"
                           initial={{ opacity: 0, y: 30 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -847,7 +835,7 @@ const ResidentDashboard = () => {
                           </motion.div>
                           <h3 className="text-lg font-semibold text-gray-900 mb-2">No issues yet</h3>
                           <p className="text-gray-500 mb-6">You haven't raised any issues yet.</p>
-                          <motion.button 
+                          <motion.button
                             className="bg-orange-100 text-orange-600 hover:bg-orange-200 px-6 py-3 rounded-xl transition-colors font-semibold text-sm"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -937,6 +925,7 @@ const ResidentDashboard = () => {
                           }}
                           whileHover={{ scale: 1.05, y: -2 }}
                           whileTap={{ scale: 0.95 }}
+                          onClick={openFormRequestModal}
                         >
                           <PlusCircle className="h-4 w-4 mr-2 inline-block" />
                           Request Service
@@ -945,7 +934,7 @@ const ResidentDashboard = () => {
                     </CardHeader>
                     <div className="px-4 lg:px-6 pb-6">
                       {userServices.length === 0 ? (
-                        <motion.div 
+                        <motion.div
                           className="text-center py-8"
                           initial={{ opacity: 0, y: 30 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -959,7 +948,7 @@ const ResidentDashboard = () => {
                           </motion.div>
                           <h3 className="text-lg font-semibold text-gray-900 mb-2">No services yet</h3>
                           <p className="text-gray-500 mb-6">You haven't requested any services yet.</p>
-                          <motion.button 
+                          <motion.button
                             className="bg-orange-100 text-orange-600 hover:bg-orange-200 px-6 py-3 rounded-xl transition-colors font-semibold text-sm"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -1058,7 +1047,7 @@ const ResidentDashboard = () => {
                         </CardHeader>
                         <div className="px-4 lg:px-6 pb-6">
                           {upcomingEvents.length === 0 ? (
-                            <motion.div 
+                            <motion.div
                               className="text-center py-8"
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
@@ -1139,7 +1128,7 @@ const ResidentDashboard = () => {
                         </CardHeader>
                         <div className="px-4 lg:px-6 pb-6">
                           {userEvents.length === 0 ? (
-                            <motion.div 
+                            <motion.div
                               className="text-center py-8"
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
@@ -1181,10 +1170,10 @@ const ResidentDashboard = () => {
                                         <Badge
                                           variant="outline"
                                           className={`text-xs ${event.userAttendanceStatus === 'ATTENDED'
-                                              ? 'bg-green-100 text-green-800'
-                                              : event.userAttendanceStatus === 'MISSED'
-                                                ? 'bg-red-100 text-red-800'
-                                                : 'bg-blue-100 text-blue-800'
+                                            ? 'bg-green-100 text-green-800'
+                                            : event.userAttendanceStatus === 'MISSED'
+                                              ? 'bg-red-100 text-red-800'
+                                              : 'bg-blue-100 text-blue-800'
                                             }`}
                                         >
                                           {event.userAttendanceStatus}
@@ -1206,6 +1195,22 @@ const ResidentDashboard = () => {
           </AnimatePresence>
         </motion.div>
       </div>
+      {formRequestModal && (
+        <motion.div
+          className="fixed inset-0 backdrop-blur-md flex items-center justify-center p-4 z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+          >
+            <ManualRequestForm isOpen={formRequestModal} onClose={closeFormRequestModal} />
+          </motion.div>
+        </motion.div>
+      )}
     </motion.div>
   );
 };
