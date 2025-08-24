@@ -323,8 +323,6 @@ const PgOwnerDashboard: React.FC = () => {
                         <motion.div 
                           className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
                           style={{ background: stat.gradient }}
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.6 }}
                         >
                           <stat.icon className="h-6 w-6 text-white" />
                         </motion.div>
@@ -527,7 +525,7 @@ const PgOwnerDashboard: React.FC = () => {
       <AnimatePresence>
         {showCreateModal && (
           <motion.div 
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 backdrop-blur-md flex items-center justify-center p-4 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

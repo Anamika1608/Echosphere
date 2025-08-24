@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { pgCommunityService } from '../../../services/pgCommunityService';
 import type { CreatePgCommunityData } from '../../../types/pgCommunity';
 
@@ -15,6 +15,21 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
     });
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const formRef = useRef<HTMLDivElement>(null);
+
+    // Handle click outside to close form
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (formRef.current && !formRef.current.contains(event.target as Node)) {
+                onCancel();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [onCancel]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -75,17 +90,19 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
     };
 
     return (
-        <div className= "min-h-screen pt-10 px-6 pb-8 w-full " style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFFAF3 67.31%,#FFFAF3 100%)' }}>
-            <button
+        <div 
+            ref={formRef}
+            className="pt-10 px-6 pb-8 w-full rounded-2xl shadow-2xl" 
+            style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFFAF3 67.31%,#FFFAF3 100%)' }}
+        >
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Create New PG Community</h2>
+                <button
                     onClick={onCancel}
-                    className="text-gray-700 hover:text-gray-600 pb-4 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="text-gray-700 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors text-xl"
                 >
                     ✕
                 </button>
-            <div className="flex justify-between items-center mb-6">
-                
-                <h2 className="text-2xl font-bold text-gray-900">Create New PG Community</h2>
-                
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -122,7 +139,7 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className={`w-full px-3 py-2 border rounded-[12px] focus:outline-none focus:ring-1 bg-white/70 focus:ring-[#FF703C] ${errors.name ? 'border-red-300' : 'border-gray-200'
+                        className={`w-full px-3 py-2 border rounded-[12px] focus:outline-none focus:ring-1 bg-white/70 focus:ring-[#FF703C] ${errors.address ? 'border-red-300' : 'border-gray-200'
                             }`}
                         placeholder="Enter complete address"
                     />
@@ -167,4 +184,4 @@ const CreatePgCommunityForm: React.FC<CreatePgCommunityFormProps> = ({ onSuccess
     );
 };
 
-export default CreatePgCommunityForm
+export default CreatePgCommunityForm;
