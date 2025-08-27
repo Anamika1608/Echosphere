@@ -30,9 +30,7 @@ function App() {
         const { data } = response.data;
         setUser(data);
 
-        // console.log("User profile fetched:", data);
       } catch (error) {
-        console.log("No user session found or error fetching profile:", error);
         // Clear user data if there's an authentication error
         clearUser();
       } finally {
@@ -46,10 +44,9 @@ function App() {
 
   useEffect(() => {
     const setUserToRedis = async () => {
-      const response = await axios.get(`${serverUrl}/auth/setWidgetSessionUserId`, {
+      await axios.get(`${serverUrl}/auth/setWidgetSessionUserId`, {
         withCredentials: true
       });
-      console.log("response after setting up userId in redis", response)
     }
     setUserToRedis()
   },[])

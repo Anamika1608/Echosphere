@@ -219,7 +219,6 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
       if (response.ok) {
         addToast(`Call dispatched successfully to ${issue.assignedTechnician.name}!`, 'success');
       } else {
-        console.log("response", response);
         throw new Error(result.message || 'Failed to dispatch call');
       }
     } catch (err: any) {

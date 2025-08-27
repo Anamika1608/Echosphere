@@ -30,8 +30,7 @@ export const useWhatsApp = () => {
       setLoading(true);
       setError(null);
       
-      const result = await whatsappAPI.initializeWhatsApp();
-      console.log('✅', result.message);
+      await whatsappAPI.initializeWhatsApp();
       
       // Start polling for status updates
       pollStatus();
@@ -54,7 +53,6 @@ export const useWhatsApp = () => {
         setQrCode(status.qrCode);
         
         if (status.isReady) {
-          console.log('🎉 WhatsApp is ready!');
           clearInterval(interval);
           fetchGroups(); // Fetch groups once ready
         }
@@ -73,7 +71,6 @@ export const useWhatsApp = () => {
       setLoading(true);
       const fetchedGroups = await whatsappAPI.getGroups();
       setGroups(fetchedGroups);
-      console.log(`📱 Found ${fetchedGroups.length} WhatsApp groups`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch groups');
       console.error('❌ Failed to fetch groups:', err);
@@ -94,7 +91,6 @@ export const useWhatsApp = () => {
       const success = await whatsappAPI.sendEventBroadcast(groupId, eventData);
       
       if (success) {
-        console.log('🎉 Event broadcast sent successfully!');
         return true;
       }
       return false;

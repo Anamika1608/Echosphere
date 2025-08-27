@@ -126,8 +126,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         withCredentials: true
       });
 
-      console.log('API Response:', response.data); // Debug log
-
       // Fix: Map the API response structure correctly
       if (response.data.success && response.data.data) {
         // Transform the events data to match your component's expected structure
@@ -242,7 +240,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
       });
 
       if (response.data.success && (!response.data.data || response.data.data.length === 0)) {
-        console.log('No existing suggestions, generating new ones...');
         await axios.post(`${serverUrl}/event-suggestions/${communityId}/generate`, {}, {
           withCredentials: true
         });

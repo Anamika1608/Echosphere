@@ -63,7 +63,6 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      console.log("params", params)
       if (specialityFilter) params.append('speciality', specialityFilter);
 
       

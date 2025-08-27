@@ -50,8 +50,6 @@ export const useWhatsApp = () => {
       if (!response.ok) {
         throw new Error(result.error || 'Failed to initialize WhatsApp');
       }
-
-      console.log('✅', result.message);
       
       // Start polling for status updates
       pollStatus();
@@ -78,7 +76,6 @@ export const useWhatsApp = () => {
         setQrCode(status.qrCode);
         
         if (status.isReady) {
-          console.log('🎉 WhatsApp is ready!');
           clearInterval(interval);
           fetchGroups(); // Fetch groups once ready
         }
@@ -105,7 +102,6 @@ export const useWhatsApp = () => {
       
       const fetchedGroups = data.groups || [];
       setGroups(fetchedGroups);
-      console.log(`📱 Found ${fetchedGroups.length} WhatsApp groups`);
       return fetchedGroups;
       
     } catch (err) {
@@ -142,8 +138,6 @@ export const useWhatsApp = () => {
       if (!response.ok) {
         throw new Error(result.error || 'Failed to send broadcast');
       }
-
-      console.log('🎉 Event broadcast sent successfully!');
       return true;
       
     } catch (err) {
