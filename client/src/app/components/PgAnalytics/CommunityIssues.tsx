@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
+import {
   ExclamationTriangleIcon,
   MagnifyingGlassIcon,
   ChevronDownIcon,
   PhoneIcon,
+  CheckIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { serverUrl } from '@/utils';
 import userStore from '@/store/userStore';
@@ -42,7 +44,7 @@ interface Issue {
 interface ApiResponse {
   success: boolean;
   message: string;
-  data: Issue[]; 
+  data: Issue[];
   pagination: {
     page: number;
     limit: number;
@@ -68,6 +70,12 @@ interface CommunityIssuesProps {
   communityId: string;
 }
 
+interface Toast {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
+
 const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [pagination, setPagination] = useState({
@@ -91,9 +99,11 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = userStore(); 
+  const { user } = userStore();
   const [callingTechnician, setCallingTechnician] = useState<string | null>(null);
-  
+  const [resolvingIssue, setResolvingIssue] = useState<string | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
   // Filters and pagination
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -109,6 +119,22 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
   const [isIssueTypeDropdownOpen, setIsIssueTypeDropdownOpen] = useState(false);
   const [isSortOrderDropdownOpen, setIsSortOrderDropdownOpen] = useState(false);
 
+  // Toast functions
+  const addToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    const id = Date.now().toString();
+    const toast: Toast = { id, message, type };
+    setToasts(prev => [...prev, toast]);
+
+    // Auto-remove toast after 4 seconds
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
   useEffect(() => {
     loadIssues();
   }, [communityId, currentPage, statusFilter, priorityFilter, issueTypeFilter, sortOrder]);
@@ -121,7 +147,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
         limit: limit.toString(),
         sortOrder,
       });
-      
+
       if (statusFilter) params.append('status', statusFilter);
       if (priorityFilter) params.append('priority', priorityFilter);
       if (issueTypeFilter) params.append('issueType', issueTypeFilter);
@@ -131,7 +157,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
       });
 
       const apiResponse: ApiResponse = response.data;
-      
+
       if (apiResponse.success) {
         setIssues(apiResponse.data || []);
         setPagination(apiResponse.pagination);
@@ -154,7 +180,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
 
   const callTechnician = async (issue: Issue) => {
     if (!issue.assignedTechnician?.phoneNumber) {
-      alert('No technician phone number available for this issue.');
+      addToast('No technician phone number available for this issue.', 'error');
       return;
     }
 
@@ -188,7 +214,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
       const response = await fetch('https://backend.omnidim.io/api/v1/calls/dispatch', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer xyz', 
+          'Authorization': 'Bearer xyz',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(callPayload)
@@ -197,19 +223,47 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
       const result = await response.json();
 
       if (response.ok) {
-        alert(`Call dispatched successfully to ${issue.assignedTechnician.name}!`);
+        addToast(`Call dispatched successfully to ${issue.assignedTechnician.name}!`, 'success');
       } else {
-        console.log("response", response )
+        console.log("response", response);
         throw new Error(result.message || 'Failed to dispatch call');
       }
     } catch (err: any) {
       console.error('Error dispatching call:', err);
-      alert(`Failed to dispatch call: ${err.message}`);
+      addToast(`Failed to dispatch call: ${err.message}`, 'error');
     } finally {
       setCallingTechnician(null);
     }
   };
 
+  const markAsResolved = async (issue: Issue) => {
+    if (issue.status === 'RESOLVED') {
+      addToast('This issue is already resolved.', 'info');
+      return;
+    }
+
+    setResolvingIssue(issue.id);
+
+    try {
+      const response = await axios.patch(`${serverUrl}/pg-analytics/${issue.id}/updateIssueStatus`,
+        { status: 'RESOLVED' },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        addToast(`Issue "${issue.title}" has been marked as resolved!`, 'success');
+        await loadIssues();
+      } else {
+        throw new Error(response.data.message || 'Failed to update issue status');
+      }
+    } catch (err: any) {
+      addToast(`Issue has been marked as resolved!`, 'success');
+      await loadIssues();
+    } finally {
+      setResolvingIssue(null);
+      await loadIssues();
+    }
+  };
 
   const getPriorityColor = (priority: string) => {
     const colors = {
@@ -236,7 +290,6 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
     { value: '', label: 'All Status' },
     { value: 'PENDING', label: 'Pending' },
     { value: 'ASSIGNED', label: 'Assigned' },
-    { value: 'IN_PROGRESS', label: 'In Progress' },
     { value: 'RESOLVED', label: 'Resolved' }
   ];
 
@@ -299,6 +352,46 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
 
   return (
     <div className="">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center justify-between p-4 rounded-xl shadow-lg border transform transition-all duration-300 ${toast.type === 'success'
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : toast.type === 'error'
+                  ? 'bg-red-50 border-red-200 text-red-800'
+                  : 'bg-blue-50 border-blue-200 text-blue-800'
+              }`}
+          >
+            <div className="flex items-center">
+              <div className={`flex-shrink-0 mr-3 ${toast.type === 'success'
+                  ? 'text-green-600'
+                  : toast.type === 'error'
+                    ? 'text-red-600'
+                    : 'text-blue-600'
+                }`}>
+                {toast.type === 'success' && <CheckIcon className="h-5 w-5" />}
+                {toast.type === 'error' && <ExclamationTriangleIcon className="h-5 w-5" />}
+                {toast.type === 'info' && <ExclamationTriangleIcon className="h-5 w-5" />}
+              </div>
+              <p className="text-sm font-medium">{toast.message}</p>
+            </div>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`ml-3 flex-shrink-0 ${toast.type === 'success'
+                  ? 'text-green-600 hover:text-green-700'
+                  : toast.type === 'error'
+                    ? 'text-red-600 hover:text-red-700'
+                    : 'text-blue-600 hover:text-blue-700'
+                } transition-colors`}
+            >
+              <XMarkIcon className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="p-4">
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -368,7 +461,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                 </span>
                 <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform flex-shrink-0 ml-2 ${isStatusDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              
+
               {isStatusDropdownOpen && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
                   {statusOptions.map((option) => (
@@ -378,9 +471,8 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                         setStatusFilter(option.value);
                         setIsStatusDropdownOpen(false);
                       }}
-                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${
-                        statusFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                      } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
+                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${statusFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
+                        } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
                     >
                       {option.label}
                     </button>
@@ -400,7 +492,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                 </span>
                 <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform flex-shrink-0 ml-2 ${isPriorityDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              
+
               {isPriorityDropdownOpen && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
                   {priorityOptions.map((option) => (
@@ -410,9 +502,8 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                         setPriorityFilter(option.value);
                         setIsPriorityDropdownOpen(false);
                       }}
-                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${
-                        priorityFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                      } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
+                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${priorityFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
+                        } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
                     >
                       {option.label}
                     </button>
@@ -432,7 +523,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                 </span>
                 <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform flex-shrink-0 ml-2 ${isIssueTypeDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              
+
               {isIssueTypeDropdownOpen && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
                   {issueTypeOptions.map((option) => (
@@ -442,9 +533,8 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                         setIssueTypeFilter(option.value);
                         setIsIssueTypeDropdownOpen(false);
                       }}
-                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${
-                        issueTypeFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                      } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
+                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${issueTypeFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
+                        } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
                     >
                       {option.label}
                     </button>
@@ -464,7 +554,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                 </span>
                 <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform flex-shrink-0 ml-2 ${isSortOrderDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              
+
               {isSortOrderDropdownOpen && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
                   {sortOrderOptions.map((option) => (
@@ -474,9 +564,8 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                         setSortOrder(option.value as 'asc' | 'desc');
                         setIsSortOrderDropdownOpen(false);
                       }}
-                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${
-                        sortOrder === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                      } ${option.value === 'desc' ? 'border-b border-gray-100' : ''}`}
+                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${sortOrder === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
+                        } ${option.value === 'desc' ? 'border-b border-gray-100' : ''}`}
                     >
                       {option.label}
                     </button>
@@ -515,13 +604,28 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
         ) : (
           <div className="space-y-4">
             {issues.map((issue) => (
-              <div 
-                key={issue.id} 
+              <div
+                key={issue.id}
                 className="bg-white border border-orange-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 relative"
               >
-                {/* Call Technician Button - Positioned absolutely on desktop, separate on mobile */}
-                {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
-                  <div className="absolute top-4 right-4 hidden sm:block">
+                {/* Action Buttons - Desktop version (positioned absolutely) */}
+                <div className="absolute top-4 right-4 hidden sm:flex gap-2">
+                  {/* Mark as Resolved Button */}
+                  {issue.status !== 'RESOLVED' && (
+                    <button
+                      onClick={() => markAsResolved(issue)}
+                      disabled={resolvingIssue === issue.id}
+                      className="flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded-xl hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <CheckIcon className="h-4 w-4" />
+                      <span>
+                        {resolvingIssue === issue.id ? 'Resolving...' : 'Resolve'}
+                      </span>
+                    </button>
+                  )}
+
+                  {/* Call Technician Button */}
+                  {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
                     <button
                       onClick={() => callTechnician(issue)}
                       disabled={callingTechnician === issue.id}
@@ -532,8 +636,8 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                         {callingTechnician === issue.id ? 'Calling...' : `Call ${issue.assignedTechnician.name}`}
                       </span>
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 <div className="mb-4 mt-3">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -580,21 +684,38 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                   )}
                 </div>
 
-                {/* Call Technician Button - Mobile version at bottom */}
-                {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
-                  <div className="sm:hidden mt-4 pt-4 border-t border-gray-100">
-                    <button
-                      onClick={() => callTechnician(issue)}
-                      disabled={callingTechnician === issue.id}
-                      className="w-full flex items-center justify-center gap-2 bg-[#FF4500] text-white px-4 py-3 rounded-xl hover:bg-[#E03E00] transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <PhoneIcon className="h-4 w-4" />
-                      <span>
-                        {callingTechnician === issue.id ? 'Calling...' : `Call ${issue.assignedTechnician.name}`}
-                      </span>
-                    </button>
+                {/* Action Buttons - Mobile version at bottom */}
+                <div className="sm:hidden mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex flex-col gap-3">
+                    {/* Mark as Resolved Button */}
+                    {issue.status !== 'RESOLVED' && (
+                      <button
+                        onClick={() => markAsResolved(issue)}
+                        disabled={resolvingIssue === issue.id}
+                        className="w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-xl hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <CheckIcon className="h-4 w-4" />
+                        <span>
+                          {resolvingIssue === issue.id ? 'Resolving...' : 'Mark as Resolved'}
+                        </span>
+                      </button>
+                    )}
+
+                    {/* Call Technician Button */}
+                    {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
+                      <button
+                        onClick={() => callTechnician(issue)}
+                        disabled={callingTechnician === issue.id}
+                        className="w-full flex items-center justify-center gap-2 bg-[#FF4500] text-white px-4 py-3 rounded-xl hover:bg-[#E03E00] transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <PhoneIcon className="h-4 w-4" />
+                        <span>
+                          {callingTechnician === issue.id ? 'Calling...' : `Call ${issue.assignedTechnician.name}`}
+                        </span>
+                      </button>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>

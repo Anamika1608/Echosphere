@@ -164,4 +164,8 @@ router.get(
   pgCommunityAnalyticsController.getRecentActivities
 );
 
+// update the issue status
+router.patch('/:issueId/updateIssueStatus', authenticateToken, pgCommunityAnalyticsController.updateIssueStatus);
+
+
 export { router as pgAnalyticsRouter };

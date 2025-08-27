@@ -11,11 +11,11 @@ export const pgCommunityAnalyticsController = {
         throw new AppError('Authentication required', 401);
       }
 
-      const { 
-        page = '1', 
-        limit = '10', 
-        status, 
-        priority, 
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        priority,
         issueType,
         sortBy = 'createdAt',
         sortOrder = 'desc'
@@ -59,11 +59,11 @@ export const pgCommunityAnalyticsController = {
         throw new AppError('Authentication required', 401);
       }
 
-      const { 
-        page = '1', 
-        limit = '10', 
-        status, 
-        priority, 
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        priority,
         serviceType,
         sortBy = 'createdAt',
         sortOrder = 'desc'
@@ -107,9 +107,9 @@ export const pgCommunityAnalyticsController = {
         throw new AppError('Authentication required', 401);
       }
 
-      const { 
-        page = '1', 
-        limit = '10', 
+      const {
+        page = '1',
+        limit = '10',
         eventType,
         upcoming = 'false',
         sortBy = 'createdAt',
@@ -199,11 +199,11 @@ export const pgCommunityAnalyticsController = {
       }
 
       const { id } = req.params;
-      const { 
-        page = '1', 
-        limit = '10', 
-        status, 
-        priority, 
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        priority,
         issueType,
         sortBy = 'createdAt',
         sortOrder = 'desc'
@@ -223,8 +223,8 @@ export const pgCommunityAnalyticsController = {
       };
 
       const result = await pgCommunityAnalyticsService.getPgCommunityIssues(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         filters,
         pagination
@@ -250,11 +250,11 @@ export const pgCommunityAnalyticsController = {
       }
 
       const { id } = req.params;
-      const { 
-        page = '1', 
-        limit = '10', 
-        status, 
-        priority, 
+      const {
+        page = '1',
+        limit = '10',
+        status,
+        priority,
         serviceType,
         sortBy = 'createdAt',
         sortOrder = 'desc'
@@ -274,8 +274,8 @@ export const pgCommunityAnalyticsController = {
       };
 
       const result = await pgCommunityAnalyticsService.getPgCommunityServices(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         filters,
         pagination
@@ -301,9 +301,9 @@ export const pgCommunityAnalyticsController = {
       }
 
       const { id } = req.params;
-      const { 
-        page = '1', 
-        limit = '10', 
+      const {
+        page = '1',
+        limit = '10',
         eventType,
         upcoming = 'false',
         sortBy = 'startDate',
@@ -322,11 +322,11 @@ export const pgCommunityAnalyticsController = {
         sortOrder: sortOrder as 'asc' | 'desc'
       };
 
-      
+
 
       const result = await pgCommunityAnalyticsService.getPgCommunityEvents(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         filters,
         pagination
@@ -355,8 +355,8 @@ export const pgCommunityAnalyticsController = {
       const { timeframe = '30' } = req.query; // days
 
       const analytics = await pgCommunityAnalyticsService.getPgCommunityAnalytics(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         parseInt(timeframe as string)
       );
@@ -382,8 +382,8 @@ export const pgCommunityAnalyticsController = {
       const { timeframe = '30' } = req.query; // days
 
       const eventAnalytics = await pgCommunityAnalyticsService.getEventAnalytics(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         parseInt(timeframe as string)
       );
@@ -408,8 +408,8 @@ export const pgCommunityAnalyticsController = {
       const { id } = req.params;
 
       const overview = await pgCommunityAnalyticsService.getDashboardOverview(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role
       );
 
@@ -434,8 +434,8 @@ export const pgCommunityAnalyticsController = {
       const { limit = '20' } = req.query;
 
       const activities = await pgCommunityAnalyticsService.getRecentActivities(
-        id, 
-        req.user.userId, 
+        id,
+        req.user.userId,
         req.user.role,
         parseInt(limit as string)
       );
@@ -445,6 +445,19 @@ export const pgCommunityAnalyticsController = {
         message: 'Recent activities retrieved successfully',
         data: activities
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async updateIssueStatus(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+      const issueId = req.params.issueId;
+      const response = await pgCommunityAnalyticsService.updateIssueStatus(issueId);
+      res.status(200).json({ message: 'Issue status updated successfully', data: response });
     } catch (error) {
       next(error);
     }
