@@ -71,16 +71,19 @@ const EditPgCommunityForm: React.FC<EditPgCommunityFormProps> = ({ community, on
     };
 
     return (
-        <div className= "min-h-screen pt-10 px-6 pb-8 w-full " style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFFAF3 67.31%,#FFFAF3 100%)' }}>
-            <button
+        <div className="pt-10 px-6 pb-8 w-full rounded-2xl shadow-lg"
+            style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFFAF3 67.31%,#FFFAF3 100%)' }}>
+
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                    Edit PG Community
+                </h2>
+                <button
                     onClick={onCancel}
-                    className="text-gray-700 hover:text-gray-600 pb-4 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="text-gray-700 hover:text-gray-600 rounded-lg p-1 hover:bg-gray-100 transition-colors"
                 >
                     ✕
                 </button>
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Edit PG Community</h2>
-                
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
