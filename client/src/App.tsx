@@ -42,15 +42,6 @@ function App() {
     getUserProfile();
   }, [setUser, clearUser]);
 
-  useEffect(() => {
-    const setUserToRedis = async () => {
-      await axios.get(`${serverUrl}/auth/setWidgetSessionUserId`, {
-        withCredentials: true
-      });
-    }
-    setUserToRedis()
-  },[])
-
   // Show loading spinner while checking authentication
   if (isLoading || !authChecked) {
     return <LoadingSpinner />;

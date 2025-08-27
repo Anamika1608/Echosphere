@@ -13,7 +13,7 @@ model User {
   email          String   @unique
   password       String
   profilePicture String?
-  role           UserRole
+  role           UserRole @default(RESIDENT)
   
   // For residents - which specific PG they belong to
   pgCommunityId String?
@@ -176,7 +176,7 @@ model Technician {
   name        String
   phoneNumber String
   qrCode      String?
-  speciality  TechnicianField
+  speciality  TechnicianField @default(GENERAL_MAINTENANCE)
   isAvailable Boolean         @default(true)
 
   // Many-to-many relationship with PG communities
@@ -209,8 +209,8 @@ model RaisedIssue {
   ticketNumber  Int           @unique @default(autoincrement())
   title         String
   description   String
-  issueType     IssueType
-  priorityLevel PriorityLevel
+  issueType     IssueType     @default(OTHER)
+  priorityLevel PriorityLevel @default(P2)
   status        IssueStatus   @default(PENDING)
   location      String
   imageUrls     String[]
@@ -236,7 +236,7 @@ model RequestedService {
   ticketNumber  Int           @unique @default(autoincrement())
   title         String
   description   String
-  serviceType   ServiceType
+  serviceType   ServiceType   @default(OTHER)
   priorityLevel PriorityLevel
   status        ServiceStatus @default(PENDING)
   location      String

@@ -129,7 +129,6 @@ npx prisma db push
 - **Code Splitting**: Route-based code splitting for faster loading
 - **Image Optimization**: Efficient image handling and compression
 - **Database Indexing**: Optimized queries with proper indexing
-- **Caching**: Redis integration for improved performance
 - **CDN**: Static asset delivery optimization
 
 This repository represents a modern, scalable property management platform with AI-powered features designed to streamline community management and enhance resident experience. 

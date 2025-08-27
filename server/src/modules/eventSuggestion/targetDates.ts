@@ -1,8 +1,3 @@
-// Redis key patterns for tracking alternation
-export const REDIS_KEYS = {
-  SUGGESTION_CACHE: 'pg:suggestions:'
-};
-
 // Generate target dates dynamically based on current date
 export const getTargetDates = () => {
   const now = new Date();
