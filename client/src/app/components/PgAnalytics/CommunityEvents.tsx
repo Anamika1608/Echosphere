@@ -101,7 +101,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
     qrCode,
     groups,
     loading: whatsappLoading,
-    initializeWhatsApp,
     sendEventBroadcast,
   } = useWhatsApp();
 
@@ -317,10 +316,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
       hour: '2-digit',
       minute: '2-digit'
     });
-  };
-
-  const isEventUpcoming = (startDate: string) => {
-    return new Date(startDate) > new Date();
   };
 
   // Dropdown options
@@ -867,7 +862,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
             eventsData.events.map((event) => {
               const startDateTime = formatDateTime(event.startDate);
               const endDateTime = formatDateTime(event.endDate);
-              const upcoming = isEventUpcoming(event.startDate);
 
               return (
                 <div key={event.id} className="bg-white border border-orange-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300">

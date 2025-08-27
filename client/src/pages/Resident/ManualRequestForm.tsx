@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { serverUrl } from '@/utils';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 interface ManualRequestFormProps {
     isOpen: boolean;
@@ -25,8 +26,6 @@ const ManualRequestForm: React.FC<ManualRequestFormProps> = ({ isOpen, onClose }
     });
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [successMessage, setSuccessMessage] = useState<string>('');
-    const [isSubmitted, setIsSubmitted] = useState(false);
     const formRef = useRef<HTMLDivElement>(null);
 
     // Handle click outside to close form
@@ -124,12 +123,11 @@ const ManualRequestForm: React.FC<ManualRequestFormProps> = ({ isOpen, onClose }
 
             const data = response.data;
 
-            if (data.success) {
-                setIsSubmitted(true);
-                setSuccessMessage(
-                    `${data.type === 'issue' ? 'Issue' : 'Service request'} submitted successfully! ${data.ticketNumber ? `Ticket ID: ${data.ticketNumber}` : ''
-                    } ${data.assignedTechnician ? `Assigned to: ${data.assignedTechnician}` : ''}`
+            if (data) {
+                toast.success(
+                    `${data.type === 'issue' ? 'Issue' : 'Service request'} submitted successfully!`
                 );
+              
 
             } else {
                 if (data.requiresMoreInfo) {

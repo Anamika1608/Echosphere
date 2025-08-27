@@ -117,7 +117,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
   const [serviceTypeFilter, setServiceTypeFilter] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(10);
-  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // Dropdown states

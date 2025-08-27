@@ -2,7 +2,7 @@
 
 import { motion, useSpring } from "framer-motion";
 import type { FC, JSX } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface Position {
   x: number;
