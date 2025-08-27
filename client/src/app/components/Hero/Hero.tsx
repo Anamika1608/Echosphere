@@ -55,7 +55,7 @@ const Hero = ({ demoLink = '' }) => {
             </motion.div>
 
             <div className="relative z-10">
-               {/* @ts-ignore */}
+                {/* @ts-ignore */}
                 <motion.h1
                     className="text-xl pt-30 leading-tight md:text-6xl lg:text-6xl font-bold tracking-tighter max-w-xl sm:max-w-5xl mx-auto sm:mx-auto"
                     {...fadeInUp}
@@ -81,7 +81,12 @@ const Hero = ({ demoLink = '' }) => {
                     {...fadeIn}
                     transition={{ delay: 0.4 }}
                 >
-                    <Spline scene="../../../../../public/spline.spline" />
+                    <div className="scale-25">
+                        <Spline
+                            scene="https://prod.spline.design/1OOUEgK1bBI7KW2R/scene.splinecode"
+                            className="w-full h-full"
+                        /><div className="hide-spline-badge"></div>
+                    </div>
                     <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
                 </motion.div>
 

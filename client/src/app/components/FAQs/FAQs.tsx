@@ -57,7 +57,8 @@ export function FAQs() {
   };
 
   return (
-    <section id="faq" className="grid grid-cols-1 mx-auto px-4 py-8 sm:py-16 gap-4">
+    <section id="faq" className="grid grid-cols-1 mx-auto px-4 py-8 sm:py-16 gap-4"
+      style={{ background: 'linear-gradient(180deg, #f9f7f5 0%, #FFF 19.11%)' }}>
       {/* Header Section */}
       <motion.div
         className="sm:mx-auto mx-10 px-0 text-center"
@@ -84,7 +85,12 @@ export function FAQs() {
           viewport={{ once: true, amount: 0.3 }}
           whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
         >
-          <Spline scene="../../../../../public/spline.spline" />
+          <div className="scale-25">
+            <Spline
+              scene="https://prod.spline.design/1OOUEgK1bBI7KW2R/scene.splinecode"
+              className="w-full h-full"
+            /><div className="hide-spline-badge"></div>
+          </div>
           <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
         </motion.div>
       </motion.div>

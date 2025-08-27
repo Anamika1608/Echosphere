@@ -60,3 +60,16 @@
   }
 }
 
+iframe {
+  pointer-events: none; /* optional */
+}
+
+.hide-spline-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 160px; /* slightly bigger than the badge */
+  height: 60px;
+  background: white; 
+  z-index: 10;
+}
