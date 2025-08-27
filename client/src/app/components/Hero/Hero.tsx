@@ -6,7 +6,7 @@ import img1 from '../../../assets/img1.png';
 import img2 from '../../../assets/img2.png';
 import bgimage from '../../../assets/bgimage.png';
 
-const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
+const Hero = ({ demoLink = '' }) => {
     const fadeInUp = {
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0 },
