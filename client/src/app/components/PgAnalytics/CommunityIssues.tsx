@@ -351,18 +351,18 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
           <div
             key={toast.id}
             className={`flex items-center justify-between p-4 rounded-xl shadow-lg border transform transition-all duration-300 ${toast.type === 'success'
-                ? 'bg-green-50 border-green-200 text-green-800'
-                : toast.type === 'error'
-                  ? 'bg-red-50 border-red-200 text-red-800'
-                  : 'bg-blue-50 border-blue-200 text-blue-800'
+              ? 'bg-green-50 border-green-200 text-green-800'
+              : toast.type === 'error'
+                ? 'bg-red-50 border-red-200 text-red-800'
+                : 'bg-blue-50 border-blue-200 text-blue-800'
               }`}
           >
             <div className="flex items-center">
               <div className={`flex-shrink-0 mr-3 ${toast.type === 'success'
-                  ? 'text-green-600'
-                  : toast.type === 'error'
-                    ? 'text-red-600'
-                    : 'text-blue-600'
+                ? 'text-green-600'
+                : toast.type === 'error'
+                  ? 'text-red-600'
+                  : 'text-blue-600'
                 }`}>
                 {toast.type === 'success' && <CheckIcon className="h-5 w-5" />}
                 {toast.type === 'error' && <ExclamationTriangleIcon className="h-5 w-5" />}
@@ -373,10 +373,10 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
             <button
               onClick={() => removeToast(toast.id)}
               className={`ml-3 flex-shrink-0 ${toast.type === 'success'
-                  ? 'text-green-600 hover:text-green-700'
-                  : toast.type === 'error'
-                    ? 'text-red-600 hover:text-red-700'
-                    : 'text-blue-600 hover:text-blue-700'
+                ? 'text-green-600 hover:text-green-700'
+                : toast.type === 'error'
+                  ? 'text-red-600 hover:text-red-700'
+                  : 'text-blue-600 hover:text-blue-700'
                 } transition-colors`}
             >
               <XMarkIcon className="h-4 w-4" />
@@ -589,14 +589,21 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                 key={issue.id}
                 className="bg-white border border-orange-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 relative"
               >
-                {/* Action Buttons - Desktop version (positioned absolutely) */}
+                {/* Action Buttons) */}
+                
                 <div className="absolute top-4 right-4 hidden sm:flex gap-2">
                   {/* Mark as Resolved Button */}
                   {issue.status !== 'RESOLVED' && (
                     <button
                       onClick={() => markAsResolved(issue)}
                       disabled={resolvingIssue === issue.id}
-                      className="flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded-xl hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 text-black px-3 py-2 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        borderRadius: '16px',
+                        border: '1px solid #FFF',
+                        background: 'linear-gradient(180deg, #FFF 0%, #A9E4A9 56.5%, #62B862 113%)',
+                        boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                      }}
                     >
                       <CheckIcon className="h-4 w-4" />
                       <span>
@@ -610,7 +617,13 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                     <button
                       onClick={() => callTechnician(issue)}
                       disabled={callingTechnician === issue.id}
-                      className="flex items-center gap-2 bg-[#FF4500] text-white px-3 py-2 rounded-xl hover:bg-[#E03E00] transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 text-black px-3 py-2 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        borderRadius: '16px',
+                        border: '1px solid #FFF',
+                        background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF6E39 113%)',
+                        boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                      }}
                     >
                       <PhoneIcon className="h-4 w-4" />
                       <span>

@@ -652,8 +652,13 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
                     <button
                       onClick={() => approveAndAssignService(service)}
                       disabled={approvingService === service.id}
-                      className="flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded-xl hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
+                      className="flex items-center gap-2 text-black px-3 py-2 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        borderRadius: '16px',
+                        border: '1px solid #FFF',
+                        background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
+                        boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                      }}                    >
                       <CheckIcon className="h-4 w-4" />
                       <span>
                         {approvingService === service.id ? 'Approving...' : 'Approve & Assign'}
@@ -662,7 +667,13 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
                     <button
                       onClick={() => declineService(service)}
                       disabled={decliningService === service.id}
-                      className="flex items-center gap-2 bg-red-600 text-white px-3 py-2 rounded-xl hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 text-black px-3 py-2 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        borderRadius: '16px',
+                        border: '1px solid #FFF',
+                        background: 'linear-gradient(180deg, #FFF 0%, #FFB2B2 56.5%, #FF6E39 113%)',
+                        boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                      }}
                     >
                       <XMarkIcon className="h-4 w-4" />
                       <span>
@@ -679,8 +690,13 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
                     <button
                       onClick={() => markAsCompleted(service)}
                       disabled={completingService === service.id}
-                      className="flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded-xl hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
+                      className="flex items-center gap-2 text-black px-3 py-2 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        borderRadius: '16px',
+                        border: '1px solid #FFF',
+                        background: 'linear-gradient(180deg, #FFF 0%, #A9E4A9 56.5%, #62B862 113%)',
+                        boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                      }}                    >
                       <CheckIcon className="h-4 w-4" />
                       <span>
                         {completingService === service.id ? 'Completing...' : 'Complete'}
@@ -692,8 +708,13 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
                       <button
                         onClick={() => callTechnician(service)}
                         disabled={callingTechnician === service.id}
-                        className="flex items-center gap-2 bg-[#FF4500] text-white px-3 py-2 rounded-xl hover:bg-[#E03E00] transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
+                        className="flex items-center gap-2 text-black px-3 py-2 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        style={{
+                          borderRadius: '16px',
+                          border: '1px solid #FFF',
+                          background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF6E39 113%)',
+                          boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+                        }}                      >
                         <PhoneIcon className="h-4 w-4" />
                         <span>
                           {callingTechnician === service.id ? 'Calling...' : `Call ${service.assignedTechnician.name}`}

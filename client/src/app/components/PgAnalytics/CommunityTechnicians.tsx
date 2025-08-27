@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
+import {
   WrenchScrewdriverIcon,
   PencilIcon,
   TrashIcon,
@@ -47,7 +47,7 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
   const [searchTerm, setSearchTerm] = useState('');
   const [specialityFilter, setSpecialityFilter] = useState<string>('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
+
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -65,7 +65,7 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
       const params = new URLSearchParams();
       if (specialityFilter) params.append('speciality', specialityFilter);
 
-      
+
       const response = await axios.get(`${serverUrl}/technician/pg/${communityId}?${params}`, {
         withCredentials: true
       });
@@ -105,8 +105,8 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
 
   const filteredTechnicians = technicians.filter(technician => {
     const matchesSearch = technician.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         technician.phoneNumber.includes(searchTerm) ||
-                         technician.speciality.toLowerCase().includes(searchTerm.toLowerCase());
+      technician.phoneNumber.includes(searchTerm) ||
+      technician.speciality.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
 
@@ -125,17 +125,17 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
     return colors[speciality as keyof typeof colors] || colors.GENERAL;
   };
 
- const specialityOptions = [
-  { value: '', label: 'All Specialities' },
-  { value: 'PLUMBING', label: 'Plumbing' },
-  { value: 'ELECTRICAL', label: 'Electrical' },
-  { value: 'CARPENTRY', label: 'Carpentry' },
-  { value: 'CLEANING', label: 'Cleaning' },
-  { value: 'PAINTING', label: 'Painting' },
-  { value: 'AC_REPAIR', label: 'AC Repair' },
-  { value: 'APPLIANCE_REPAIR', label: 'Appliance Repair' },
-  { value: 'GENERAL_MAINTENANCE', label: 'General Maintenance' }
-];
+  const specialityOptions = [
+    { value: '', label: 'All Specialities' },
+    { value: 'PLUMBING', label: 'Plumbing' },
+    { value: 'ELECTRICAL', label: 'Electrical' },
+    { value: 'CARPENTRY', label: 'Carpentry' },
+    { value: 'CLEANING', label: 'Cleaning' },
+    { value: 'PAINTING', label: 'Painting' },
+    { value: 'AC_REPAIR', label: 'AC Repair' },
+    { value: 'APPLIANCE_REPAIR', label: 'Appliance Repair' },
+    { value: 'GENERAL_MAINTENANCE', label: 'General Maintenance' }
+  ];
 
   if (loading) {
     return (
@@ -176,31 +176,31 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
           <h2 className="text-xl font-bold text-gray-900 mb-1">Technicians</h2>
           <p className="text-gray-600 text-sm">{technicians.length} technicians available</p>
         </div>
-        
-        {/* Action Buttons - Mobile Stacked */}
+
+        {/* Action Buttons */}
         <div className="flex flex-col gap-3 mb-6">
           <button
             onClick={() => setShowCreateModal(true)}
             className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
-                  borderRadius: '16px',
-                  border: '1px solid #FFF',
-                  background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF9A72 113%)',
-                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
-                }}
-              >
-                Add New Technician
-              </button>
+              borderRadius: '16px',
+              border: '1px solid #FFF',
+              background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF9A72 113%)',
+              boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+            }}
+          >
+            Add New Technician
+          </button>
           <button
             onClick={() => setShowImportModal(true)}
             className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
-                  borderRadius: '16px',
-                  border: '1px solid #FFF',
-                  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
-                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
-                }}
-              >
-                Import from Other PGs
-              </button>
+              borderRadius: '16px',
+              border: '1px solid #FFF',
+              background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
+              boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
+            }}
+          >
+            Import from Other PGs
+          </button>
         </div>
       </div>
 
@@ -217,7 +217,7 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-2xl focus:border-transparent transition-colors"
           />
         </div>
-        
+
         {/* Custom Dropdown */}
         <div className="relative">
           <button
@@ -229,7 +229,7 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
             </span>
             <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
-          
+
           {isDropdownOpen && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
               {specialityOptions.map((option) => (
@@ -239,9 +239,8 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
                     setSpecialityFilter(option.value);
                     setIsDropdownOpen(false);
                   }}
-                  className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${
-                    specialityFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                  } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
+                  className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${specialityFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
+                    } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
                 >
                   {option.label}
                 </button>
@@ -344,11 +343,10 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleToggleAvailability(technician)}
-                    className={`p-2 rounded-xl transition-colors ${
-                      technician.isAvailable
+                    className={`p-2 rounded-xl transition-colors ${technician.isAvailable
                         ? 'text-red-600 hover:text-red-500 hover:bg-red-50'
                         : 'text-purple-600 hover:text-purple-500 hover:bg-purple-50'
-                    }`}
+                      }`}
                     title={technician.isAvailable ? 'Mark Unavailable' : 'Mark Available'}
                   >
                     {technician.isAvailable ? (
