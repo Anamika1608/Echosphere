@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "../../../components/ui/accordion.tsx";
 import Spline from '@splinetool/react-spline';
+import type { Variants } from 'framer-motion'
 import { motion } from 'framer-motion';
 
 const faqs = [
@@ -28,7 +29,7 @@ const faqs = [
 
 export function FAQs() {
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     initial: {},
     animate: {
       transition: {
@@ -37,19 +38,19 @@ export function FAQs() {
     }
   };
 
-  const fadeInUp = {
+  const fadeInUp: Variants = {
     initial: { opacity: 0, y: 20 },
-    animate: { 
-      opacity: 1, 
+    animate: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.6, ease: "easeOut" }
     }
   };
 
-  const accordionVariants = {
+  const accordionVariants: Variants = {
     initial: { opacity: 0, y: 30 },
-    animate: { 
-      opacity: 1, 
+    animate: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.5, ease: "easeOut" }
     }
@@ -58,14 +59,14 @@ export function FAQs() {
   return (
     <section id="faq" className="grid grid-cols-1 mx-auto px-4 py-8 sm:py-16 gap-4">
       {/* Header Section */}
-      <motion.div 
+      <motion.div
         className="sm:mx-auto mx-10 px-0 text-center"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
       >
-        <motion.div 
+        <motion.div
           className="text-center py-4 sm:mb-8"
           variants={fadeInUp}
         >
@@ -75,7 +76,7 @@ export function FAQs() {
         </motion.div>
 
         {/* Spline Container */}
-        <motion.div 
+        <motion.div
           className="flex justify-center mb-6 items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -89,7 +90,7 @@ export function FAQs() {
       </motion.div>
 
       {/* FAQ Accordion */}
-      <motion.div 
+      <motion.div
         className="max-w-3xl mx-4 sm:mx-auto sm:w-xl mb-20 overflow-visible"
         variants={containerVariants}
         initial="initial"
@@ -101,7 +102,7 @@ export function FAQs() {
             <motion.div
               key={index}
               variants={accordionVariants}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.01,
                 transition: { duration: 0.2 }
               }}

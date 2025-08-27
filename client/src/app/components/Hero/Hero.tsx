@@ -7,12 +7,12 @@ import img2 from '../../../assets/img2.png';
 import bgimage from '../../../assets/bgimage.png';
 
 const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
-    // Subtle animation variants
     const fadeInUp = {
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0 },
         transition: { duration: 0.6, ease: "easeOut" }
     };
+
 
     const fadeIn = {
         initial: { opacity: 0 },
@@ -26,17 +26,17 @@ const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
     };
 
     return (
-        <section 
-            id="hero" 
-            className="container mx-auto -mt-16 px-0 pb-16 text-center" 
+        <section
+            id="hero"
+            className="container mx-auto -mt-16 px-0 pb-16 text-center"
             style={{
-                backgroundImage: `url(${bgimage})`, 
-                backgroundSize: 'cover', 
+                backgroundImage: `url(${bgimage})`,
+                backgroundSize: 'cover',
                 backgroundPosition: 'center'
             }}
         >
             {/* Side images with subtle fade */}
-            <motion.div 
+            <motion.div
                 className="absolute left-25 top-0 h-60 w-60 flex items-center mb-0 mt-100"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -44,8 +44,8 @@ const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
             >
                 <img src={img1} alt="" />
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
                 className="absolute right-25 top-0 h-60 w-60 flex items-center mb-0 mt-100"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -55,8 +55,8 @@ const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
             </motion.div>
 
             <div className="relative z-10">
-                {/* Main heading with gentle fade up */}
-                <motion.h1 
+               {/* @ts-ignore */}
+                <motion.h1
                     className="text-xl pt-30 leading-tight md:text-6xl lg:text-6xl font-bold tracking-tighter max-w-xl sm:max-w-5xl mx-auto sm:mx-auto"
                     {...fadeInUp}
                 >
@@ -65,18 +65,18 @@ const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
                 </motion.h1>
 
                 {/* Description with slight delay */}
-                <motion.p 
+                <motion.p
                     className="mt-4 text-gray-500 mx-8 sm:mx-auto font-light"
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                    A faster approach to <strong className='font-bold'>Residential Community</strong> problems. 
+                    A faster approach to <strong className='font-bold'>Residential Community</strong> problems.
                     Making <strong className='font-bold'>support instant</strong> and community building effortless.
                 </motion.p>
 
                 {/* Spline container */}
-                <motion.div 
+                <motion.div
                     className="flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative"
                     {...fadeIn}
                     transition={{ delay: 0.4 }}
@@ -86,14 +86,14 @@ const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
                 </motion.div>
 
                 {/* Buttons with subtle hover */}
-                <motion.div 
+                <motion.div
                     className="mt-8 flex flex-row sm:flex-row items-center justify-center gap-4 sm:mt-10"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.6 }}
                 >
                     <motion.div whileHover={subtleHover}>
-                        <Button 
+                        <Button
                             size="lg"
                             asChild
                             style={{
@@ -109,9 +109,9 @@ const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
                     </motion.div>
 
                     <motion.div whileHover={subtleHover}>
-                        <Button 
-                            size="lg" 
-                            className="bg-orange-100 hover:bg-[#E03E00] hover:text-white rounded-[12px] text-[#FF6D2E] sm:w-auto transition-colors duration-300" 
+                        <Button
+                            size="lg"
+                            className="bg-orange-100 hover:bg-[#E03E00] hover:text-white rounded-[12px] text-[#FF6D2E] sm:w-auto transition-colors duration-300"
                             asChild
                         >
                             <Link to="/register">Start for free</Link>
@@ -134,7 +134,7 @@ const Hero = ({ demoLink = 'https://www.youtube.com/embed/dQw4w9WgXcQ' }) => {
                             boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
                             border: '8px solid rgba(255,255,255,0.95)'
                         }}
-                        whileHover={{ 
+                        whileHover={{
                             scale: 1.01,
                             transition: { duration: 0.3 }
                         }}

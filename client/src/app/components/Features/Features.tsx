@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Mic, LayoutDashboard, Lightbulb, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion'
+
 
 const freeTierFeatures = [
   {
@@ -39,14 +41,7 @@ const freeTierFeatures = [
 ];
 
 const Features: React.FC = () => {
-  // Animation variants
-  const fadeInUp = {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: "easeOut" }
-  };
-
-  const containerVariants = {
+  const containerVariants: Variants = {
     initial: {},
     animate: {
       transition: {
@@ -55,10 +50,10 @@ const Features: React.FC = () => {
     }
   };
 
-  const cardVariants = {
+  const cardVariants: Variants = {
     initial: { opacity: 0, y: 40 },
-    animate: { 
-      opacity: 1, 
+    animate: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.6, ease: "easeOut" }
     }
@@ -66,30 +61,30 @@ const Features: React.FC = () => {
 
   const iconVariants = {
     initial: { scale: 0.8, opacity: 0 },
-    animate: { 
-      scale: 1, 
+    animate: {
+      scale: 1,
       opacity: 1,
       transition: { duration: 0.4, delay: 0.2 }
     }
   };
 
   return (
-    <section 
-      id="features" 
-      className="container grid sm:grid-cols-2 sm:gap-6 mx-auto px-4 sm:px-16 py-16 sm:py-24" 
-      style={{ 
-        backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%,#ffffff 0%, #F9F7F5 10%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' 
+    <section
+      id="features"
+      className="container grid sm:grid-cols-2 sm:gap-6 mx-auto px-4 sm:px-16 py-16 sm:py-24"
+      style={{
+        backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%,#ffffff 0%, #F9F7F5 10%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)'
       }}
     >
       {/* Header Section */}
-      <motion.div 
+      <motion.div
         className="text-center sm:text-left mb-12 sm:pl-20"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
       >
-        <motion.span 
+        <motion.span
           className="text-sm sm:text-xl font-semibold text-gray-500"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -98,7 +93,7 @@ const Features: React.FC = () => {
         >
           FREE-TIER FEATURES
         </motion.span>
-        <motion.h2 
+        <motion.h2
           className="text-3xl sm:text-5xl sm:font-semibold font-bold tracking-tight mt-2 sm:w-[450px] leading-tight"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -110,7 +105,7 @@ const Features: React.FC = () => {
       </motion.div>
 
       {/* Cards Grid */}
-      <motion.div 
+      <motion.div
         className="grid grid-cols-2 sm:max-w-[600px] sm:gap-8 sm:grid-cols-2 lg:grid-cols-2 gap-6"
         variants={containerVariants}
         initial="initial"
@@ -121,7 +116,7 @@ const Features: React.FC = () => {
           <motion.div
             key={index}
             variants={cardVariants}
-            whileHover={{ 
+            whileHover={{
               y: -5,
               scale: 1.02,
               transition: { duration: 0.2 }
@@ -134,10 +129,10 @@ const Features: React.FC = () => {
               }}
             >
               <CardHeader className="p-0">
-                <motion.div 
+                <motion.div
                   className="w-fit pt-2 mb-4"
                   variants={iconVariants}
-                  whileHover={{ 
+                  whileHover={{
                     scale: 1.1,
                     rotate: 5,
                     transition: { duration: 0.2 }

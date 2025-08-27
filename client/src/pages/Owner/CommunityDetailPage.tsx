@@ -9,7 +9,6 @@ import CommunityServices from '../../app/components/PgAnalytics/CommunityService
 import CommunityEvents from '../../app/components/PgAnalytics/CommunityEvents';
 import CommunityTechnicians from '../../app/components/PgAnalytics/CommunityTechnicians';
 import {
-  ChartBarIcon,
   UsersIcon,
   ExclamationTriangleIcon,
   WrenchScrewdriverIcon,

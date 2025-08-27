@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Eye, EyeOff, Mail, Lock, User, Building, ChevronDown } from 'lucide-react';
+import type { Variants } from 'framer-motion'
 import { motion, AnimatePresence } from 'framer-motion';
 import { serverUrl } from '@/utils';
 import { useMemo } from 'react';
@@ -202,7 +203,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
   };
 
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -213,7 +214,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -225,7 +226,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
     }
   };
 
-  const formVariants = {
+  const formVariants: Variants = {
     hidden: { x: -50, opacity: 0 },
     visible: {
       x: 0,
@@ -237,7 +238,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
     }
   };
 
-  const imageVariants = {
+  const imageVariants: Variants = {
     hidden: { x: 50, opacity: 0, scale: 0.9 },
     visible: {
       x: 0,
@@ -250,80 +251,73 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
     }
   };
 
-  const buttonVariants = {
+  const buttonVariants: Variants = {
     idle: { scale: 1 },
-    hover: { 
+    hover: {
       scale: 1.02,
       transition: { duration: 0.2 }
     },
     tap: { scale: 0.98 }
   };
 
-  const inputFocusVariants = {
-    focus: { 
-      scale: 1.02,
-      transition: { duration: 0.2 }
-    }
-  };
-
-  const dropdownVariants = {
-    closed: { 
-      opacity: 0, 
-      scale: 0.95, 
+  const dropdownVariants: Variants = {
+    closed: {
+      opacity: 0,
+      scale: 0.95,
       y: -10,
       transition: { duration: 0.2 }
     },
-    open: { 
-      opacity: 1, 
-      scale: 1, 
+    open: {
+      opacity: 1,
+      scale: 1,
       y: 0,
       transition: { duration: 0.2, ease: "easeOut" }
     }
   };
 
-  const pgCardVariants = {
+  const pgCardVariants: Variants = {
     hidden: { opacity: 0, y: -10, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
+    visible: {
+      opacity: 1,
+      y: 0,
       scale: 1,
       transition: { duration: 0.3, ease: "easeOut" }
     }
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="min-h-screen flex"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* Left Side - Form */}
-      <motion.div 
+      <motion.div
         className="w-full lg:w-1/2 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8"
         style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}
         variants={formVariants}
       >
         <div className="max-w-md w-full">
-          <motion.div 
+          <motion.div
             className="bg-white/50 rounded-2xl border border-transparent shadow-lg p-6 sm:p-8"
-            whileHover={{ 
+            whileHover={{
               boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
               transition: { duration: 0.3 }
             }}
           >
             {/* Header */}
-            <motion.div 
+            <motion.div
               className="text-center mb-8"
               variants={itemVariants}
             >
               <div className="flex mb-10 items-center space-x-2">
-            <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-              <img src={Logo} alt="Logo" />
-            </div>
-            <span className="text-gray-900 font-semibold text-lg">Echo</span>
-          </div>
-              <motion.h2 
+                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                  <img src={Logo} alt="Logo" />
+                </div>
+                <span className="text-gray-900 font-semibold text-lg">Echo</span>
+              </div>
+              <motion.h2
                 className="text-2xl sm:text-3xl font-bold text-gray-900"
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -331,7 +325,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
               >
                 Create Account
               </motion.h2>
-              <motion.p 
+              <motion.p
                 className="text-gray-600 mt-2 text-sm sm:text-base"
                 initial={{ y: -10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -344,7 +338,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
             {/* Error Message */}
             <AnimatePresence>
               {error && (
-                <motion.div 
+                <motion.div
                   className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -357,8 +351,8 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
             </AnimatePresence>
 
             {/* Form */}
-            <motion.form 
-              onSubmit={handleSubmit} 
+            <motion.form
+              onSubmit={handleSubmit}
               className="space-y-6"
               variants={itemVariants}
             >
@@ -377,7 +371,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                   >
                     <div className="flex items-center">
                       <motion.div
-                        animate={{ 
+                        animate={{
                           color: formData.role ? '#FF4500' : '#9CA3AF',
                           transition: { duration: 0.2 }
                         }}
@@ -393,7 +387,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                       </span>
                     </div>
                     <motion.div
-                      animate={{ 
+                      animate={{
                         rotate: isRoleDropdownOpen ? 180 : 0,
                         transition: { duration: 0.2 }
                       }}
@@ -404,7 +398,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
 
                   <AnimatePresence>
                     {isRoleDropdownOpen && (
-                      <motion.div 
+                      <motion.div
                         className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10"
                         variants={dropdownVariants}
                         initial="closed"
@@ -416,14 +410,13 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                             key={option.value}
                             type="button"
                             onClick={() => handleRoleChange(option.value as 'PG_OWNER' | 'RESIDENT')}
-                            className={`w-full px-4 py-4 text-left hover:bg-orange-50 transition-colors ${
-                              formData.role === option.value ? 'bg-orange-100 text-[#FF4500]' : 'text-gray-700'
-                            } ${index === 0 ? 'rounded-t-2xl' : ''} ${index === roleOptions.length - 1 ? 'rounded-b-2xl' : ''}`}
+                            className={`w-full px-4 py-4 text-left hover:bg-orange-50 transition-colors ${formData.role === option.value ? 'bg-orange-100 text-[#FF4500]' : 'text-gray-700'
+                              } ${index === 0 ? 'rounded-t-2xl' : ''} ${index === roleOptions.length - 1 ? 'rounded-b-2xl' : ''}`}
                             whileHover={{ backgroundColor: '#FFF7ED', x: 4 }}
                             whileTap={{ scale: 0.98 }}
                             initial={{ opacity: 0, x: -10 }}
-                            animate={{ 
-                              opacity: 1, 
+                            animate={{
+                              opacity: 1,
                               x: 0,
                               transition: { delay: index * 0.1, duration: 0.2 }
                             }}
@@ -452,13 +445,12 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name
                 </label>
-                <motion.div 
+                <motion.div
                   className="relative"
-                  whileFocusWithin={inputFocusVariants.focus}
                 >
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <motion.div
-                      animate={{ 
+                      animate={{
                         color: formData.name ? '#FF4500' : '#9CA3AF',
                         transition: { duration: 0.2 }
                       }}
@@ -484,13 +476,12 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address
                 </label>
-                <motion.div 
+                <motion.div
                   className="relative"
-                  whileFocusWithin={inputFocusVariants.focus}
                 >
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <motion.div
-                      animate={{ 
+                      animate={{
                         color: formData.email ? '#FF4500' : '#9CA3AF',
                         transition: { duration: 0.2 }
                       }}
@@ -514,16 +505,16 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
               {/* PG Code Field (only for residents) */}
               <AnimatePresence>
                 {formData.role === 'RESIDENT' && (
-                  <motion.div 
+                  <motion.div
                     variants={itemVariants}
                     initial={{ opacity: 0, height: 0 }}
-                    animate={{ 
-                      opacity: 1, 
+                    animate={{
+                      opacity: 1,
                       height: 'auto',
                       transition: { duration: 0.4, ease: "easeOut" }
                     }}
-                    exit={{ 
-                      opacity: 0, 
+                    exit={{
+                      opacity: 0,
                       height: 0,
                       transition: { duration: 0.3 }
                     }}
@@ -531,13 +522,12 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                     <label htmlFor="pgCode" className="block text-sm font-medium text-gray-700 mb-2">
                       PG Code
                     </label>
-                    <motion.div 
+                    <motion.div
                       className="relative"
-                      whileFocusWithin={inputFocusVariants.focus}
                     >
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <motion.div
-                          animate={{ 
+                          animate={{
                             color: formData.pgCode ? '#FF4500' : '#9CA3AF',
                             transition: { duration: 0.2 }
                           }}
@@ -556,12 +546,12 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                         placeholder="Enter PG code"
                       />
                       {searchingPg && (
-                        <motion.div 
+                        <motion.div
                           className="absolute inset-y-0 right-0 pr-3 flex items-center"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                         >
-                          <motion.div 
+                          <motion.div
                             className="rounded-full h-4 w-4 border-b-2 border-orange-600"
                             animate={{ rotate: 360 }}
                             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -569,11 +559,11 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                         </motion.div>
                       )}
                     </motion.div>
-                    
+
                     {/* PG Community Info */}
                     <AnimatePresence>
                       {pgCommunity && (
-                        <motion.div 
+                        <motion.div
                           className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg"
                           variants={pgCardVariants}
                           initial="hidden"
@@ -608,13 +598,12 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
-                <motion.div 
+                <motion.div
                   className="relative"
-                  whileFocusWithin={inputFocusVariants.focus}
                 >
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <motion.div
-                      animate={{ 
+                      animate={{
                         color: formData.password ? '#FF4500' : '#9CA3AF',
                         transition: { duration: 0.2 }
                       }}
@@ -640,7 +629,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                     whileTap={{ scale: 0.9 }}
                   >
                     <motion.div
-                      animate={{ 
+                      animate={{
                         rotate: showPassword ? 180 : 0,
                         transition: { duration: 0.3 }
                       }}
@@ -660,13 +649,12 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
                   Confirm Password
                 </label>
-                <motion.div 
+                <motion.div
                   className="relative"
-                  whileFocusWithin={inputFocusVariants.focus}
                 >
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <motion.div
-                      animate={{ 
+                      animate={{
                         color: formData.confirmPassword ? '#FF4500' : '#9CA3AF',
                         transition: { duration: 0.2 }
                       }}
@@ -692,7 +680,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
                     whileTap={{ scale: 0.9 }}
                   >
                     <motion.div
-                      animate={{ 
+                      animate={{
                         rotate: showConfirmPassword ? 180 : 0,
                         transition: { duration: 0.3 }
                       }}
@@ -724,14 +712,14 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
               >
                 <AnimatePresence mode="wait">
                   {loading ? (
-                    <motion.div 
+                    <motion.div
                       className="flex items-center justify-center"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       key="loading"
                     >
-                      <motion.div 
+                      <motion.div
                         className="rounded-full h-4 w-4 border-b-2 border-white mr-2"
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -753,7 +741,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
             </motion.form>
 
             {/* Footer */}
-            <motion.div 
+            <motion.div
               className="mt-6 text-center"
               variants={itemVariants}
             >
@@ -774,8 +762,8 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
       </motion.div>
 
       {/* Right Side - Image */}
-      <motion.div 
-        className="hidden lg:flex lg:w-1/2 relative overflow-hidden" 
+      <motion.div
+        className="hidden lg:flex lg:w-1/2 relative overflow-hidden"
         style={{ backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%, #F9F7F5 0%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)' }}
         variants={imageVariants}
       >
@@ -783,7 +771,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
           src={Registerpic}
           alt="Register"
           className="w-full h-[940px] object-cover p-5 rounded-[32px]"
-          whileHover={{ 
+          whileHover={{
             scale: 1.02,
             transition: { duration: 0.4 }
           }}
@@ -792,22 +780,22 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
           src={Loginillus}
           alt="Login Illustration"
           className="absolute top-1/2 left-1/2 w-[400px] h-[400px] object-contain transform -translate-x-1/2 -translate-y-1/2"
-          initial={{ 
-            opacity: 0, 
+          initial={{
+            opacity: 0,
             y: 50,
             rotate: -10
           }}
-          animate={{ 
-            opacity: 1, 
+          animate={{
+            opacity: 1,
             y: 0,
             rotate: 0,
-            transition: { 
-              delay: 0.5, 
+            transition: {
+              delay: 0.5,
               duration: 0.8,
               ease: "easeOut"
             }
           }}
-          whileHover={{ 
+          whileHover={{
             y: -10,
             rotate: 5,
             transition: { duration: 0.3 }

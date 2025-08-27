@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import type {Variants} from 'framer-motion'
+import { motion, AnimatePresence,  } from 'framer-motion';
 import { serverUrl } from '@/utils';
 import userStore from '@/store/userStore';
 import Loginpic from '../../assets/LoginPic.jpg';
@@ -72,7 +73,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
   };
 
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -83,7 +84,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -95,7 +96,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
     }
   };
 
-  const formVariants = {
+  const formVariants: Variants = {
     hidden: { x: -50, opacity: 0 },
     visible: {
       x: 0,
@@ -107,7 +108,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
     }
   };
 
-  const imageVariants = {
+  const imageVariants: Variants = {
     hidden: { x: 50, opacity: 0, scale: 0.9 },
     visible: {
       x: 0,
@@ -120,20 +121,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
     }
   };
 
-  const buttonVariants = {
+  const buttonVariants: Variants = {
     idle: { scale: 1 },
     hover: { 
       scale: 1.02,
       transition: { duration: 0.2 }
     },
     tap: { scale: 0.98 }
-  };
-
-  const inputFocusVariants = {
-    focus: { 
-      scale: 1.02,
-      transition: { duration: 0.2 }
-    }
   };
 
   return (
@@ -208,7 +202,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
                 </label>
                 <motion.div 
                   className="relative"
-                  whileFocusWithin={inputFocusVariants.focus}
                 >
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <motion.div
@@ -240,7 +233,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
                 </label>
                 <motion.div 
                   className="relative"
-                  whileFocusWithin={inputFocusVariants.focus}
                 >
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <motion.div

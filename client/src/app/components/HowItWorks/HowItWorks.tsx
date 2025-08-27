@@ -4,6 +4,7 @@ import Icon3 from '../../../assets/Icon3.svg';
 import Icon4 from '../../../assets/Icon4.svg';
 import Icon5 from '../../../assets/Icon5.svg';
 import { motion } from 'framer-motion';
+import type {Variants} from 'framer-motion'
 
 const steps = [
   { 
@@ -50,7 +51,7 @@ const steps = [
 
 const HowItWorks = () => {
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     initial: {},
     animate: {
       transition: {
@@ -59,7 +60,7 @@ const HowItWorks = () => {
     }
   };
 
-  const stepVariants = {
+  const stepVariants: Variants = {
     initial: { opacity: 0, y: 30 },
     animate: { 
       opacity: 1, 
@@ -68,7 +69,7 @@ const HowItWorks = () => {
     }
   };
 
-  const iconVariants = {
+  const iconVariants: Variants = {
     initial: { scale: 0.8, opacity: 0 },
     animate: { 
       scale: 1, 
@@ -77,7 +78,7 @@ const HowItWorks = () => {
     }
   };
 
-  const lineVariants = {
+  const lineVariants: Variants = {
     initial: { scaleX: 0 },
     animate: { 
       scaleX: 1,
