@@ -268,32 +268,6 @@ const CommunityTechnicians: React.FC<CommunityTechniciansProps> = ({ communityId
               ? 'Try adjusting your search or filter criteria.'
               : 'Add technicians to manage maintenance and services.'}
           </p>
-          {!searchTerm && !specialityFilter && (
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
-                  borderRadius: '16px',
-                  border: '1px solid #FFF',
-                  background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF9A72 113%)',
-                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
-                }}
-              >
-                Add New Technician
-              </button>
-              <button
-                onClick={() => setShowImportModal(true)}
-                className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
-                  borderRadius: '16px',
-                  border: '1px solid #FFF',
-                  background: 'linear-gradient(180deg, #FFF 0%, #E6D5FF 56.5%, #B2A1FF 113%)',
-                  boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
-                }}
-              >
-                Import from Other PGs
-              </button>
-            </div>
-          )}
         </div>
       ) : (
         <div className="space-y-4">

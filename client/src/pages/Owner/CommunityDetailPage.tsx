@@ -337,7 +337,7 @@ const CommunityDetailPage: React.FC = () => {
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden h-full overflow-hidden">
+      <div className="lg:hidden h-full overflow-y-auto">
         {/* Mobile Header - Fixed */}
         <motion.div 
           className="shadow-lg border-b flex-shrink-0"
@@ -502,20 +502,14 @@ const CommunityDetailPage: React.FC = () => {
           className="flex-1 overflow-y-auto"
         >
           <motion.div 
-            className="px-4 py-8"
+            className="py-8"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >          
             {/* Mobile Tab Content */}
             <motion.div 
-              className="rounded-2xl overflow-hidden"
-              style={{
-                borderRadius: "15px",
-                background: '#F4F4F4',
-                boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
-                border: '4px solid rgba(255,255,255,0.95)'
-              }}
+              className="rounded-2xl overflow-y-auto"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
