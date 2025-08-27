@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   CalendarIcon,
-  MagnifyingGlassIcon,
   ChevronDownIcon,
   SparklesIcon,
   PlusIcon,
-  ClockIcon
+  ClockIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import { serverUrl } from '@/utils';
 import { useWhatsApp } from '@/services/whatsappService';
@@ -81,28 +81,39 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
   const [eventTypeFilter, setEventTypeFilter] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(10);
+  // @ts-ignore
   const [sortBy, setSortBy] = useState('startDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // Dropdown states
   const [isUpcomingDropdownOpen, setIsUpcomingDropdownOpen] = useState(false);
   const [isEventTypeDropdownOpen, setIsEventTypeDropdownOpen] = useState(false);
-  const [isSortByDropdownOpen, setIsSortByDropdownOpen] = useState(false);
   const [isSortOrderDropdownOpen, setIsSortOrderDropdownOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [showGroupSelector, setShowGroupSelector] = useState(false);
   const [currentEventSuggestion, setCurrentEventSuggestion] = useState<any>(null);
 
-
+  // QR Modal state
+  const [showQRModal, setShowQRModal] = useState(false);
 
   const {
     isReady,
     isInitializing,
     qrCode,
+    qrCodeDataURL,
     groups,
     loading: whatsappLoading,
     sendEventBroadcast,
   } = useWhatsApp();
+
+  // Show QR modal when QR code is available 
+  useEffect(() => {
+    if (qrCodeDataURL) {
+      setShowQRModal(true);
+    } else {
+      setShowQRModal(false);
+    }
+  }, [qrCodeDataURL]);
 
   useEffect(() => {
     loadEvents();
@@ -126,9 +137,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         withCredentials: true
       });
 
-      // Fix: Map the API response structure correctly
       if (response.data.success && response.data.data) {
-        // Transform the events data to match your component's expected structure
         const transformedEvents = response.data.data.map((event: any) => ({
           id: event.id,
           title: event.title,
@@ -137,7 +146,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
           startDate: event.startDate,
           endDate: event.endDate,
           location: event.location,
-          maxAttendees: event.maxCapacity, // Note: API uses maxCapacity, component expects maxAttendees
+          maxAttendees: event.maxCapacity,
           currentAttendees: event._count?.attendances || 0,
           organizer: {
             id: event.createdBy.id,
@@ -146,7 +155,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
           },
           createdAt: event.createdAt,
           updatedAt: event.updatedAt,
-          status: determineEventStatus(event.startDate, event.endDate) // You'll need this helper function
+          status: determineEventStatus(event.startDate, event.endDate)
         }));
 
         setEventsData({
@@ -279,11 +288,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
     }
   };
 
-  const handleSearch = () => {
-    setCurrentPage(1);
-    loadEvents();
-  };
-
   const getStatusColor = (status: string) => {
     const colors = {
       UPCOMING: 'bg-blue-100 text-blue-800',
@@ -331,12 +335,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
     { value: 'MEETING', label: 'Meeting' }
   ];
 
-  const sortByOptions = [
-    { value: 'startDate', label: 'Start Date' },
-    { value: 'createdAt', label: 'Created Date' },
-    { value: 'title', label: 'Title' }
-  ];
-
   const sortOrderOptions = [
     { value: 'desc', label: 'Descending' },
     { value: 'asc', label: 'Ascending' }
@@ -376,16 +374,16 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
     );
   }
 
-
   const broadCastEvent = async (eventSuggestion: any) => {
     // Step 1: Initialize WhatsApp if not ready
     if (!isReady) {
+      console.log("whatsapp is not ready")
       return;
     }
 
     // Step 2: Check if groups are available
     if (groups.length === 0) {
-      alert('❌ No WhatsApp groups found. Make sure you have groups and try refreshing.');
+      alert('No WhatsApp groups found. Make sure you have groups and try refreshing.');
       return;
     }
 
@@ -417,18 +415,18 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         await implementSuggestion(currentEventSuggestion.id);
 
         // Show success message
-        alert('✅ Event broadcasted to WhatsApp and created successfully!');
+        alert('Event broadcasted to WhatsApp and created successfully!');
 
         // Reset modal state
         setShowGroupSelector(false);
         setSelectedGroupId('');
         setCurrentEventSuggestion(null);
       } else {
-        alert('❌ Failed to broadcast event to WhatsApp');
+        alert('Failed to broadcast event to WhatsApp');
       }
     } catch (error) {
       console.error('Failed to broadcast and create event:', error);
-      alert('❌ Error occurred while broadcasting event');
+      alert('Error occurred while broadcasting event');
     }
   };
 
@@ -437,8 +435,84 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
     setSelectedGroupId('');
     setCurrentEventSuggestion(null);
   };
+
+  // QR Modal close handler
+  const handleCloseQRModal = () => {
+    setShowQRModal(false);
+  };
+
   return (
     <div className="p-4">
+      {/* QR Code Modal */}
+      {showQRModal && qrCodeDataURL && (
+        <div className="fixed inset-0 bg-black/50 bg-opacity-75 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+            <button
+              onClick={handleCloseQRModal}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <XMarkIcon className="h-6 w-6" />
+            </button>
+
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Connect WhatsApp
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Scan this QR code with your WhatsApp mobile app to connect
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <div className="bg-white p-4 rounded-lg border-2 border-gray-200 inline-block">
+                  <img
+                    src={qrCodeDataURL}
+                    alt="WhatsApp QR Code"
+                    className="w-48 h-48 mx-auto"
+                    onError={(e) => {
+                      console.error('QR Code image failed to load:', qrCodeDataURL);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-center text-sm text-gray-600">
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                    <span>Open WhatsApp on your phone</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center text-sm text-gray-600">
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                    <span>Tap Menu → Linked Devices</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center text-sm text-gray-600">
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                    <span>Tap "Link a Device" and scan this code</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 text-center">
+                <p className="text-xs text-gray-500">
+                  This QR code will expire automatically once connected
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {!isReady && (
         <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
@@ -451,13 +525,13 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
             <div className="ml-3">
               <p className="text-sm text-yellow-800">
                 {isInitializing
-                  ? '📱 WhatsApp connecting... Check your backend console for QR code'
-                  : '📱 WhatsApp not connected. Click "Broadcast Event" to setup.'
+                  ? 'WhatsApp connecting. QR code will appear shortly'
+                  : 'WhatsApp not connected. Click "Broadcast Event" to setup.'
                 }
               </p>
               {qrCode && (
                 <p className="text-xs text-yellow-600 mt-1">
-                  QR Code available in backend console - scan with your phone
+                  QR Code available - scan with your phone
                 </p>
               )}
             </div>
@@ -466,7 +540,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
       )}
 
       {/* AI Event Suggestion Section */}
-      {eventSuggestion && (
+      {eventSuggestion ? (
         <div className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-2xl p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center">
@@ -475,16 +549,15 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
             </div>
             <div className="flex space-x-2">
               <button
-                onClick={handleGenerateNewSuggestions}  // NEW
+                onClick={handleGenerateNewSuggestions}
                 disabled={suggestionLoading}
-                className=" mx-auto  px-6 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
+                className=" flex mx-auto px-4 py-3  hover:bg-purple-600 transition-colors font-semibold text-sm" style={{
                   borderRadius: '16px',
                   border: '1px solid #FFF',
                   background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF9A72 113%)',
                   boxShadow: '1px 3px 6.1px 0 rgba(0, 0, 0, 0.20)'
                 }}
               >
-               
                 <SparklesIcon className="h-4 w-4 mr-1" />
                 {suggestionLoading ? 'Generating...' : 'New Ideas'}
               </button>
@@ -541,16 +614,22 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
                   )}
                 </button>
               )}
-
-
             </div>
           </div>
+        </div>
+      ) : (
+        <div className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-2xl p-4 animate-pulse">
+          <div className="flex items-center mb-2">
+            <SparklesIcon className="h-6 w-6 text-purple-400 mr-2" />
+            <h3 className="text-lg font-bold text-gray-700">AI Event Suggestion</h3>
+          </div>
+          <p className="text-gray-500 text-sm">Generating event ideas for you...</p>
         </div>
       )}
 
       {/* Group Selection Modal */}
       {showGroupSelector && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 bg-opacity-75 backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">Select WhatsApp Group</h3>
 
@@ -565,8 +644,8 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
                     <div
                       key={group.id}
                       className={`p-3 border rounded-lg cursor-pointer mb-2 transition-colors ${selectedGroupId === group.id
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
                         }`}
                       onClick={() => setSelectedGroupId(group.id)}
                     >
@@ -603,7 +682,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         </div>
       )}
 
-
       {!eventSuggestion && !suggestionLoading && (
         <div className="mb-6 bg-gray-50 border border-gray-200 rounded-2xl p-4">
           <div className="flex items-center justify-between">
@@ -612,7 +690,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
               <p className="text-gray-600 text-sm">Click to generate AI-powered event ideas for your community</p>
             </div>
             <button
-              onClick={loadEventSuggestionExplicit}  // Use explicit function for initial generation
+              onClick={loadEventSuggestionExplicit}
               className="flex items-center bg-[#FF4500] text-white px-4 py-2 rounded-lg hover:bg-[#E03E00] transition-colors text-sm font-semibold"
             >
               <SparklesIcon className="h-4 w-4 mr-1" />
@@ -622,7 +700,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         </div>
       )}
 
-      {/* All Suggestions Modal - Simple Implementation */}
+      {/* All Suggestions Modal */}
       {showAllSuggestions && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
@@ -637,11 +715,11 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
                 </button>
               </div>
               <p className="text-gray-600 text-sm">
-                View all AI-generated event suggestions for your community. Click "Create Event" to implement any suggestion.
+                View all AI-generated event suggestions for your community.
               </p>
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-600">
-                  Full suggestions list will be implemented here. For now, use the main suggestion above.
+                  Full suggestions list will be implemented here.
                 </p>
               </div>
             </div>
@@ -689,147 +767,102 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         </div>
       </div>
 
-      {/* Filters - Mobile Optimized */}
+      {/* Filters */}
       <div className="space-y-4 mb-6">
-        {/* Search Input */}
-        <div className="relative">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search events..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors"
-          />
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="relative">
+            <button
+              onClick={() => setIsUpcomingDropdownOpen(!isUpcomingDropdownOpen)}
+              className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
+            >
+              <span className="text-gray-700">
+                {upcomingOptions.find(opt => opt.value === upcomingFilter)?.label || 'All Events'}
+              </span>
+              <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform ${isUpcomingDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-        {/* Upcoming Filter Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => setIsUpcomingDropdownOpen(!isUpcomingDropdownOpen)}
-            className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
-          >
-            <span className="text-gray-700">
-              {upcomingOptions.find(opt => opt.value === upcomingFilter)?.label || 'All Events'}
-            </span>
-            <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform ${isUpcomingDropdownOpen ? 'rotate-180' : ''}`} />
-          </button>
+            {isUpcomingDropdownOpen && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                {upcomingOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      setUpcomingFilter(option.value);
+                      setIsUpcomingDropdownOpen(false);
+                    }}
+                    className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${upcomingFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
+                      } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
-          {isUpcomingDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
-              {upcomingOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    setUpcomingFilter(option.value);
-                    setIsUpcomingDropdownOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${upcomingFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                    } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+          <div className="relative">
+            <button
+              onClick={() => setIsEventTypeDropdownOpen(!isEventTypeDropdownOpen)}
+              className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
+            >
+              <span className="text-gray-700">
+                {eventTypeOptions.find(opt => opt.value === eventTypeFilter)?.label || 'All Types'}
+              </span>
+              <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform ${isEventTypeDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-        {/* Event Type Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => setIsEventTypeDropdownOpen(!isEventTypeDropdownOpen)}
-            className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
-          >
-            <span className="text-gray-700">
-              {eventTypeOptions.find(opt => opt.value === eventTypeFilter)?.label || 'All Types'}
-            </span>
-            <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform ${isEventTypeDropdownOpen ? 'rotate-180' : ''}`} />
-          </button>
+            {isEventTypeDropdownOpen && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                {eventTypeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      setEventTypeFilter(option.value);
+                      setIsEventTypeDropdownOpen(false);
+                    }}
+                    className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${eventTypeFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
+                      } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
-          {isEventTypeDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
-              {eventTypeOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    setEventTypeFilter(option.value);
-                    setIsEventTypeDropdownOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${eventTypeFilter === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                    } ${option.value === '' ? 'border-b border-gray-100' : ''}`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+          <div className="relative">
+            <button
+              onClick={() => setIsSortOrderDropdownOpen(!isSortOrderDropdownOpen)}
+              className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
+            >
+              <span className="text-gray-700">
+                {sortOrderOptions.find(opt => opt.value === sortOrder)?.label || 'Descending'}
+              </span>
+              <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform ${isSortOrderDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-        {/* Sort By Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => setIsSortByDropdownOpen(!isSortByDropdownOpen)}
-            className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
-          >
-            <span className="text-gray-700">
-              {sortByOptions.find(opt => opt.value === sortBy)?.label || 'Start Date'}
-            </span>
-            <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform ${isSortByDropdownOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {isSortByDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
-              {sortByOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    setSortBy(option.value);
-                    setIsSortByDropdownOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${sortBy === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                    } ${option.value === 'startDate' ? 'border-b border-gray-100' : ''}`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Sort Order Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => setIsSortOrderDropdownOpen(!isSortOrderDropdownOpen)}
-            className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors bg-white"
-          >
-            <span className="text-gray-700">
-              {sortOrderOptions.find(opt => opt.value === sortOrder)?.label || 'Descending'}
-            </span>
-            <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform ${isSortOrderDropdownOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {isSortOrderDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
-              {sortOrderOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    setSortOrder(option.value as 'asc' | 'desc');
-                    setIsSortOrderDropdownOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${sortOrder === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
-                    } ${option.value === 'desc' ? 'border-b border-gray-100' : ''}`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
+            {isSortOrderDropdownOpen && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                {sortOrderOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      setSortOrder(option.value as 'asc' | 'desc');
+                      setIsSortOrderDropdownOpen(false);
+                    }}
+                    className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors ${sortOrder === option.value ? 'bg-orange-100 text-[#FF4500] font-medium' : 'text-gray-700'
+                      } ${option.value === 'desc' ? 'border-b border-gray-100' : ''}`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Events List - Mobile Grid */}
+      {/* Events List */}
       {!eventsData?.events || eventsData.events.length === 0 ? (
         <div className="text-center py-12">
           <CalendarIcon className="mx-auto h-12 w-12 text-gray-300 mb-4" />
@@ -884,11 +917,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
                       {event.location && (
                         <div className="text-xs text-gray-500 mt-1">
                           Location: {event.location}
-                        </div>
-                      )}
-                      {event.maxAttendees && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          Attendees: {event.currentAttendees}/{event.maxAttendees}
                         </div>
                       )}
                     </div>

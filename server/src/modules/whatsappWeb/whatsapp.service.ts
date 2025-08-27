@@ -21,6 +21,7 @@ class WhatsAppService {
   private isReady: boolean = false;
   private isInitializing: boolean = false;
   private qrCode: string | null = null;
+  private qrCodeDataURL: string | null = null; // Store QR code as data URL for frontend
 
   constructor() {
     this.client = new Client({
@@ -46,18 +47,37 @@ class WhatsAppService {
   }
 
   private setupEventListeners(): void {
-    this.client.on('qr', (qr: string) => {
-
+    this.client.on('qr', async (qr: string) => {
       console.log('📱 QR RECEIVED - Scan with WhatsApp:');
       qrcode.generate(qr, { small: true });
 
       this.qrCode = qr;
+      
+      // Generate QR code as data URL for frontend
+      try {
+        const QRCode = require('qrcode');
+        this.qrCodeDataURL = await QRCode.toDataURL(qr, {
+          errorCorrectionLevel: 'M',
+          type: 'image/png',
+          quality: 0.92,
+          margin: 1,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+          }
+        });
+        console.log('✅ QR Code generated for frontend display');
+      } catch (error) {
+        console.error('❌ Failed to generate QR code data URL:', error);
+        this.qrCodeDataURL = null;
+      }
     });
 
     this.client.on('ready', () => {
       console.log('✅ WhatsApp Client is ready!');
       this.isReady = true;
       this.qrCode = null;
+      this.qrCodeDataURL = null; // Clear QR code once authenticated
     });
 
     this.client.on('authenticated', () => {
@@ -68,6 +88,7 @@ class WhatsAppService {
       console.error('❌ Authentication failed:', msg);
       this.isReady = false;
       this.qrCode = null;
+      this.qrCodeDataURL = null;
     });
 
     this.client.on('disconnected', (reason: string) => {
@@ -163,11 +184,13 @@ _This message was sent automatically by Event Manager Bot_ 🤖`;
     isReady: boolean;
     isInitializing: boolean;
     qrCode: string | null;
+    qrCodeDataURL: string | null; // Add this for frontend
   } {
     return {
       isReady: this.isReady,
       isInitializing: this.isInitializing,
-      qrCode: this.qrCode
+      qrCode: this.qrCode,
+      qrCodeDataURL: this.qrCodeDataURL
     };
   }
 
@@ -177,6 +200,7 @@ _This message was sent automatically by Event Manager Bot_ 🤖`;
       this.isReady = false;
       this.isInitializing = false;
       this.qrCode = null;
+      this.qrCodeDataURL = null;
     } catch (error) {
       console.error('❌ Failed to destroy WhatsApp client:', error);
     }

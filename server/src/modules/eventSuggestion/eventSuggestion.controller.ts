@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { eventSuggestionService } from './eventSuggestion.service';
-import { mockDataInjectionService } from '../../mockData/mockDataInjectionService';
 import { AppError } from '../../utils/errors';
 import { ai } from '../../lib/googleGemini';
+import { getTargetDates } from './targetDates';
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -15,7 +15,7 @@ class EventSuggestionController {
 
   /**
    * @route POST /api/event-suggestions/:pgId/generate
-   * @desc Generate AI-powered event suggestions with auto mock data injection
+   * @desc Generate AI-powered event suggestions based on current date and upcoming occasions
    * @access Private (PG Owner or Resident)
    */
   generateSuggestions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -49,7 +49,7 @@ class EventSuggestionController {
 
         console.log("Checking existing suggestions", existingResult);
 
-        // Fixed condition: return existing suggestions if they exist
+        // Return existing suggestions if they exist
         if (existingResult.suggestions && existingResult.suggestions.length > 0) {
           return res.status(200).json({
             success: true,
@@ -59,7 +59,7 @@ class EventSuggestionController {
         }
       }
 
-      // Generate new suggestions if none exist or forceFresh is true
+      // Generate new suggestions
       const result = await eventSuggestionService.generateEventSuggestions(
         pgId,
         req.user.userId,
@@ -83,14 +83,7 @@ class EventSuggestionController {
 
   /**
    * @route GET /api/event-suggestions/:pgId
-   * @desc Get existing event suggestions with broadcast info
-   * @access Private (PG Owner or Resident)
-   */
-  // Fixed Backend Controller
-
-  /**
-   * @route GET /api/event-suggestions/:pgId
-   * @desc Get existing event suggestions with broadcast info
+   * @desc Get existing event suggestions with auto-generation if none exist
    * @access Private (PG Owner or Resident)
    */
   getSuggestions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -103,7 +96,7 @@ class EventSuggestionController {
       const {
         status,
         limit = '10',
-        autoGenerate = 'true' // Add this parameter to control auto-generation
+        autoGenerate = 'true'
       } = req.query;
 
       const filters = {
@@ -122,7 +115,7 @@ class EventSuggestionController {
 
       // If no suggestions exist and autoGenerate is true, generate them
       if ((!result.suggestions || result.suggestions.length === 0) && autoGenerate === 'true') {
-        console.log("No suggestions found, auto-generating...");
+        console.log("No suggestions found, auto-generating based on current date...");
 
         if (!ai) {
           throw new AppError('AI service not available', 503);
@@ -154,7 +147,6 @@ class EventSuggestionController {
       next(error);
     }
   };
-
 
   /**
    * @route POST /api/event-suggestions/:suggestionId/broadcast
@@ -200,51 +192,6 @@ class EventSuggestionController {
       next(error);
     }
   };
-
-  /**
-   * @route PATCH /api/event-suggestions/:suggestionId/status
-   * @desc Update suggestion status (approve/reject)
-   * @access Private (PG Owner)
-   */
-  // updateSuggestionStatus = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  //   try {
-  //     if (!req.user) {
-  //       throw new AppError('Authentication required', 401);
-  //     }
-
-  //     const { suggestionId } = req.params;
-  //     const { 
-  //       status,
-  //       ownerFeedback,
-  //       ownerRating 
-  //     } = req.body;
-
-  //     if (!['APPROVED', 'REJECTED', 'PENDING'].includes(status)) {
-  //       throw new AppError('Invalid status value', 400);
-  //     }
-
-  //     if (ownerRating && (ownerRating < 1 || ownerRating > 5)) {
-  //       throw new AppError('Rating must be between 1 and 5', 400);
-  //     }
-
-  //     const updatedSuggestion = await eventSuggestionService.updateSuggestionStatus(
-  //       suggestionId,
-  //       status,
-  //       ownerFeedback,
-  //       ownerRating,
-  //       req.user.userId
-  //     );
-
-  //     res.status(200).json({
-  //       success: true,
-  //       message: 'Suggestion status updated successfully',
-  //       data: updatedSuggestion
-  //     });
-
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
 
   /**
    * @route POST /api/event-suggestions/:suggestionId/implement
@@ -307,39 +254,8 @@ class EventSuggestionController {
   };
 
   /**
-   * @route GET /api/event-suggestions/:pgId/mock-data-info
-   * @desc Get information about injected mock data
-   * @access Private (PG Owner or Resident)
-   */
-  getMockDataInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      if (!req.user) {
-        throw new AppError('Authentication required', 401);
-      }
-
-      const { pgId } = req.params;
-
-      const mockDataInfo = await mockDataInjectionService.getMockDataInfo(pgId);
-      const hasMockData = await mockDataInjectionService.hasMockData(pgId);
-
-      res.status(200).json({
-        success: true,
-        message: 'Mock data information retrieved successfully',
-        data: {
-          hasMockData,
-          mockDataInfo,
-          isFirstTime: !hasMockData
-        }
-      });
-
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
    * @route GET /api/event-suggestions/target-dates
-   * @desc Get target dates for event suggestions
+   * @desc Get target dates for event suggestions based on current date
    * @access Private (Any authenticated user)
    */
   getTargetDates = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -348,13 +264,13 @@ class EventSuggestionController {
         throw new AppError('Authentication required', 401);
       }
 
-      const { getTargetDates } = await import('../../mockData/eventsMockData');
       const targetDates = getTargetDates();
 
       res.status(200).json({
         success: true,
         message: 'Target dates retrieved successfully',
-        data: targetDates
+        data: targetDates,
+        currentDate: new Date().toISOString()
       });
 
     } catch (error) {
@@ -363,52 +279,39 @@ class EventSuggestionController {
   };
 
   /**
-   * @route GET /api/event-suggestions/mock-data-stats
-   * @desc Get statistics about mock data distribution (Admin only)
-   * @access Private (Admin)
-   */
-  // getMockDataStats = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  //   try {
-  //     if (!req.user) {
-  //       throw new AppError('Authentication required', 401);
-  //     }
-
-  //     // In a real app, you'd check for admin role here
-  //     const stats = await mockDataInjectionService.getMockDataStats();
-
-  //     res.status(200).json({
-  //       success: true,
-  //       message: 'Mock data statistics retrieved successfully',
-  //       data: stats
-  //     });
-
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
-
-  /**
-   * @route DELETE /api/event-suggestions/:pgId/mock-data
-   * @desc Clear mock data for a PG (Testing purposes)
+   * @route POST /api/event-suggestions/:pgId/refresh
+   * @desc Force refresh suggestions based on current date
    * @access Private (PG Owner)
    */
-  clearMockData = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  refreshSuggestions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
         throw new AppError('Authentication required', 401);
       }
 
       if (req.user.role !== 'PG_OWNER') {
-        throw new AppError('Only PG owners can clear mock data', 403);
+        throw new AppError('Only PG owners can refresh suggestions', 403);
       }
 
       const { pgId } = req.params;
 
-      await mockDataInjectionService.clearMockData(pgId);
+      if (!ai) {
+        throw new AppError('AI service not available', 503);
+      }
+
+      // Force generate fresh suggestions
+      const result = await eventSuggestionService.generateEventSuggestions(
+        pgId,
+        req.user.userId,
+        req.user.role,
+        ai,
+        { forceFresh: true }
+      );
 
       res.status(200).json({
         success: true,
-        message: 'Mock data cleared successfully'
+        message: 'Event suggestions refreshed successfully',
+        data: result
       });
 
     } catch (error) {
@@ -417,38 +320,37 @@ class EventSuggestionController {
   };
 
   /**
-   * @route POST /api/event-suggestions/:pgId/force-inject
-   * @desc Force inject mock data (Testing purposes)
-   * @access Private (PG Owner)
+   * @route GET /api/event-suggestions/:pgId/status
+   * @desc Get status of event suggestions for a PG
+   * @access Private (PG Owner or Resident)
    */
-  forceInjectMockData = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  getSuggestionStatus = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
         throw new AppError('Authentication required', 401);
       }
 
-      if (req.user.role !== 'PG_OWNER') {
-        throw new AppError('Only PG owners can force inject mock data', 403);
-      }
-
       const { pgId } = req.params;
 
-      // Clear existing mock data first
-      try {
-        await mockDataInjectionService.clearMockData(pgId);
-      } catch (error) {
-        // Ignore if no mock data exists
-      }
+      const result = await eventSuggestionService.getEventSuggestions(
+        pgId,
+        req.user.userId,
+        req.user.role,
+        { limit: 1 }
+      );
 
-      // Inject fresh mock data
-      await mockDataInjectionService.injectMockDataToPg(pgId);
-
-      const mockDataInfo = await mockDataInjectionService.getMockDataInfo(pgId);
+      const targetDates = getTargetDates();
 
       res.status(200).json({
         success: true,
-        message: 'Mock data injected successfully',
-        data: mockDataInfo
+        message: 'Suggestion status retrieved successfully',
+        data: {
+          hasSuggestions: result.suggestions && result.suggestions.length > 0,
+          totalSuggestions: result.total,
+          latestSuggestion: result.suggestions?.[0] || null,
+          nextTargetDates: targetDates,
+          currentDate: new Date().toISOString()
+        }
       });
 
     } catch (error) {

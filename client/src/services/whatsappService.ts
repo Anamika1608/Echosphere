@@ -20,6 +20,7 @@ export const useWhatsApp = () => {
   const [isReady, setIsReady] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const [qrCodeDataURL, setQrCodeDataURL] = useState<string | null>(null); // Add this state
   const [groups, setGroups] = useState<WhatsAppGroup[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,15 +30,15 @@ export const useWhatsApp = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       await whatsappAPI.initializeWhatsApp();
-      
+
       // Start polling for status updates
       pollStatus();
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
-      console.error('❌ WhatsApp initialization failed:', err);
+      console.error('Failed to initialize WhatsApp:', err);
     } finally {
       setLoading(false);
     }
@@ -51,7 +52,8 @@ export const useWhatsApp = () => {
         setIsReady(status.isReady);
         setIsInitializing(status.isInitializing);
         setQrCode(status.qrCode);
-        
+        setQrCodeDataURL(status.qrCodeDataURL); // Update QR code data URL
+
         if (status.isReady) {
           clearInterval(interval);
           fetchGroups(); // Fetch groups once ready
@@ -73,7 +75,7 @@ export const useWhatsApp = () => {
       setGroups(fetchedGroups);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch groups');
-      console.error('❌ Failed to fetch groups:', err);
+      console.error('Failed to fetch groups:', err);
     } finally {
       setLoading(false);
     }
@@ -89,7 +91,7 @@ export const useWhatsApp = () => {
       setError(null);
 
       const success = await whatsappAPI.sendEventBroadcast(groupId, eventData);
-      
+
       if (success) {
         return true;
       }
@@ -97,7 +99,7 @@ export const useWhatsApp = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
-      console.error('❌ Broadcast failed:', err);
+      console.error('Broadcast failed:', err);
       return false;
     } finally {
       setLoading(false);
@@ -112,9 +114,12 @@ export const useWhatsApp = () => {
         setIsReady(status.isReady);
         setIsInitializing(status.isInitializing);
         setQrCode(status.qrCode);
-        
+        setQrCodeDataURL(status.qrCodeDataURL); // Set QR code data URL
+
         if (status.isReady) {
           fetchGroups();
+        } else {
+          initializeWhatsApp();
         }
       } catch (err) {
         console.error('Failed to check initial status:', err);
@@ -122,12 +127,13 @@ export const useWhatsApp = () => {
     };
 
     checkInitialStatus();
-  }, [fetchGroups]);
+  }, [fetchGroups, initializeWhatsApp]);
 
   return {
     isReady,
     isInitializing,
     qrCode,
+    qrCodeDataURL, // Expose QR code data URL
     groups,
     loading,
     error,

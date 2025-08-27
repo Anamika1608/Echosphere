@@ -1,7 +1,4 @@
-
 import { serverUrl } from '../utils';
-
-
 
 interface EventData {
   title: string;
@@ -22,6 +19,7 @@ interface WhatsAppStatus {
   isReady: boolean;
   isInitializing: boolean;
   qrCode: string | null;
+  qrCodeDataURL: string | null; // Add this for the QR code image
 }
 
 class WhatsAppAPI {
@@ -33,6 +31,8 @@ class WhatsAppAPI {
       },
     });
 
+    console.log("after initializeWhatsApp", response);
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.error || 'Failed to initialize WhatsApp');
@@ -43,6 +43,8 @@ class WhatsAppAPI {
 
   async getStatus(): Promise<WhatsAppStatus> {
     const response = await fetch(`${serverUrl}/whatsapp/status`);
+
+    console.log("response after fetching status", response);
     
     if (!response.ok) {
       throw new Error('Failed to get WhatsApp status');
@@ -86,10 +88,3 @@ class WhatsAppAPI {
 }
 
 export const whatsappAPI = new WhatsAppAPI();
-
-
-
-
-
-
-

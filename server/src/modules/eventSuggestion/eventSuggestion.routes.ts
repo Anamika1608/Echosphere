@@ -93,40 +93,4 @@ router.post(
   eventSuggestionController.implementSuggestion
 );
 
-/**
- * @route GET /api/event-suggestions/:pgId/mock-data-info
- * @desc Get information about injected mock data
- * @access Private (PG Owner or Resident)
- */
-router.get(
-  '/:pgId/mock-data-info',
-  authenticateToken,
-  validate(eventSuggestionValidationSchemas.getPgInfoSchema),
-  eventSuggestionController.getMockDataInfo
-);
-
-/**
- * @route DELETE /api/event-suggestions/:pgId/mock-data
- * @desc Clear mock data for a PG (Testing purposes)
- * @access Private (PG Owner)
- */
-router.delete(
-  '/:pgId/mock-data',
-  authenticateToken,
-  validate(eventSuggestionValidationSchemas.getPgInfoSchema),
-  eventSuggestionController.clearMockData
-);
-
-/**
- * @route POST /api/event-suggestions/:pgId/force-inject
- * @desc Force inject mock data (Testing purposes)
- * @access Private (PG Owner)
- */
-router.post(
-  '/:pgId/force-inject',
-  authenticateToken,
-  validate(eventSuggestionValidationSchemas.getPgInfoSchema),
-  eventSuggestionController.forceInjectMockData
-);
-
 export { router as eventSuggestionRouter };

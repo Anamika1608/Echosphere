@@ -1,22 +1,20 @@
 import { PrismaClient } from '@prisma/client';
 import Redis from 'ioredis';
 import { AppError } from '../../utils/errors';
-import { mockDataInjectionService } from '../../mockData/mockDataInjectionService';
-import { getTargetDates, REDIS_KEYS } from '../../mockData/eventsMockData';
+import { getTargetDates, REDIS_KEYS } from './targetDates';
 
 const prisma = new PrismaClient();
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 
 interface EventSuggestionFilters {
   eventType?: string;
-  forceFresh?: boolean; // Force new suggestions
+  forceFresh?: boolean; 
 }
 
 export class EventSuggestionService {
 
   /**
-   * Generate AI-powered event suggestions for specific target dates
-   * Auto-injects mock data if needed
+   * Generate AI-powered event suggestions without mock data
    */
   async generateEventSuggestions(
     pgCommunityId: string,
@@ -29,13 +27,6 @@ export class EventSuggestionService {
       // Verify user access
       await this.verifyUserAccess(pgCommunityId, userId, userRole);
 
-      // Auto-inject mock data if this is the first time
-      const hasMockData = await mockDataInjectionService.hasMockData(pgCommunityId);
-      if (!hasMockData) {
-        console.log(`🔄 Auto-injecting mock data for PG: ${pgCommunityId}`);
-        await mockDataInjectionService.injectMockDataToPg(pgCommunityId);
-      }
-
       // Check if we have cached suggestions (unless force fresh)
       if (!filters.forceFresh) {
         const cachedSuggestions = await this.getCachedSuggestions(pgCommunityId);
@@ -45,13 +36,13 @@ export class EventSuggestionService {
         }
       }
 
-      // Get PG community data with injected mock data
-      const pgCommunity = await this.getPgCommunityWithHistory(pgCommunityId);
+      // Get PG community basic data
+      const pgCommunity = await this.getPgCommunityData(pgCommunityId);
 
       // Get target dates for suggestions
       const targetDates = getTargetDates();
 
-      // Generate suggestions using Gemini AI for each target date
+      // Generate suggestions using AI for each target date
       const allSuggestions = [];
       for (const targetDate of targetDates) {
         const suggestions = await this.generateAISuggestionsForDate(
@@ -73,9 +64,9 @@ export class EventSuggestionService {
         pgCommunity: {
           name: pgCommunity.name,
           facilitiesCount: pgCommunity.facilities.length,
-          pastEventsCount: pgCommunity.events.length
+          residentsCount: pgCommunity.residents.length
         },
-        mockDataInfo: await mockDataInjectionService.getMockDataInfo(pgCommunityId)
+        generatedAt: new Date().toISOString()
       };
 
       await this.cacheSuggestions(pgCommunityId, result);
@@ -140,7 +131,7 @@ export class EventSuggestionService {
         ...suggestion,
         canBroadcast: userRole === 'PG_OWNER',
         residentsCount: suggestion.pgCommunity.residents.length,
-        broadcastStatus: 'ready' // Can be 'ready', 'sent', 'scheduled'
+        broadcastStatus: 'ready'
       }));
 
       return {
@@ -162,7 +153,7 @@ export class EventSuggestionService {
     broadcastData: {
       message?: string;
       scheduleFor?: Date;
-      channels?: string[]; // ['email', 'push', 'sms']
+      channels?: string[];
     }
   ) {
     try {
@@ -202,10 +193,10 @@ export class EventSuggestionService {
       const broadcastMessage = broadcastData.message ||
         `🎉 New Event Suggestion: ${suggestion.title}\n\n${suggestion.description}\n\nSuggested Date: ${suggestion.suggestedDate?.toDateString()}\nExpected Engagement: ${suggestion.expectedEngagement}%\n\nWhat do you think? Let us know your interest!`;
 
-      // Create broadcast record (you can create a separate Broadcast model)
+      // Create broadcast record
       const broadcastId = `broadcast_${Date.now()}`;
 
-      // Store broadcast info in Redis for now
+      // Store broadcast info in Redis
       await redis.setex(`broadcast:${broadcastId}`, 3600 * 24 * 7, JSON.stringify({
         suggestionId,
         pgCommunityId: suggestion.pgCommunityId,
@@ -218,16 +209,12 @@ export class EventSuggestionService {
         sentAt: new Date()
       }));
 
-      // Here you would integrate with your notification service
-      // For now, we'll just log the broadcast
       console.log(`📢 Broadcasting suggestion "${suggestion.title}" to ${residents.length} residents`);
-      console.log(`Message: ${broadcastMessage}`);
 
       // Update suggestion with broadcast info
       await prisma.eventSuggestion.update({
         where: { id: suggestionId },
         data: {
-          // Add broadcast fields if you extend the schema
           updatedAt: new Date()
         }
       });
@@ -279,7 +266,7 @@ export class EventSuggestionService {
           title: suggestion.title,
           description: suggestion.description,
           eventType: suggestion.suggestedEventType,
-          location: suggestion.requiredFacilities[0] || 'TBD',
+          location: suggestion.requiredFacilities[0] || suggestion.location || 'TBD',
           startDate,
           endDate,
           maxCapacity: eventDetails.maxCapacity || suggestion.recommendedCapacity,
@@ -288,7 +275,7 @@ export class EventSuggestionService {
           createdById: userId,
           pgCommunityId: suggestion.pgCommunityId,
           requiresRegistration: true,
-          registrationDeadline: new Date(startDate.getTime() - 24 * 60 * 60 * 1000) // 1 day before
+          registrationDeadline: new Date(startDate.getTime() - 24 * 60 * 60 * 1000)
         }
       });
 
@@ -331,22 +318,11 @@ export class EventSuggestionService {
     }
   }
 
-  private async getPgCommunityWithHistory(pgCommunityId: string) {
+  private async getPgCommunityData(pgCommunityId: string) {
     const pgCommunity = await prisma.pgCommunity.findUnique({
       where: { id: pgCommunityId },
       include: {
         facilities: true,
-        events: {
-          include: {
-            analytics: true,
-            attendances: true,
-            feedbacks: true
-          },
-          orderBy: {
-            startDate: 'desc'
-          },
-          take: 10
-        },
         residents: {
           select: {
             id: true,
@@ -377,23 +353,9 @@ export class EventSuggestionService {
       amenities: f.amenities
     }));
 
-    const pastEventsData = pgCommunity.events
-      .filter((e: any) => e.analytics)
-      .map((e: any) => ({
-        title: e.title,
-        type: e.eventType,
-        engagement: e.analytics.engagementScore,
-        attendance: e.analytics.attendanceRate,
-        rating: e.analytics.averageRating,
-        successFactors: e.analytics.successFactors,
-        cost: e.actualCost || e.estimatedCost,
-        facilityUsed: e.facilityId
-      }));
-
     const prompt = this.buildAIPromptForDate(
       pgCommunity,
       facilitiesData,
-      pastEventsData,
       targetDate,
       filters
     );
@@ -410,59 +372,58 @@ export class EventSuggestionService {
   private buildAIPromptForDate(
     pgCommunity: any,
     facilities: any[],
-    pastEvents: any[],
     targetDate: any,
     filters: EventSuggestionFilters
   ): string {
+    const currentDate = new Date().toLocaleDateString();
+
     return `
 You are an expert event planner for PG communities. Suggest 1 PERFECT event for "${pgCommunity.name}" for the specific date: ${targetDate.date} (${targetDate.context}).
+
+**Current Date:** ${currentDate}
+**Target Date Context:** ${targetDate.context} - ${targetDate.description}
 
 **PG Community Details:**
 - Name: ${pgCommunity.name}
 - Total Residents: ${pgCommunity.residents.length}
+- Community Type: Paying Guest accommodation
 
 **Available Facilities:**
-${facilities.map(f => `- ${f.name} (${f.type}, capacity: ${f.capacity}, ID: ${f.id}): ${f.amenities.join(', ')}`).join('\n')}
+${facilities.length > 0
+        ? facilities.map(f => `- ${f.name} (${f.type}, capacity: ${f.capacity}): ${f.amenities?.join(', ') || 'Basic facilities'}`).join('\n')
+        : '- Common Room (Community space for gatherings)\n- Terrace (Open area for outdoor activities)'
+      }
 
-**Past Successful Events:**
-${pastEvents.slice(0, 3).map(e => `
-- ${e.title} (${e.type}): 
-  * Engagement Score: ${e.engagement}/100
-  * Attendance Rate: ${e.attendance}%
-  * Rating: ${e.rating}/5
-  * Success Factors: ${e.successFactors.join(', ')}
-  * Cost: ₹${e.cost || 'N/A'}
-`).join('')}
-
-**Target Date Context:**
+**Event Context:**
 - Date: ${targetDate.date}
-- Context: ${targetDate.context}
+- Occasion: ${targetDate.context}
 - Type: ${targetDate.type}
-- Description: ${targetDate.description}
+- Why this date: ${targetDate.description}
 
 **Requirements:**
-- Suggest EXACTLY 1 event that fits this specific date and context
-- Base suggestion on past successful patterns from this PG
-- Consider the target date context (${targetDate.context})
-- Match to available facilities
-- Provide realistic cost estimates
+- Suggest EXACTLY 1 event perfect for this specific date and occasion
+- Consider it's a PG community with young working professionals
+- Make it engaging, cost-effective, and community-building focused
+- Match the event type to the occasion (${targetDate.type})
+- Provide realistic cost estimates for a PG community
+- Consider the target date context: ${targetDate.context}
 
 **Response Format (JSON only, no extra text):**
 {
-  "title": "Event Title",
-  "description": "Detailed description explaining why this event is perfect for ${targetDate.context}",
+  "title": "Event Title that matches ${targetDate.context}",
+  "description": "Detailed description explaining why this event is perfect for ${targetDate.context} in a PG community",
   "eventType": "SOCIAL|FESTIVAL|EDUCATIONAL|SPORTS|CULTURAL|OTHER",
-  "reasoning": "Why this event will be successful based on past data and context",
-  "contextFactors": ["${targetDate.context}", "Based on past ${pastEvents[0]?.title || 'successful events'}"],
-  "requiredFacilities": ["Facility ID needed"],
- "location": "Clearly specify the name of the place where this event will be organized. Do not include any ID—just mention the location name (e.g., inside the PG or outside PG)."
-  "recommendedCapacity": 50,
-  "estimatedCost": 2000,
-  "expectedEngagement": 85,
+  "reasoning": "Why this event will be successful for PG residents on ${targetDate.context}",
+  "contextFactors": ["${targetDate.context}", "PG Community Event", "Young Professionals"],
+  "requiredFacilities": ["Main facility needed"],
+  "location": "Clear location name (e.g., 'Common Room', 'Terrace', 'Garden Area')",
+  "recommendedCapacity": ${Math.min(pgCommunity.residents.length || 20, 50)},
+  "estimatedCost": 1500,
+  "expectedEngagement": 80,
   "duration": 180
 }
 
-Focus on ONE perfect event that leverages this PG's past successes and fits the specific date context.
+Focus on creating ONE perfect community event that brings PG residents together for ${targetDate.context}.
     `;
   }
 
@@ -486,7 +447,7 @@ Focus on ONE perfect event that leverages this PG's past successes and fits the 
         reasoning: parsedResponse.reasoning,
         contextFactors: parsedResponse.contextFactors || [targetDate.context],
         basedOnEventIds: [],
-        expectedEngagement: parsedResponse.expectedEngagement || 0,
+        expectedEngagement: parsedResponse.expectedEngagement || 75,
         requiredFacilities: parsedResponse.requiredFacilities || [],
         recommendedCapacity: parsedResponse.recommendedCapacity,
         estimatedCost: parsedResponse.estimatedCost,
@@ -502,18 +463,19 @@ Focus on ONE perfect event that leverages this PG's past successes and fits the 
   private getFallbackSuggestion(pgCommunityId: string, targetDate: any) {
     return [{
       pgCommunityId,
-      title: `${targetDate.context} Community Event`,
-      description: `A special event designed for ${targetDate.context.toLowerCase()} to bring residents together.`,
+      title: `${targetDate.context} Community Gathering`,
+      description: `A special community event designed for ${targetDate.context.toLowerCase()} to bring PG residents together and strengthen bonds.`,
+      location: 'Common Room',
       suggestedEventType: targetDate.type === 'festival' ? 'FESTIVAL' : 'SOCIAL',
       suggestedDate: new Date(targetDate.date),
       suggestedDuration: 180,
-      reasoning: `Perfect timing for ${targetDate.context} celebration`,
-      contextFactors: [targetDate.context],
+      reasoning: `Perfect timing for ${targetDate.context} celebration in PG community`,
+      contextFactors: [targetDate.context, 'PG Community Event'],
       basedOnEventIds: [],
       expectedEngagement: 75,
       requiredFacilities: ['Common Room'],
-      recommendedCapacity: 50,
-      estimatedCost: 2000,
+      recommendedCapacity: 25,
+      estimatedCost: 1500,
       status: 'PENDING'
     }];
   }
