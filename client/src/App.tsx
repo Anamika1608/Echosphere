@@ -69,12 +69,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* <Route path="/dashboard/owner" element={
-          <ProtectedRoute allowedRoles={["PG_OWNER"]}>
-            <OwnerOldDashboard />
-          </ProtectedRoute>
-        } /> */}
-
         <Route path="/dashboard/owner" element={
           <ProtectedRoute allowedRoles={["PG_OWNER"]}>
             <PgOwnerDashboard />

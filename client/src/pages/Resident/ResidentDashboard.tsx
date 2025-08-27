@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '../../components/ui/button';
 import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent
 } from '../../components/ui/card';
 import {
   PlusCircle,
   History,
   CalendarDays,
-  Mic,
   User,
   Settings,
   LogOut,
@@ -32,10 +28,9 @@ import {
 } from 'lucide-react';
 import userStore from '@/store/userStore';
 import useModalStore from '@/store/modalStore';
-import Spline from '@splinetool/react-spline';
 import { useNavigate } from 'react-router-dom';
 import ManualRequestForm from './ManualRequestForm';
-const serverUrl = 'http://localhost:3000/api';
+import { serverUrl } from '@/utils';
 
 // Simple Badge Component
 const Badge = ({ children, className = "", variant = "default" }: {
@@ -161,7 +156,11 @@ const ResidentDashboard = () => {
     formRequestModal,
     openFormRequestModal,
     closeFormRequestModal,
-  } = useModalStore();
+  } = useModalStore() as {
+    formRequestModal: boolean;
+    openFormRequestModal: () => void;
+    closeFormRequestModal: () => void;
+  };
 
   const navigate = useNavigate();
 

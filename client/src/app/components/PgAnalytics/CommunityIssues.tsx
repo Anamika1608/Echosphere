@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   ExclamationTriangleIcon,
-  MagnifyingGlassIcon,
   ChevronDownIcon,
   PhoneIcon,
   CheckIcon,
@@ -173,11 +172,6 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
     }
   };
 
-  const handleSearch = () => {
-    setCurrentPage(1);
-    loadIssues();
-  };
-
   const callTechnician = async (issue: Issue) => {
     if (!issue.assignedTechnician?.phoneNumber) {
       addToast('No technician phone number available for this issue.', 'error');
@@ -250,14 +244,14 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
         { withCredentials: true }
       );
 
-      if (response.data.success) {
-        addToast(`Issue "${issue.title}" has been marked as resolved!`, 'success');
+      if (response.data) {
+        addToast(`Issue has been marked as resolved!`, 'success');
         await loadIssues();
       } else {
         throw new Error(response.data.message || 'Failed to update issue status');
       }
     } catch (err: any) {
-      addToast(`Issue has been marked as resolved!`, 'success');
+      addToast(`Failed to update issue status!`, 'error');
       await loadIssues();
     } finally {
       setResolvingIssue(null);
@@ -435,18 +429,6 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
 
         {/* Filters - Responsive Design */}
         <div className="mb-6">
-          {/* Search Input - Full Width */}
-          <div className="relative mb-4">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search issues..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-[#FF4500] focus:border-transparent transition-colors"
-            />
-          </div>
 
           {/* Filter Dropdowns - Responsive Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">

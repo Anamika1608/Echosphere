@@ -23,5 +23,17 @@ export const voiceChatController = {
     } catch (error) {
       next(error);
     }
+  },
+  async updateServiceStatus(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+      const { serviceId } = req.params;
+      const response = await voiceChatService.updateServiceStatus(serviceId, req.body.status);
+      res.status(200).json({ message: 'Service status updated successfully', data: response });
+    } catch (error) {
+      next(error);
+    }
   }
 };

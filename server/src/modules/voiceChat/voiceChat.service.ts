@@ -43,6 +43,16 @@ interface CreateServiceData {
   service_details?: string;
 }
 
+enum ServiceStatus {
+  PENDING = 'PENDING',
+  AWAITING_APPROVAL = 'AWAITING_APPROVAL',
+  APPROVED = 'APPROVED',
+  ASSIGNED = 'ASSIGNED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  REJECTED = 'REJECTED'
+}
+
 export const voiceChatService = {
   getResidentCallData: async function (data: VoiceChatData): Promise<any> {
     try {
@@ -198,8 +208,195 @@ export const voiceChatService = {
       console.error('Error creating new service request:', error);
       throw error;
     }
+  },
+
+  updateServiceStatus: async function (serviceId: string, serviceStatus: ServiceStatus): Promise<any> {
+    try {
+      console.log('Update service status data received:', { serviceId, serviceStatus });
+
+      // Validate the service status
+      if (!Object.values(ServiceStatus).includes(serviceStatus)) {
+        throw new Error('Invalid service status provided');
+      }
+
+      // Find the service first to get current details
+      const existingService = await prisma.requestedService.findUnique({
+        where: { id: serviceId },
+        include: {
+          pgCommunity: true,
+          requestedBy: true,
+          assignedTechnician: true
+        }
+      });
+
+      if (!existingService) {
+        throw new Error('Service not found');
+      }
+
+      let updateData: any = {
+        status: serviceStatus,
+        updatedAt: new Date()
+      };
+
+      // Handle different status transitions
+      switch (serviceStatus) {
+        case ServiceStatus.APPROVED:
+          // When approving, find and assign technician
+          const availableTechnician = await findAvailableTechnicianForService(
+            existingService.pgCommunityId,
+            existingService.serviceType
+          );
+
+          if (availableTechnician) {
+            updateData.assignedTechnicianId = availableTechnician.id;
+            updateData.status = ServiceStatus.ASSIGNED; // Move directly to ASSIGNED if technician found
+            updateData.isApprovedByOwner = true;
+            updateData.approvedAt = new Date();
+          } else {
+            updateData.isApprovedByOwner = true;
+            updateData.approvedAt = new Date();
+            // Status remains APPROVED until technician is available
+          }
+          break;
+
+        case ServiceStatus.ASSIGNED:
+          // Service has been assigned to technician
+          updateData.assignedAt = new Date();
+          break;
+
+        case ServiceStatus.IN_PROGRESS:
+          // Technician has started working on the service
+          updateData.startedAt = new Date();
+          break;
+
+        case ServiceStatus.COMPLETED:
+          // Service has been completed
+          updateData.completedAt = new Date();
+          break;
+
+        case ServiceStatus.REJECTED:
+          // Service has been rejected
+          updateData.isApprovedByOwner = false;
+          // You might want to add rejection reason later
+          break;
+
+        default:
+          // For other statuses, just update the status
+          break;
+      }
+
+      // Step 2: Update the service status in the database
+      const result = await prisma.requestedService.update({
+        where: { id: serviceId },
+        data: updateData,
+        include: {
+          assignedTechnician: {
+            select: {
+              id: true,
+              name: true,
+              phoneNumber: true,
+              speciality: true
+            }
+          },
+          pgCommunity: {
+            select: {
+              name: true,
+              pgCode: true
+            }
+          },
+          requestedBy: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
+        }
+      });
+
+      // Log the status change for tracking
+      console.log(`Service ${serviceId} status updated from ${existingService.status} to ${serviceStatus}`);
+
+      return {
+        success: true,
+        message: `Service status updated to ${serviceStatus.toLowerCase().replace('_', ' ')} successfully`,
+        data: result
+      };
+
+    } catch (error) {
+      console.error('Error updating service status:', error);
+      throw error;
+    }
   }
+
 };
+
+async function findAvailableTechnicianForService(pgCommunityId: string, serviceType: string) {
+  // Map service types to technician fields
+  const serviceToTechnicianFieldMap: { [key: string]: TechnicianField } = {
+    'CLEANING': TechnicianField.CLEANING,
+    'MAINTENANCE': TechnicianField.GENERAL_MAINTENANCE,
+    'REPAIR': TechnicianField.GENERAL_MAINTENANCE,
+    'INSTALLATION': TechnicianField.GENERAL_MAINTENANCE,
+    'UPGRADE': TechnicianField.GENERAL_MAINTENANCE,
+    'INSPECTION': TechnicianField.GENERAL_MAINTENANCE,
+    'HEATING_COOLING': TechnicianField.AC_REPAIR,
+    'PLUMBING': TechnicianField.PLUMBING,
+    'ELECTRICAL': TechnicianField.ELECTRICAL,
+    'OTHER': TechnicianField.GENERAL_MAINTENANCE
+  };
+
+  const requiredField = serviceToTechnicianFieldMap[serviceType] || TechnicianField.GENERAL_MAINTENANCE;
+
+  const technician = await prisma.technician.findFirst({
+    where: {
+      speciality: requiredField,
+      isAvailable: true,
+      pgAssignments: {
+        some: {
+          pgCommunityId: pgCommunityId
+        }
+      }
+    },
+    include: {
+      _count: {
+        select: {
+          assignedIssues: {
+            where: {
+              status: { notIn: ['RESOLVED'] }
+            }
+          },
+          assignedServices: {
+            where: {
+              status: { notIn: ['COMPLETED', 'REJECTED'] }
+            }
+          }
+        }
+      }
+    },
+    orderBy: [
+      // Prioritize technicians with fewer active assignments
+      { assignedIssues: { _count: 'asc' } },
+      { assignedServices: { _count: 'asc' } }
+    ]
+  });
+
+  // If no specific technician found, try to find a general maintenance technician
+  if (!technician) {
+    return await prisma.technician.findFirst({
+      where: {
+        speciality: TechnicianField.GENERAL_MAINTENANCE,
+        isAvailable: true,
+        pgAssignments: {
+          some: {
+            pgCommunityId: pgCommunityId
+          }
+        }
+      }
+    });
+  }
+
+  return technician;
+}
 
 async function analyzeManualInputWithGemini(data: CreateServiceData): Promise<GeminiAnalysisResponse> {
   try {
@@ -325,9 +522,9 @@ function getManualInputFallbackAnalysis(data: CreateServiceData): GeminiAnalysis
   const issueKeywords = ['broken', 'not working', 'problem', 'issue', 'damaged', 'faulty', 'malfunctioning'];
   const serviceKeywords = ['cleaning', 'maintenance', 'installation', 'upgrade', 'service', 'repair', 'check'];
 
-  const isIssue = issueKeywords.some(keyword => 
+  const isIssue = issueKeywords.some(keyword =>
     description.includes(keyword) || issueType.includes(keyword)
-  ) || (!serviceKeywords.some(keyword => 
+  ) || (!serviceKeywords.some(keyword =>
     description.includes(keyword) || issueType.includes(keyword) || serviceDetails.includes(keyword)
   ) && (description.includes('fix') || description.includes('help')));
 
@@ -377,8 +574,8 @@ function getManualInputFallbackAnalysis(data: CreateServiceData): GeminiAnalysis
   }
 
   // Generate title
-  const title = data.issue_type ? 
-    `${data.issue_type} ${isIssue ? 'Issue' : 'Service Request'}` : 
+  const title = data.issue_type ?
+    `${data.issue_type} ${isIssue ? 'Issue' : 'Service Request'}` :
     `${isIssue ? 'Issue' : 'Service Request'} - ${category}`;
 
   // Generate description

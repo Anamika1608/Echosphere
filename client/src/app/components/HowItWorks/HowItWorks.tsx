@@ -1,5 +1,3 @@
-import HowItWorksBg from '../../../assets/HowItWorksBg.png';
-import HowItWorks2 from '../../../assets/HowItWorks2.png';
 import Icon1 from '../../../assets/Icon1.svg';
 import Icon2 from '../../../assets/Icon2.svg';
 import Icon3 from '../../../assets/Icon3.svg';
@@ -66,7 +64,7 @@ const HowItWorks = () => {
     animate: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
+      transition: { duration: 0.6, ease: ["easeOut"] }
     }
   };
 
@@ -83,7 +81,7 @@ const HowItWorks = () => {
     initial: { scaleX: 0 },
     animate: { 
       scaleX: 1,
-      transition: { duration: 0.8, delay: 0.5, ease: "easeOut" }
+      transition: { duration: 0.8, delay: 0.5, ease: ["easeOut"] }
     }
   };
 

@@ -5,7 +5,6 @@ import {
   MagnifyingGlassIcon,
   ChevronDownIcon,
   SparklesIcon,
-  EyeIcon,
   PlusIcon,
   ClockIcon
 } from '@heroicons/react/24/outline';
@@ -102,10 +101,8 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
     qrCode,
     groups,
     loading: whatsappLoading,
-    error: whatsappError,
     initializeWhatsApp,
     sendEventBroadcast,
-    clearError
   } = useWhatsApp();
 
   useEffect(() => {
@@ -391,12 +388,6 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
   const broadCastEvent = async (eventSuggestion: any) => {
     // Step 1: Initialize WhatsApp if not ready
     if (!isReady) {
-      const initialized = await initializeWhatsApp();
-      if (!initialized) {
-        alert('❌ Failed to initialize WhatsApp. Check console.');
-        return;
-      }
-      // Will wait for polling to detect ready state
       return;
     }
 

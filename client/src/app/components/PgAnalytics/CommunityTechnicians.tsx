@@ -1,15 +1,11 @@
-// components/community/CommunityTechnicians.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   WrenchScrewdriverIcon,
-  PlusIcon,
   PencilIcon,
   TrashIcon,
-  UserPlusIcon,
   MagnifyingGlassIcon,
   PhoneIcon,
-  ExclamationTriangleIcon,
   CheckCircleIcon,
   XCircleIcon,
   ChevronDownIcon

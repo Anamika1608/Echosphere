@@ -9,4 +9,8 @@ router.post('/getResidentCallData', voiceChatController.getResidentCallData);
 // manual service/issue request route
 router.post('/createNewServiceRequest', authenticateToken, voiceChatController.createNewServiceRequest);
 
+// update the requested service status
+router.patch('/:serviceId/updateServiceStatus', authenticateToken, voiceChatController.updateServiceStatus);
+
+
 export { router as voiceChatRouter };
