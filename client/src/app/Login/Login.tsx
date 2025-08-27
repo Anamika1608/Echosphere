@@ -8,7 +8,7 @@ import userStore from '@/store/userStore';
 import Loginpic from '../../assets/LoginPic.jpg';
 import Loginillus from '../../assets/loginillus.svg';
 import { Link } from 'react-router-dom';
-import Logo from '../../../src/assets/logo.svg';
+import Logo from '../../../src/assets/Logo.svg';
 
 interface LoginFormData {
   email: string;

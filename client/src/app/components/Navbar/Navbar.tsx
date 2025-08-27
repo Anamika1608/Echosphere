@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
-import Logo from '../../../assets/logo.svg';
+import Logo from '../../../assets/Logo.svg';
 
 interface NavbarProps {
   className?: string;

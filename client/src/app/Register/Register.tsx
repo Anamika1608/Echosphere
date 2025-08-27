@@ -11,7 +11,7 @@ import userStore from '@/store/userStore';
 import Registerpic from '../../assets/RegisterPic.jpg';
 import Loginillus from '../../assets/loginillus.svg';
 import { Link } from 'react-router-dom';
-import Logo from '../../../src/assets/logo.svg';
+import Logo from '../../../src/assets/Logo.svg';
 
 interface SignupFormData {
   name: string;
