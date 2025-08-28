@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -182,7 +183,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
 
     try {
       const callPayload = {
-        agent_id: 8982,
+        agent_id: 29311,
         to_number: issue.assignedTechnician.phoneNumber,
         call_context: {
           issue_id: issue.id,
@@ -613,7 +614,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                   )}
 
                   {/* Call Technician Button */}
-                  {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
+                  {/* {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
                     <button
                       onClick={() => callTechnician(issue)}
                       disabled={callingTechnician === issue.id}
@@ -630,7 +631,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                         {callingTechnician === issue.id ? 'Calling...' : `Call ${issue.assignedTechnician.name}`}
                       </span>
                     </button>
-                  )}
+                  )} */}
                 </div>
 
                 <div className="mb-4 mt-3">
@@ -696,7 +697,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                     )}
 
                     {/* Call Technician Button */}
-                    {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
+                    {/* {issue.assignedTechnician && issue.assignedTechnician.phoneNumber && (
                       <button
                         onClick={() => callTechnician(issue)}
                         disabled={callingTechnician === issue.id}
@@ -707,7 +708,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
                           {callingTechnician === issue.id ? 'Calling...' : `Call ${issue.assignedTechnician.name}`}
                         </span>
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>

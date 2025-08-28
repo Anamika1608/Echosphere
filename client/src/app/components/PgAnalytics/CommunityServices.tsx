@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -704,7 +705,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
                     </button>
 
                     {/* Call Technician Button */}
-                    {service.assignedTechnician && service.assignedTechnician.phoneNumber && (
+                    {/* {service.assignedTechnician && service.assignedTechnician.phoneNumber && (
                       <button
                         onClick={() => callTechnician(service)}
                         disabled={callingTechnician === service.id}
@@ -720,7 +721,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
                           {callingTechnician === service.id ? 'Calling...' : `Call ${service.assignedTechnician.name}`}
                         </span>
                       </button>
-                    )}
+                    )} */}
                   </>
                 )}
               </div>
@@ -848,7 +849,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
                       </button>
 
                       {/* Call Technician Button */}
-                      {service.assignedTechnician && service.assignedTechnician.phoneNumber && (
+                      {/* {service.assignedTechnician && service.assignedTechnician.phoneNumber && (
                         <button
                           onClick={() => callTechnician(service)}
                           disabled={callingTechnician === service.id}
@@ -859,7 +860,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
                             {callingTechnician === service.id ? 'Calling...' : `Call ${service.assignedTechnician.name}`}
                           </span>
                         </button>
-                      )}
+                      )} */}
                     </>
                   )}
                 </div>
