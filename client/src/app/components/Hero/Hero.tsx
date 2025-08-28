@@ -13,7 +13,6 @@ const Hero = ({ demoLink = '' }) => {
         transition: { duration: 0.6, ease: "easeOut" }
     };
 
-
     const fadeIn = {
         initial: { opacity: 0 },
         animate: { opacity: 1 },
@@ -28,16 +27,17 @@ const Hero = ({ demoLink = '' }) => {
     return (
         <section
             id="hero"
-            className="container mx-auto -mt-16 px-0 pb-16 text-center"
+            className="container mx-auto -mt-16 px-4 sm:px-0 pb-16 text-center w-full"
             style={{
                 backgroundImage: `url(${bgimage})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
             }}
         >
-            {/* Side images with subtle fade */}
+            {/* Side images with responsive positioning */}
+            {/* Side images with subtle fade - hidden on mobile */}
             <motion.div
-                className="absolute left-25 top-0 h-60 w-60 flex items-center mb-0 mt-100"
+                className="absolute left-25 top-0 h-60 w-60 flex items-center mb-0 mt-100 hidden sm:block"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
@@ -46,7 +46,7 @@ const Hero = ({ demoLink = '' }) => {
             </motion.div>
 
             <motion.div
-                className="absolute right-25 top-0 h-60 w-60 flex items-center mb-0 mt-100"
+                className="absolute right-25 top-0 h-60 w-60 flex items-center mb-0 mt-100 hidden sm:block"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.4 }}
@@ -57,27 +57,27 @@ const Hero = ({ demoLink = '' }) => {
             <div className="relative z-10">
                 {/* @ts-ignore */}
                 <motion.h1
-                    className="text-xl pt-30 leading-tight md:text-6xl lg:text-6xl font-bold tracking-tighter max-w-xl sm:max-w-5xl mx-auto sm:mx-auto"
+                    className="text-4xl sm:text-xl md:text-6xl lg:text-6xl pt-30 leading-tight font-bold tracking-tighter max-w-xl sm:max-w-5xl mx-auto sm:mx-auto px-4 sm:px-0"
                     {...fadeInUp}
                 >
                     One place to manage your community living with{' '}
                     <span className='text-orange-400'>Echosphere</span>
                 </motion.h1>
 
-                {/* Description with slight delay */}
+                {/* Description with responsive spacing */}
                 <motion.p
-                    className="mt-4 text-gray-500 mx-8 sm:mx-auto font-light"
+                    className="mt-4 text-black mx-8 sm:mx-auto text-lg font-light max-w-xl sm:max-w-2xl"
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                 >
                     A faster approach to <strong className='font-bold'>Residential Community</strong> problems.
-                    Making <strong className='font-bold'>support instant</strong> and community building effortless.
+                    Making  <strong className='font-bold'>support instant</strong> and community building effortless.
                 </motion.p>
 
-                {/* Spline container */}
+                {/* Spline container with responsive sizing */}
                 <motion.div
-                    className="flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative"
+                    className="hidden sm:flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative "
                     {...fadeIn}
                     transition={{ delay: 0.4 }}
                 >
@@ -85,14 +85,15 @@ const Hero = ({ demoLink = '' }) => {
                         <Spline
                             scene="https://prod.spline.design/1OOUEgK1bBI7KW2R/scene.splinecode"
                             className="w-full h-full"
-                        /><div className="hide-spline-badge"></div>
+                        />
+                        <div className="hide-spline-badge"></div>
                     </div>
                     <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
                 </motion.div>
 
-                {/* Buttons with subtle hover */}
+                {/* Buttons with responsive layout */}
                 <motion.div
-                    className="mt-8 flex flex-row sm:flex-row items-center justify-center gap-4 sm:mt-10"
+                    className="mt-8 flex flex-row items-center justify-center gap-4 sm:mt-10 px-4 sm:px-0"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.6 }}
@@ -124,7 +125,7 @@ const Hero = ({ demoLink = '' }) => {
                     </motion.div>
                 </motion.div>
 
-                {/* Demo video with gentle reveal */}
+                {/* Demo video with responsive sizing and spacing */}
                 <motion.div
                     className="relative z-30 max-w-4xl mx-auto mt-20 px-4"
                     initial={{ opacity: 0, y: 30 }}
