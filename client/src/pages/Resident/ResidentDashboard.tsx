@@ -18,7 +18,6 @@ import {
   CheckCircle,
   XCircle,
   Calendar,
-  Users,
   Activity,
   Wrench,
   TrendingUp,
@@ -1084,12 +1083,6 @@ const ResidentDashboard = () => {
                                       <p className="text-xs text-gray-500 mb-3">
                                         {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
                                       </p>
-                                      <div className="flex items-center gap-2">
-                                        <Badge variant="outline" className="text-xs">
-                                          <Users className="h-3 w-3 mr-1" />
-                                          {event._count.attendances} registered
-                                        </Badge>
-                                      </div>
                                     </div>
                                   </Card>
                                 </motion.div>

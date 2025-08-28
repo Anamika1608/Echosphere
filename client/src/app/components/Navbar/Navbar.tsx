@@ -22,26 +22,26 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <a 
-              href="#demo" 
+            <a
+              href="#demo"
               className="text-black hover:text-gray-900 transition-colors duration-200 font-medium text-[15px]"
             >
               Demo
             </a>
-            <a 
-              href="#features" 
+            <a
+              href="#features"
               className="text-black hover:text-gray-900 transition-colors duration-200 font-medium text-[15px]"
             >
               Features
             </a>
-            <a 
-              href="#how-it-works" 
+            <a
+              href="#how-it-works"
               className="text-black hover:text-gray-900 transition-colors duration-200 font-medium text-[15px]"
             >
               How it works
             </a>
-            <a 
-              href="#pricing" 
+            <a
+              href="#pricing"
               className="text-black hover:text-gray-900 transition-colors duration-200 font-medium text-[15px]"
             >
               Pricing
@@ -51,18 +51,18 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
           {/* Login Button */}
           <div className="flex items-center">
             <Button
-                            size="sm"
-                            asChild
-                            style={{
-                                borderRadius: "12px",
-                                border: "1.26px solid #FFAA67",
-                                background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
-                                boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)",
-                                color: "#fff"
-                            }}
-                        >
-                            <Link to="/login">Login here</Link>
-                        </Button>
+              size="sm"
+              asChild
+              style={{
+                borderRadius: "12px",
+                border: "1.26px solid #FFAA67",
+                background: "linear-gradient(95deg, #FFD0A2 4.5%, #FEB070 13.38%, #FF994F 31.58%, #FF7835 57.33%, #FF661F 79.98%, #FF5000 96.85%)",
+                boxShadow: "1.26px 3.78px 7.686px 0 rgba(0, 0, 0, 0.20)",
+                color: "#fff"
+              }}
+            >
+              <Link to="/login">Login here</Link>
+            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -76,8 +76,6 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
         </div>
       </div>
 
-     
-      
     </nav>
   );
 };
