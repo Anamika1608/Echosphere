@@ -1,65 +1,73 @@
-## 📋 Project Overview
+# 🌐 *Echosphere – AI-Powered Property Management Platform*
 
-**Echosphere** is a comprehensive property management platform that connects residents, property owners, and maintenance staff through an AI-powered interface. The application facilitates issue reporting, service requests, and community management with voice-enabled features.
+*Echosphere* is a modern property management solution that connects *residents, property owners, and maintenance staff* through an AI-powered, voice-enabled platform. It simplifies community living by streamlining issue reporting, service requests, and management workflows.  
 
-## 🏗️ Architecture
 
-### Tech Stack
-- **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS
-- **Backend**: Node.js + Express + TypeScript + Prisma ORM 
-- **Database**: PostgreSQL
-- **Authentication**: JWT + bcrypt
-- **UI Components**: Radix UI + shadcn/ui
-- **Styling**: Tailwind CSS + Framer Motion
-- **Voice Features**: Custom voice chat implementation
+## 🎥 Demo Video
+https://github.com/user-attachments/assets/dbc75615-8f93-4e04-9bcb-4c829e9d26aa
 
-## 🎯 Core Features
+---
 
-### 1. **Multi-Role User System**
-- **Residents**: Report issues, request services, view community events
-- **Property Owners**: Manage properties, approve requests, oversee maintenance
-- **Technicians**: Handle assigned tasks, update status, communicate with residents
+## 🏗 Tech Stack
 
-### 2. **Issue Management System**
-- **Issue Types**: Plumbing, Electrical, HVAC, Security, Internet, Appliances, Structural, Pest Control
-- **Priority Levels**: P1 (Critical), P2 (High), P3 (Medium), P4 (Low)
-- **Status Tracking**: Pending → Assigned → In Progress → Resolved
-- **Image Support**: Multiple image uploads for issue documentation
+- *Frontend*: React 19 + TypeScript + Vite + Tailwind CSS  
+- *Authentication*: JWT + bcrypt  
+- *UI Components*: Radix UI + shadcn/ui  
+- *Styling & Animations*: Tailwind CSS + Framer Motion  
+- *Voice Features*: Custom voice chat + NLP integration  
 
-### 3. **Service Request System**
-- **Service Types**: Cleaning, Maintenance, Repair, Installation, Upgrade, Inspection
-- **Approval Workflow**: Owner approval required for service requests
-- **Status Flow**: Pending → Awaiting Approval → Approved → Assigned → In Progress → Completed
+---
 
-### 4. **Voice-Enabled Features**
-- **Voice Assistant**: AI-powered voice interface for residents
-- **Voice Commands**: Raise issues, check status, request services
-- **Natural Language Processing**: Convert speech to actionable requests
+## ✨ Core Features
 
-### 5. **Dashboard Interfaces**
+### 👥 Multi-Role User System
+- *Residents* → Report issues, request services, view events  
+- *Property Owners* → Manage properties, approve requests, oversee staff  
+- *Technicians* → Handle assigned tasks, update status, communicate  
 
-#### Owner Dashboard (`/dashboard/owner`)
-- Property management overview
-- Staff management (technicians, building managers)
-- Issue review and approval system
-- Community event planning
-- AI assistant for management tasks
-- Statistics and analytics
+---
 
-#### Resident Dashboard (`/dashboard/resident`)
-- Personal profile management
-- Voice assistant for quick actions
-- Issue reporting and tracking
-- Service request submission
-- Community event calendar
-- Issue history and status
+## 🖼 Screenshots
 
-### Key UI Components
-- **Hero Section**: Landing page with gradient backgrounds
-- **Dashboard Cards**: Information-dense cards with actions
-- **Voice Interface**: Mic-enabled buttons for voice commands
-- **Navigation**: Sidebar navigation for dashboard users
-- **Status Indicators**: Visual status tracking for issues/services
+<img width="1631" height="726" alt="image" src="https://github.com/user-attachments/assets/1e20de94-4220-4e16-ae32-f07e4e83d0f7" />
+<img width="1152" height="834" alt="image" src="https://github.com/user-attachments/assets/3f3d71a2-b9ab-47a7-9de5-b0cf2867da4b" />
+
+# Owner Dashboard
+<img width="1919" height="912" alt="image" src="https://github.com/user-attachments/assets/ee29e1b3-8331-40a6-9f47-65647dcb2411" />
+
+# PG Community Dashboard
+<img width="1918" height="912" alt="image" src="https://github.com/user-attachments/assets/a726c3c1-4507-4498-99df-b44aa7cdf1a0" />
+<img width="1919" height="912" alt="image" src="https://github.com/user-attachments/assets/52dc4857-f0b3-47e2-8fcb-cfc929fbd51a" />
+<img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/a20a476e-c456-4d78-9b71-0e9dc36381bb" />
+
+# Resident Dashboard
+<img width="1917" height="907" alt="image" src="https://github.com/user-attachments/assets/f545d4df-1a78-4869-833f-8823e31ce7da" />
+
+
+---
+
+### 🛠 Issue Management System
+- *Types*: Plumbing, Electrical, HVAC, Security, Internet, Appliances, Structural, Pest Control  
+- *Priorities*: P1 (Critical) → P4 (Low)  
+- *Workflow*: Pending → Assigned → In Progress → Resolved  
+- *Attachments*: Multiple image uploads for documentation  
+
+---
+
+### 🧾 Service Request System
+- *Services*: Cleaning, Repair, Maintenance, Installation, Inspection  
+- *Workflow*: Pending → Awaiting Approval → Approved → Assigned → In Progress → Completed  
+- *Approval*: Owner approval required before assignment  
+
+---
+
+### 🎙 Voice-Enabled Features
+- *Voice Assistant*: AI-powered conversational interface  
+- *Commands*: Raise issues, check status, request services  
+- *NLP*: Converts speech into structured, actionable requests  
+
+
+---
 
 ## 🚀 Development Setup
 
@@ -84,51 +92,3 @@ npx prisma generate
 npx prisma db push
 ```
 
-## 🔐 Security Features
-
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: bcrypt for password security
-- **Input Validation**: Zod schema validation
-- **CORS Configuration**: Cross-origin resource sharing setup
-- **Helmet**: Security headers middleware
-
-## 📱 Key User Flows
-
-### Resident Journey
-1. **Registration/Login** → Access resident dashboard
-2. **Voice Assistant** → Speak to raise issues or check status
-3. **Issue Reporting** → Submit detailed issue with images
-4. **Service Requests** → Request maintenance services
-5. **Status Tracking** → Monitor issue/service progress
-
-### Owner Journey
-1. **Dashboard Overview** → View property statistics and staff
-2. **Issue Management** → Review and assign issues to technicians
-3. **Service Approval** → Approve/reject service requests
-4. **Staff Management** → Manage technicians and building staff
-5. **Community Events** → Plan and announce community activities
-
-### Technician Journey
-1. **Task Assignment** → Receive assigned issues and services
-2. **Status Updates** → Update progress on assigned tasks
-3. **Communication** → Interact with residents and owners
-4. **Availability Management** → Set availability status
-
-## 🎯 Future Enhancements
-
-- **Real-time Notifications**: WebSocket integration for live updates
-- **Mobile App**: React Native application
-- **Advanced Analytics**: Detailed reporting and insights
-- **Payment Integration**: Service payment processing
-- **Multi-language Support**: Internationalization
-- **AI Chatbot**: Enhanced conversational AI
-- **Document Management**: File upload and management system
-
-## 📊 Performance Considerations
-
-- **Code Splitting**: Route-based code splitting for faster loading
-- **Image Optimization**: Efficient image handling and compression
-- **Database Indexing**: Optimized queries with proper indexing
-- **CDN**: Static asset delivery optimization
-
-This repository represents a modern, scalable property management platform with AI-powered features designed to streamline community management and enhance resident experience. 
