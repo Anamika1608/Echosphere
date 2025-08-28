@@ -201,7 +201,6 @@ const ManualRequestForm: React.FC<ManualRequestFormProps> = ({ isOpen, onClose }
                                     className="mr-3 text-[#FF703C] focus:ring-[#FF703C] w-4 h-4"
                                 />
                                 <div className="flex items-center">
-                                    <span className="text-2xl mr-2">🔧</span>
                                     <div>
                                         <div className="text-sm font-medium text-gray-900">Report an Issue</div>
                                         <div className="text-xs text-gray-600">Something is broken or not working</div>
@@ -219,7 +218,6 @@ const ManualRequestForm: React.FC<ManualRequestFormProps> = ({ isOpen, onClose }
                                     className="mr-3 text-[#FF703C] focus:ring-[#FF703C] w-4 h-4"
                                 />
                                 <div className="flex items-center">
-                                    <span className="text-2xl mr-2">🛎️</span>
                                     <div>
                                         <div className="text-sm font-medium text-gray-900">Request Service</div>
                                         <div className="text-xs text-gray-600">Need a new service or maintenance</div>
