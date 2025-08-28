@@ -44,26 +44,26 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <a
-              href="#demo"
-              className="text-black hover:text-white transition-colors duration-200 font-medium text-sm lg:text-[15px] whitespace-nowrap"
+              href=""
+              className="text-black hover:text-orange-800 transition-colors duration-200 font-medium text-sm lg:text-[15px] whitespace-nowrap"
             >
               Demo
             </a>
             <a
               href="#features"
-              className="text-black hover:text-white transition-colors duration-200 font-medium text-sm lg:text-[15px] whitespace-nowrap"
+              className="text-black hover:text-orange-800 transition-colors duration-200 font-medium text-sm lg:text-[15px] whitespace-nowrap"
             >
               Features
             </a>
             <a
               href="#how-it-works"
-              className="text-black hover:text-white transition-colors duration-200 font-medium text-sm lg:text-[15px] whitespace-nowrap"
+              className="text-black hover:text-orange-800 transition-colors duration-200 font-medium text-sm lg:text-[15px] whitespace-nowrap"
             >
               How it works
             </a>
             <a
               href="#pricing"
-              className="text-black hover:text-white transition-colors duration-200 font-medium text-sm lg:text-[15px] whitespace-nowrap"
+              className="text-black hover:text-orange-800 transition-colors duration-200 font-medium text-sm lg:text-[15px] whitespace-nowrap"
             >
               Pricing
             </a>

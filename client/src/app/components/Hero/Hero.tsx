@@ -6,7 +6,7 @@ import img1 from '../../../assets/img1.png';
 import img2 from '../../../assets/img2.png';
 import bgimage from '../../../assets/bgimage.png';
 
-const Hero = ({ demoLink = '' }) => {
+const Hero = () => {
     const fadeInUp = {
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0 },
@@ -35,7 +35,6 @@ const Hero = ({ demoLink = '' }) => {
             }}
         >
             {/* Side images with responsive positioning */}
-            {/* Side images with subtle fade - hidden on mobile */}
             <motion.div
                 className="absolute left-25 top-0 h-60 w-60 flex items-center mb-0 mt-100 hidden sm:block"
                 initial={{ opacity: 0 }}
@@ -145,14 +144,15 @@ const Hero = ({ demoLink = '' }) => {
                             transition: { duration: 0.3 }
                         }}
                     >
-                        <div className="w-full aspect-video">
+                        <div className="w-full aspect-video" style={{ pointerEvents: 'auto' }}>
                             <iframe
                                 className="w-full h-full"
-                                src={demoLink}
+                                src='https://player.vimeo.com/video/1113959172?controls=1'
                                 title="Demo video"
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
+                                style={{ pointerEvents: 'auto' }}
                             />
                         </div>
                     </motion.div>
