@@ -2,21 +2,23 @@
 
 *Echosphere* is a modern property management solution that connects *residents, property owners, and maintenance staff* through an AI-powered, voice-enabled platform. It simplifies community living by streamlining issue reporting, service requests, and management workflows.  
 
-
 ## 🎥 Demo Video
 https://github.com/user-attachments/assets/dbc75615-8f93-4e04-9bcb-4c829e9d26aa
 
----
-
 ## 🏗 Tech Stack
 
-- *Frontend*: React 19 + TypeScript + Vite + Tailwind CSS  
-- *Authentication*: JWT + bcrypt  
-- *UI Components*: Radix UI + shadcn/ui  
-- *Styling & Animations*: Tailwind CSS + Framer Motion  
-- *Voice Features*: Custom voice chat + NLP integration  
-
----
+* **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS
+* **UI Components**: Radix UI + shadcn/ui + Lucide Icons + Heroicons
+* **State Management**: Zustand
+* **Animations & Styling**: Framer Motion + Tailwind Merge + tw-animate-css
+* **3D/Graphics**: Spline (`@splinetool/react-spline`, `@splinetool/runtime`) + tsparticles
+* **Routing & Themes**: React Router DOM + Next Themes
+* **Backend Framework**: Express 5 + TypeScript
+* **Database & ORM**: PostgreSQL + Prisma ORM
+* **Authentication & Security**: JWT
+* **Cloud & Media**: Cloudinary + Multer
+* **AI / NLP**: Google GenAI SDK (`@google/genai`)
+* **Messaging & QR**: WhatsApp Web.js + qrcode
 
 ## ✨ Core Features
 
@@ -25,7 +27,6 @@ https://github.com/user-attachments/assets/dbc75615-8f93-4e04-9bcb-4c829e9d26aa
 - *Property Owners* → Manage properties, approve requests, oversee staff  
 - *Technicians* → Handle assigned tasks, update status, communicate  
 
----
 
 ## 🖼 Screenshots
 
@@ -44,7 +45,7 @@ https://github.com/user-attachments/assets/dbc75615-8f93-4e04-9bcb-4c829e9d26aa
 <img width="1917" height="907" alt="image" src="https://github.com/user-attachments/assets/f545d4df-1a78-4869-833f-8823e31ce7da" />
 
 
----
+
 
 ### 🛠 Issue Management System
 - *Types*: Plumbing, Electrical, HVAC, Security, Internet, Appliances, Structural, Pest Control  
@@ -52,14 +53,14 @@ https://github.com/user-attachments/assets/dbc75615-8f93-4e04-9bcb-4c829e9d26aa
 - *Workflow*: Pending → Assigned → In Progress → Resolved  
 - *Attachments*: Multiple image uploads for documentation  
 
----
+
 
 ### 🧾 Service Request System
 - *Services*: Cleaning, Repair, Maintenance, Installation, Inspection  
 - *Workflow*: Pending → Awaiting Approval → Approved → Assigned → In Progress → Completed  
 - *Approval*: Owner approval required before assignment  
 
----
+
 
 ### 🎙 Voice-Enabled Features
 - *Voice Assistant*: AI-powered conversational interface  
@@ -67,7 +68,7 @@ https://github.com/user-attachments/assets/dbc75615-8f93-4e04-9bcb-4c829e9d26aa
 - *NLP*: Converts speech into structured, actionable requests  
 
 
----
+
 
 ## 🚀 Development Setup
 
