@@ -20,7 +20,8 @@ const port = config.port
 app.use(cors(
     {
         credentials: true,
-        origin: config.frontendUrl
+        origin: config.frontendUrl,
+        exposedHeaders: ["Set-Cookie"]
     }
 ));
 
