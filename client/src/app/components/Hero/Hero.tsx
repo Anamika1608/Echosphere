@@ -27,16 +27,18 @@ const Hero = () => {
     return (
         <section
             id="hero"
-            className="container mx-auto -mt-16 px-4 sm:px-0 pb-16 text-center w-full"
+            className="mx-auto lg:mt-[-67px] px-4 sm:px-0 pb-16 text-center w-full"
             style={{
                 backgroundImage: `url(${bgimage})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center'
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundAttachment: 'scroll'
             }}
         >
             {/* Side images with responsive positioning */}
             <motion.div
-                className="absolute left-25 top-0 h-60 w-60 flex items-center mb-0 mt-100 hidden sm:block"
+                className="absolute left-25 top-0 h-60 w-60 flex items-center mb-0 mt-100 hidden lg:flex"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
@@ -45,7 +47,7 @@ const Hero = () => {
             </motion.div>
 
             <motion.div
-                className="absolute right-25 top-0 h-60 w-60 flex items-center mb-0 mt-100 hidden sm:block"
+                className="absolute right-25 top-0 h-60 w-60 flex items-center mb-0 mt-100 hidden lg:flex"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.4 }}
@@ -56,7 +58,7 @@ const Hero = () => {
             <div className="relative z-10">
                 {/* @ts-ignore */}
                 <motion.h1
-                    className="text-4xl sm:text-xl md:text-6xl lg:text-6xl pt-30 leading-tight font-bold tracking-tighter max-w-xl sm:max-w-5xl mx-auto sm:mx-auto px-4 sm:px-0"
+                    className="text-4xl sm:text-4xl sm:px-20 md:text-6xl lg:text-6xl pt-30 leading-tight font-bold tracking-tighter max-w-xl sm:max-w-5xl mx-auto sm:mx-auto px-4 sm:px-0"
                     {...fadeInUp}
                 >
                     One place to manage your community living with{' '}
@@ -76,7 +78,7 @@ const Hero = () => {
 
                 {/* Spline container with responsive sizing */}
                 <motion.div
-                    className="hidden sm:flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative "
+                    className="hidden lg:flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative "
                     {...fadeIn}
                     transition={{ delay: 0.4 }}
                 >

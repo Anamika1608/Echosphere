@@ -78,7 +78,7 @@ export function FAQs() {
 
         {/* Spline Container */}
         <motion.div
-          className="hidden sm:flex justify-center mb-6 items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative"
+          className="hidden lg:flex justify-center mb-6 items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}

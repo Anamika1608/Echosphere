@@ -71,21 +71,22 @@ const Features: React.FC = () => {
   return (
     <section
       id="features"
-      className="container grid sm:grid-cols-2 sm:gap-6 mx-auto px-4 sm:px-16 py-16 sm:py-24"
+      className="w-full grid lg:grid-cols-2 sm:gap-6 md:gap-10 mx-auto px-4 sm:px-16 md:px-12 py-16 sm:py-24 md:py-20"
       style={{
-        backgroundImage: 'radial-gradient(292.12% 100% at 50% 0%,#ffffff 0%, #F9F7F5 10%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)'
+        backgroundImage:
+          'radial-gradient(292.12% 100% at 50% 0%,#ffffff 0%, #F9F7F5 10%, #FFF8F1 21.63%, #FFE4C9 45.15%, #FFE9C9 67.31%,#FFFAF3 100%)',
       }}
     >
       {/* Header Section */}
       <motion.div
-        className="text-center sm:text-left mb-12 sm:pl-20"
+        className="text-center sm:text-left mb-12 sm:pl-10 md:pl-40"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
       >
         <motion.span
-          className="text-sm sm:text-xl font-semibold text-gray-500"
+          className="text-sm sm:text-xl md:text-lg font-semibold text-gray-500"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -94,7 +95,7 @@ const Features: React.FC = () => {
           FREE-TIER FEATURES
         </motion.span>
         <motion.h2
-          className="text-3xl sm:text-5xl sm:font-semibold font-bold tracking-tight mt-2 sm:w-[450px] leading-tight"
+          className="text-3xl sm:text-3xl md:text-4xl sm:font-semibold font-bold tracking-tight mt-2 sm:w-[350px] md:w-[400px] leading-tight"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -106,7 +107,7 @@ const Features: React.FC = () => {
 
       {/* Cards Grid */}
       <motion.div
-        className="grid grid-cols-2 sm:max-w-[600px] sm:gap-8 sm:grid-cols-2 lg:grid-cols-2 gap-6"
+        className="grid grid-cols-2 sm:max-w-[600px] sm:gap-8 sm:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-10"
         variants={containerVariants}
         initial="initial"
         whileInView="animate"
@@ -119,13 +120,13 @@ const Features: React.FC = () => {
             whileHover={{
               y: -5,
               scale: 1.02,
-              transition: { duration: 0.2 }
+              transition: { duration: 0.2 },
             }}
           >
             <Card
-              className="text-left border-transparent rounded-[32px] sm:rounded-[44px] hover:border-[#FF4500] hover:shadow-xl transition-all duration-300 py-4 px-6 min-h-[200px] sm:min-h-auto"
+              className="text-left border-transparent rounded-[32px] sm:rounded-[44px] md:rounded-[36px] hover:border-[#FF4500] hover:shadow-xl transition-all duration-300 py-4 px-6 min-h-[00px]"
               style={{
-                backgroundColor: "#fff",
+                backgroundColor: '#fff',
               }}
             >
               <CardHeader className="p-0">
@@ -135,10 +136,10 @@ const Features: React.FC = () => {
                   whileHover={{
                     scale: 1.1,
                     rotate: 5,
-                    transition: { duration: 0.2 }
+                    transition: { duration: 0.2 },
                   }}
                 >
-                  <Icon className="w-8 h-8 sm:w-8 sm:h-8 text-[#FF4500]" />
+                  <Icon className="w-8 h-8 text-[#FF4500]" />
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -146,7 +147,7 @@ const Features: React.FC = () => {
                   transition={{ duration: 0.5, delay: 0.3 }}
                   viewport={{ once: true }}
                 >
-                  <CardTitle className="text-gray-800 text-left text-base font-light leading-snug sm:mb-4">
+                  <CardTitle className="text-gray-800 text-left text-base md:text-sm font-light leading-snug sm:mb-4">
                     {title}
                   </CardTitle>
                 </motion.div>
@@ -156,6 +157,7 @@ const Features: React.FC = () => {
         ))}
       </motion.div>
     </section>
+
   );
 };
 
