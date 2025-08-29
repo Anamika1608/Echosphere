@@ -38,7 +38,7 @@ export const useWhatsApp = () => {
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
-      console.error('Failed to initialize WhatsApp:', err);
+      // console.error('Failed to initialize WhatsApp:', err);
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export const useWhatsApp = () => {
           fetchGroups(); // Fetch groups once ready
         }
       } catch (err) {
-        console.error('Status polling error:', err);
+        // console.error('Status polling error:', err);
       }
     }, 2000);
 
@@ -75,7 +75,7 @@ export const useWhatsApp = () => {
       setGroups(fetchedGroups);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch groups');
-      console.error('Failed to fetch groups:', err);
+      // console.error('Failed to fetch groups:', err);
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ export const useWhatsApp = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
-      console.error('Broadcast failed:', err);
+      // console.error('Broadcast failed:', err);
       return false;
     } finally {
       setLoading(false);

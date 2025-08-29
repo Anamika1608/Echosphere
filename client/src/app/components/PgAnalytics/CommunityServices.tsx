@@ -175,7 +175,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         setError(apiResponse.message || 'Failed to load services');
       }
     } catch (err: any) {
-      console.error('Error loading services:', err);
+      // console.error('Error loading services:', err);
       setError(err.response?.data?.message || 'Failed to load services');
     } finally {
       setLoading(false);
@@ -221,7 +221,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         throw new Error(response.data.message || 'Failed to decline service');
       }
     } catch (err: any) {
-      console.error('Error declining service:', err);
+      // console.error('Error declining service:', err);
       addToast(`Failed to decline service: ${err.response?.data?.message || err.message}`, 'error');
     } finally {
       setDecliningService(null);
@@ -279,7 +279,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         throw new Error(result.message || 'Failed to dispatch call');
       }
     } catch (err: any) {
-      console.error('Error dispatching call:', err);
+      // console.error('Error dispatching call:', err);
       addToast(`Failed to dispatch call: ${err.message}`, 'error');
     } finally {
       setCallingTechnician(null);
@@ -307,7 +307,7 @@ const CommunityServices: React.FC<CommunityServicesProps> = ({ communityId }) =>
         throw new Error(response.data.message || 'Failed to complete service');
       }
     } catch (err: any) {
-      console.error('Error completing service:', err);
+      // console.error('Error completing service:', err);
       addToast(`Service has been marked as completed!`, 'success');
       await loadServices();
     } finally {

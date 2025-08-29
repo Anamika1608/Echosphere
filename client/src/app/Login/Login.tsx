@@ -64,7 +64,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
         window.location.href = '/dashboard/resident';
       }
     } catch (err: any) {
-      console.error('Login error:', err);
+      // console.error('Login error:', err);
       const errorMessage = err.response?.data?.message || 'Login failed. Please try again.';
       setError(errorMessage);
     } finally {

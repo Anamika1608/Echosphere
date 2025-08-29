@@ -9,7 +9,7 @@ export const handleUserLogout = async (navigate: any) => {
             withCredentials: true,
         });
     } catch (err) {
-        console.error('Logout error:', err);
+        // console.error('Logout error:', err);
     } finally {
         clearUser();
         navigate('/');

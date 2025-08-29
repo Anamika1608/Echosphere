@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import config from "./config"
 
+import { errorHandler } from "./middleware/error.middleware";
+
 import { authRouter } from "./modules/auth/auth.routes";
 import { voiceChatRouter } from "./modules/voiceChat/voiceChat.routes";
 import { pgCommunityRouter } from "./modules/pgCommunity/pgCommunity.routes"
@@ -38,6 +40,7 @@ app.get("/", (req, res) => {
     res.send("Hello there!");
 });
 
+
 app.use("/api/auth", authRouter)
 app.use("/api/pg-community", pgCommunityRouter)
 app.use("/api/pg-analytics", pgAnalyticsRouter)
@@ -45,3 +48,5 @@ app.use("/api/technician", technicianRouter)
 app.use("/api/voice-chat", voiceChatRouter)
 app.use("/api/event-suggestions", eventSuggestionRouter)
 app.use("/api/whatsapp", whatsappWebRouter)
+
+app.use(errorHandler);

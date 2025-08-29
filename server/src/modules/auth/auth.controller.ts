@@ -37,6 +37,7 @@ export const authController = {
 
       res.status(200).json({ message: 'Login successful', data: user });
     } catch (error) {
+      // console.error("Login error:", error);
       next(error);
     }
   },

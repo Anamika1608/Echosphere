@@ -202,7 +202,7 @@ const ResidentDashboard = () => {
         if (upcomingRes.data.success) setUpcomingEvents(upcomingRes.data.data);
       }
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      // console.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
     }
@@ -256,7 +256,7 @@ const ResidentDashboard = () => {
       clearUser();
       navigate('/login');
     } catch (err: any) {
-      console.error('Logout error:', err);
+      // console.error('Logout error:', err);
       clearUser();
       navigate('/login');
     }

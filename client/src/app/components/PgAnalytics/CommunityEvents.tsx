@@ -172,7 +172,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         });
       }
     } catch (err: any) {
-      console.error('Events loading error:', err);
+      // console.error('Events loading error:', err);
       setError(err.response?.data?.message || 'Failed to load events');
       // Set empty state on error
       setEventsData({
@@ -234,7 +234,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         setEventSuggestion(response.data.data.suggestions[0]);
       }
     } catch (err: any) {
-      console.error('Failed to regenerate event suggestions:', err.response?.data?.message);
+      // console.error('Failed to regenerate event suggestions:', err.response?.data?.message);
       setError('Failed to generate new suggestions');
     } finally {
       setSuggestionLoading(false);
@@ -425,7 +425,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         alert('Failed to broadcast event to WhatsApp');
       }
     } catch (error) {
-      console.error('Failed to broadcast and create event:', error);
+      // console.error('Failed to broadcast and create event:', error);
       alert('Error occurred while broadcasting event');
     }
   };
@@ -476,7 +476,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
                     alt="WhatsApp QR Code"
                     className="w-48 h-48 mx-auto"
                     onError={(e) => {
-                      console.error('QR Code image failed to load:', qrCodeDataURL);
+                      // console.error('QR Code image failed to load:', qrCodeDataURL);
                       e.currentTarget.style.display = 'none';
                     }}
                   />

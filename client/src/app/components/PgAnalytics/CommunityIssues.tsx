@@ -166,7 +166,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
         setError(apiResponse.message || 'Failed to load issues');
       }
     } catch (err: any) {
-      console.error('Error loading issues:', err);
+      // console.error('Error loading issues:', err);
       setError(err.response?.data?.message || 'Failed to load issues');
     } finally {
       setLoading(false);
@@ -223,7 +223,7 @@ const CommunityIssues: React.FC<CommunityIssuesProps> = ({ communityId }) => {
         throw new Error(result.message || 'Failed to dispatch call');
       }
     } catch (err: any) {
-      console.error('Error dispatching call:', err);
+      // console.error('Error dispatching call:', err);
       addToast(`Failed to dispatch call: ${err.message}`, 'error');
     } finally {
       setCallingTechnician(null);

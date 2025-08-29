@@ -1316,7 +1316,7 @@ export const pgCommunityAnalyticsService = {
       });
       return result;
     } catch (error) {
-      console.error('Error updating issue status:', error);
+      // console.error('Error updating issue status:', error);
       throw error;
     }
   }
