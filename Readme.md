@@ -3,7 +3,8 @@
 *Echosphere* is a modern property management solution that connects *residents, property owners, and maintenance staff* through an AI-powered, voice-enabled platform. It simplifies community living by streamlining issue reporting, service requests, and management workflows.  
 
 ## 🎥 Demo Video
-https://github.com/user-attachments/assets/dbc75615-8f93-4e04-9bcb-4c829e9d26aa
+
+https://github.com/user-attachments/assets/8ed31b92-ef5c-4281-9b98-f97452ff5938
 
 ## 🏗 Tech Stack
 
