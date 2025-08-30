@@ -52,7 +52,7 @@ class WhatsAppService {
       qrcode.generate(qr, { small: true });
 
       this.qrCode = qr;
-      
+
       // Generate QR code as data URL for frontend
       try {
         const QRCode = require('qrcode');
@@ -91,9 +91,18 @@ class WhatsAppService {
       this.qrCodeDataURL = null;
     });
 
-    this.client.on('disconnected', (reason: string) => {
+    this.client.on('disconnected', async (reason: string) => {
       console.log('📱 WhatsApp disconnected:', reason);
       this.isReady = false;
+      try {
+        await this.client.logout();
+      } catch (err: any) {
+        if (err.code === "EBUSY") {
+          console.warn("⚠️ Ignored EBUSY during logout:", err.message);
+        } else {
+          console.error("❌ Logout error:", err);
+        }
+      }
     });
 
     // Test commands
@@ -201,8 +210,12 @@ _This message was sent automatically by Event Manager Bot_ 🤖`;
       this.isInitializing = false;
       this.qrCode = null;
       this.qrCodeDataURL = null;
-    } catch (error) {
-      console.error('❌ Failed to destroy WhatsApp client:', error);
+    } catch (error: any) {
+      if (error.code === "EBUSY") {
+        console.warn("⚠️ Ignored EBUSY during destroy:", error.message);
+      } else {
+        console.error("❌ Failed to destroy WhatsApp client:", error);
+      }
     }
   }
 }

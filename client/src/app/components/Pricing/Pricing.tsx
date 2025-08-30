@@ -40,21 +40,19 @@ const Pricing: React.FC = () => {
 
     const freeFeatures = [
         { name: "Manual issue/service request via form", included: true },
-        { name: "Auto broadcasting of events", included: true },
         { name: "Basic support tickets", included: true },
+        { name: "Auto assignment of technician", included: true },
+        { name: "Auto broadcasting of events", included: false },
         { name: "Voice-based requests", included: false },
-        { name: "Auto assignment of technician", included: false },
         { name: "Auto call to technician", included: false },
-        { name: "Advanced analytics & insights", included: false },
     ];
 
     const premiumFeatures = [
         { name: "Voice-based issue/service request", included: true },
-        { name: "Auto broadcasting of events", included: true },
         { name: "Priority support tickets", included: true },
         { name: "Auto assignment of technician", included: true },
+        { name: "Auto broadcasting of events", included: true },
         { name: "Auto call to technician", included: true },
-        { name: "Advanced analytics & insights", included: true },
     ];
 
 

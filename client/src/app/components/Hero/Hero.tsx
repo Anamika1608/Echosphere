@@ -149,7 +149,7 @@ const Hero = () => {
                         <div className="w-full aspect-video" style={{ pointerEvents: 'auto' }}>
                             <iframe
                                 className="w-full h-full"
-                                src='https://player.vimeo.com/video/1113959172?controls=1'
+                                src='https://player.vimeo.com/video/1114512837?controls=1'
                                 title="Demo video"
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

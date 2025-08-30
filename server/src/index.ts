@@ -51,3 +51,19 @@ app.use("/api/event-suggestions", eventSuggestionRouter)
 app.use("/api/whatsapp", whatsappWebRouter)
 
 app.use(errorHandler);
+
+process.on("uncaughtException", (err: any) => {
+  if (err.code === "EBUSY") {
+    console.warn("⚠️ Ignored EBUSY (chrome_debug.log locked):", err.message);
+  } else {
+    console.error("❌ Uncaught Exception:", err);
+  }
+});
+
+process.on("unhandledRejection", (reason: any) => {
+  if (reason?.code === "EBUSY") {
+    console.warn("⚠️ Ignored EBUSY (chrome_debug.log locked):", reason);
+  } else {
+    console.error("❌ Unhandled Rejection:", reason);
+  }
+});

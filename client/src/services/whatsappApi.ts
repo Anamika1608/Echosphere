@@ -19,7 +19,7 @@ interface WhatsAppStatus {
   isReady: boolean;
   isInitializing: boolean;
   qrCode: string | null;
-  qrCodeDataURL: string | null; // Add this for the QR code image
+  qrCodeDataURL: string | null; 
 }
 
 class WhatsAppAPI {

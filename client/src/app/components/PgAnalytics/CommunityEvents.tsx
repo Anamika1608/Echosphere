@@ -97,6 +97,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
   const [showQRModal, setShowQRModal] = useState(false);
 
   const {
+    initializeWhatsApp,
     isReady,
     isInitializing,
     qrCode,
@@ -514,7 +515,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
         </div>
       )}
 
-      {!isReady && (
+      {/* {!isReady && (
         <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
           <div className="flex items-center">
             <div className="flex-shrink-0">
@@ -537,7 +538,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* AI Event Suggestion Section */}
       {eventSuggestion ? (
@@ -593,9 +594,14 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
                 <span>{eventSuggestion.location}</span>
               </div>
 
-              {eventSuggestion.status === 'PENDING' && (
+              {/* {eventSuggestion.status === 'PENDING' && (
                 <button
-                  onClick={() => broadCastEvent(eventSuggestion)}
+                  onClick={() => {
+                    if (!isInitializing) {
+                      initializeWhatsApp();
+                    }
+                    broadCastEvent(eventSuggestion);
+                  }}
                   disabled={suggestionLoading || whatsappLoading}
                   className="flex items-center bg-[#25D366] text-white px-3 py-1 rounded-lg hover:bg-[#20BA5A] transition-colors text-sm font-semibold disabled:opacity-50"
                 >
@@ -613,7 +619,7 @@ const CommunityEvents: React.FC<CommunityEventsProps> = ({ communityId }) => {
                     </>
                   )}
                 </button>
-              )}
+              )} */}
             </div>
           </div>
         </div>

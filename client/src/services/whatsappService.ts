@@ -20,7 +20,7 @@ export const useWhatsApp = () => {
   const [isReady, setIsReady] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [qrCode, setQrCode] = useState<string | null>(null);
-  const [qrCodeDataURL, setQrCodeDataURL] = useState<string | null>(null); // Add this state
+  const [qrCodeDataURL, setQrCodeDataURL] = useState<string | null>(null); 
   const [groups, setGroups] = useState<WhatsAppGroup[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export const useWhatsApp = () => {
       } catch (err) {
         // console.error('Status polling error:', err);
       }
-    }, 2000);
+    }, 6000);
 
     // Stop polling after 5 minutes
     setTimeout(() => clearInterval(interval), 300000);
@@ -118,8 +118,6 @@ export const useWhatsApp = () => {
 
         if (status.isReady) {
           fetchGroups();
-        } else {
-          initializeWhatsApp();
         }
       } catch (err) {
         console.error('Failed to check initial status:', err);
