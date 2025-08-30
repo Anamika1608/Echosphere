@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
 import Logo from '../../../assets/Logo.svg';
 import userStore from '../../../store/userStore';
+import ProfileSkeleton from './ProfileSkelton';
 
 interface NavbarProps {
   className?: string;
@@ -11,7 +12,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { user } = userStore();
+  const { user, loadingUserInfo } = userStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,7 +82,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 
           {/* Desktop Login Button / User Profile */}
           <div className="hidden md:flex items-center flex-shrink-0">
-            {user && user.profilePicture ? (
+            {loadingUserInfo ? <ProfileSkeleton /> : (user && user.profilePicture) ? (
               <div 
                 onClick={handleProfileClick}
                 className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1 transition-all duration-200"
@@ -168,8 +169,10 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 
             {/* Mobile Login Button / User Profile */}
             <div className="pt-3 px-3">
-              {user && user.profilePicture ? (
-                <div 
+              {loadingUserInfo ? (
+                <ProfileSkeleton />
+              ) : user && user.profilePicture ? (
+                <div
                   onClick={() => {
                     handleProfileClick();
                     setIsMobileMenuOpen(false);

@@ -19,11 +19,13 @@ const initialUser: User = {
 interface StoreState {
   user: User;
   isLoading: boolean;
+  loadingUserInfo: boolean;
   isAuthenticated: boolean;
   setUser: (newUser: User) => void;
   updateUser: (updates: Partial<User>) => void;
   clearUser: () => void;
   setLoading: (loading: boolean) => void;
+  setLoadingUserInfo: (loading: boolean) => void;
   addRaisedIssue: (issue: RaisedIssue) => void;
   removeRaisedIssue: (issueId: string) => void;
   addRequestedService: (service: RequestedService) => void;
@@ -34,6 +36,7 @@ const userStore = create<StoreState>((set) => ({
   // User state
   user: initialUser,
   isLoading: false,
+  loadingUserInfo: false,
   isAuthenticated: false,
 
   // Set loading state
@@ -42,12 +45,19 @@ const userStore = create<StoreState>((set) => ({
       isLoading: loading,
     })),
 
+  // Set loading user info state
+  setLoadingUserInfo: (loading) =>
+    set(() => ({
+      loadingUserInfo: loading,
+    })),
+
   // Set entire user object
   setUser: (newUser) =>
     set(() => ({
       user: { ...newUser },
       isAuthenticated: Boolean(newUser.id),
       isLoading: false,
+      loadingUserInfo: false,
     })),
 
   // Update specific user fields
@@ -66,6 +76,7 @@ const userStore = create<StoreState>((set) => ({
       user: initialUser,
       isAuthenticated: false,
       isLoading: false,
+      loadingUserInfo: false,
     })),
 
   // Raised Issues Functions
