@@ -4,9 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../../../components/ui/accordion.tsx";
-import Spline from '@splinetool/react-spline';
-import type { Variants } from 'framer-motion'
-import { motion } from 'framer-motion';
+import type { Variants } from "framer-motion";
+import { motion } from "framer-motion";
+import splineGIF from "../../../assets/splineGIF.gif";
 
 const faqs = [
   {
@@ -32,10 +32,8 @@ export function FAQs() {
   const containerVariants: Variants = {
     initial: {},
     animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+      transition: { staggerChildren: 0.1 },
+    },
   };
 
   const fadeInUp: Variants = {
@@ -43,8 +41,8 @@ export function FAQs() {
     animate: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   };
 
   const accordionVariants: Variants = {
@@ -52,13 +50,26 @@ export function FAQs() {
     animate: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
+  const fadeIn: Variants = {
+    initial: { opacity: 0 },
+    animate: {
+      opacity: 1,
+      transition: { duration: 0.8 },
+    },
   };
 
   return (
-    <section id="faq" className="grid grid-cols-1 mx-auto px-4 py-8 sm:py-16 gap-4"
-      style={{ background: 'linear-gradient(180deg, #f9f7f5 0%, #FFF 19.11%)' }}>
+    <section
+      id="faq"
+      className="grid grid-cols-1 mx-auto px-4 py-8 sm:py-16 gap-4"
+      style={{
+        background: "linear-gradient(180deg, #f9f7f5 0%, #FFF 19.11%)",
+      }}
+    >
       {/* Header Section */}
       <motion.div
         className="sm:mx-auto mx-10 px-0 text-center"
@@ -67,73 +78,65 @@ export function FAQs() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
       >
-        <motion.div
-          className="text-center py-4 sm:mb-8"
-          variants={fadeInUp}
-        >
+        <motion.div className="text-center py-4 sm:mb-8" variants={fadeInUp}>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
             Frequently Asked Questions
           </h2>
         </motion.div>
 
-        {/* Spline Container */}
+        {/* Spline GIF Container */}
         <motion.div
-          className="hidden lg:flex justify-center mb-6 items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative"
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true, amount: 0.3 }}
-          whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+          className="hidden lg:flex justify-center items-center h-[160px] sm:h-[200px] mt-6 mx-auto relative"
+          variants={fadeIn}
+          initial="initial"
+          animate="animate"
+          transition={{ delay: 0.4 }}
         >
-          <div className="scale-25">
-            <Spline
-              scene="https://prod.spline.design/1OOUEgK1bBI7KW2R/scene.splinecode"
-              className="w-full h-full"
-            /><div className="hide-spline-badge"></div>
-          </div>
-          <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
+          <img
+            src={splineGIF}
+            alt="Spline Animation"
+            className="w-full h-full object-contain pointer-events-none"
+            loading="lazy"
+          />
         </motion.div>
-      </motion.div>
 
-      {/* FAQ Accordion */}
-      <motion.div
-        className="max-w-3xl mx-4 sm:mx-auto sm:w-xl mb-20 overflow-visible"
-        variants={containerVariants}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              variants={accordionVariants}
-              whileHover={{
-                scale: 1.01,
-                transition: { duration: 0.2 }
-              }}
-            >
-              <AccordionItem value={`item-${index}`} className="border-b">
-                <motion.div
-                  whileHover={{ x: 5, transition: { duration: 0.2 } }}
-                >
-                  <AccordionTrigger className="hover:text-orange-500 transition-colors duration-200">
-                    {faq.q}
-                  </AccordionTrigger>
-                </motion.div>
-                <AccordionContent className="text-gray-500">
+        {/* FAQ Accordion */}
+        <motion.div
+          className="max-w-3xl mx-4 sm:mx-auto sm:w-xl mb-20 overflow-visible"
+          variants={containerVariants}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <Accordion type="single" collapsible className="w-full">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                variants={accordionVariants}
+                whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+              >
+                <AccordionItem value={`item-${index}`} className="border-b">
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
+                    whileHover={{ x: 5, transition: { duration: 0.2 } }}
                   >
-                    {faq.a}
+                    <AccordionTrigger className="hover:text-orange-500 transition-colors duration-200">
+                      {faq.q}
+                    </AccordionTrigger>
                   </motion.div>
-                </AccordionContent>
-              </AccordionItem>
-            </motion.div>
-          ))}
-        </Accordion>
+                  <AccordionContent className="text-gray-500">
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                      {faq.a}
+                    </motion.div>
+                  </AccordionContent>
+                </AccordionItem>
+              </motion.div>
+            ))}
+          </Accordion>
+        </motion.div>
       </motion.div>
     </section>
   );

@@ -5,6 +5,8 @@ import Spline from '@splinetool/react-spline';
 import img1 from '../../../assets/img1.png';
 import img2 from '../../../assets/img2.png';
 import bgimage from '../../../assets/bgimage.png';
+import voiceBotAnimation from '../../../assets/voiceBotAnimation.mp4';
+import splineGIF from '../../../assets/splineGIF.gif';
 
 const Hero = () => {
     const fadeInUp = {
@@ -79,18 +81,17 @@ const Hero = () => {
 
                 {/* Spline container */}
                 <motion.div
-                    className="hidden lg:flex justify-center items-center h-[160px] sm:h-[223px] mt-6 mx-auto relative "
-                    {...fadeIn}
-                    transition={{ delay: 0.4 }}
-                >
-                    <div className="scale-25">
-                        <Spline
-                            scene="https://prod.spline.design/1OOUEgK1bBI7KW2R/scene.splinecode"
-                            className="w-full h-full"
-                        /><div className="hide-spline-badge"></div>
-                    </div>
-                    <div className="absolute inset-0 z-10" style={{ cursor: 'default' }}></div>
-                </motion.div>
+  className="hidden lg:flex justify-center items-center h-[160px] sm:h-[200px] mt-6 mx-auto relative"
+  {...fadeIn}
+  transition={{ delay: 0.4 }}
+>
+  <img 
+    src={splineGIF} 
+    alt="Spline Animation" 
+    className="w-full h-full object-contain pointer-events-none"
+  />
+</motion.div>
+
 
                 {/* Buttons with subtle hover */}
                 <motion.div
