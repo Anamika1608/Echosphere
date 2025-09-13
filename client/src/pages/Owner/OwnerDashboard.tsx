@@ -217,7 +217,7 @@ const PgOwnerDashboard: React.FC = () => {
       clearUser();
       navigate('/login');
     } catch (err: any) {
-      console.error('Logout error:', err);
+      // console.error('Logout error:', err);
       clearUser();
       navigate('/login');
     } finally {

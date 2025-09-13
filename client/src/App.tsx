@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 import { serverUrl } from './utils/index.ts';
 import userStore from './store/userStore.ts';
@@ -10,20 +10,17 @@ import Register from './app/Register/Register';
 import PgOwnerDashboard from './pages/Owner/OwnerDashboard.tsx';
 import ResidentDashboard from './pages/Resident/ResidentDashboard.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
-import LoadingSpinner from './components/ui/loading.tsx';
 import ProtectedRoute from './components/route/ProtectedRoute.tsx';
 import NotFound from './pages/NotFound/NotFound.tsx';
 import CommunityDetailPage from './pages/Owner/CommunityDetailPage.tsx';
 
 function App() {
-  const { setUser, clearUser } = userStore();
-  const [isLoading, setIsLoading] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false);
+  const { setUser, clearUser, setLoadingUserInfo } = userStore();
 
   useEffect(() => {
     const getUserProfile = async () => {
       try {
-        setIsLoading(true);
+        setLoadingUserInfo(true);
         const response = await axios.get(`${serverUrl}/auth/getUserProfile`, {
           withCredentials: true,
         });
@@ -34,27 +31,12 @@ function App() {
         // Clear user data if there's an authentication error
         clearUser();
       } finally {
-        setIsLoading(false);
-        setAuthChecked(true);
+        setLoadingUserInfo(false);
       }
     };
 
     getUserProfile();
-  }, [setUser, clearUser]);
-
-  useEffect(() => {
-    const setUserToRedis = async () => {
-      await axios.get(`${serverUrl}/auth/setWidgetSessionUserId`, {
-        withCredentials: true
-      });
-    }
-    setUserToRedis()
-  },[])
-
-  // Show loading spinner while checking authentication
-  if (isLoading || !authChecked) {
-    return <LoadingSpinner />;
-  }
+  }, [setUser, clearUser, setLoadingUserInfo]);
 
   return (
     <>

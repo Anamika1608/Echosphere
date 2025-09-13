@@ -455,7 +455,7 @@ Focus on creating ONE perfect community event that brings PG residents together 
       }];
 
     } catch (error) {
-      console.error('Error parsing AI response:', error);
+      // console.error('Error parsing AI response:', error);
       return this.getFallbackSuggestion(pgCommunityId, targetDate);
     }
   }
