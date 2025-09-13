@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, memo } from 'react';
 import { useInView } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -7,32 +7,33 @@ import PricingCard from "./PricingCard";
 import type { Variants } from 'framer-motion';
 
 
-const Pricing: React.FC = () => {
+const Pricing: React.FC = memo(() => {
     const headerRef = useRef(null);
     const ctaRef = useRef(null);
     const headerInView = useInView(headerRef, { once: true, amount: 0.5 });
     const ctaInView = useInView(ctaRef, { once: true, amount: 0.5 });
 
+    // Simplified animations for better performance
     const titleVariants: Variants = {
-        initial: { opacity: 0, y: 30 },
+        initial: { opacity: 0, y: 20 }, // Reduced movement
         animate: {
             opacity: 1,
             y: 0,
             transition: {
-                duration: 0.8,
-                ease: [0.25, 0.46, 0.45, 0.94]
+                duration: 0.4, // Faster animation
+                ease: "easeOut" // Simpler easing
             }
         }
     };
 
     const subtitleVariants: Variants = {
-        initial: { opacity: 0, y: 20 },
+        initial: { opacity: 0, y: 15 }, // Reduced movement
         animate: {
             opacity: 1,
             y: 0,
             transition: {
-                duration: 0.6,
-                delay: 0.3,
+                duration: 0.3, // Faster animation
+                delay: 0.1, // Reduced delay
                 ease: "easeOut"
             }
         }
@@ -190,6 +191,8 @@ const Pricing: React.FC = () => {
             </div>
         </section>
     );
-};
+});
+
+Pricing.displayName = 'Pricing';
 
 export default Pricing;

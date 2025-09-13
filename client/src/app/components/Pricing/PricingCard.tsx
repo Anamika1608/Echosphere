@@ -2,7 +2,7 @@ import { Button } from '../../../components/ui/button';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { Check, X, Star, Shield } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useRef, memo } from 'react';
 import type { Variants } from 'framer-motion';
 
 interface PricingCardProps {
@@ -16,7 +16,7 @@ interface PricingCardProps {
     delay?: number;
 }
 
-const PricingCard: React.FC<PricingCardProps> = ({
+const PricingCard: React.FC<PricingCardProps> = memo(({
     title,
     price,
     period,
@@ -26,101 +26,93 @@ const PricingCard: React.FC<PricingCardProps> = ({
     isPremium = false,
     delay = 0
 }) => {
-    const [isHovered, setIsHovered] = useState(false);
     const cardRef = useRef(null);
     const isInView = useInView(cardRef, { once: true, amount: 0.3 });
 
+    // Simplified animations for better performance
     const cardVariants: Variants = {
-        initial: { opacity: 0, y: 50, scale: 0.9 },
+        initial: { opacity: 0, y: 30, scale: 0.95 }, // Reduced movement and scale
         animate: {
             opacity: 1,
             y: 0,
             scale: 1,
             transition: {
-                duration: 0.8,
+                duration: 0.4, // Faster animation
                 delay,
-                ease: [0.25, 0.46, 0.45, 0.94],
-                type: "spring",
-                stiffness: 100,
-                damping: 15
+                ease: "easeOut" // Simpler easing
             }
         }
     };
 
+    // Simplified variants for better performance
     const featureVariants: Variants = {
-        initial: { opacity: 0, x: -20 },
+        initial: { opacity: 0, x: -10 }, // Reduced movement
         animate: (index: number) => ({
             opacity: 1,
             x: 0,
             transition: {
-                duration: 0.5,
-                delay: delay + 0.3 + (index * 0.1),
+                duration: 0.2, // Faster animation
+                delay: delay + 0.1 + (index * 0.05), // Reduced delay
                 ease: "easeOut"
             }
         })
     };
 
     const iconVariants: Variants = {
-        initial: { scale: 0, rotate: -180 },
+        initial: { scale: 0.8, opacity: 0 }, // Simplified initial state
         animate: (index: number) => ({
             scale: 1,
-            rotate: 0,
+            opacity: 1,
             transition: {
-                duration: 0.6,
-                delay: delay + 0.4 + (index * 0.1),
-                type: "spring",
-                stiffness: 200,
-                damping: 20
+                duration: 0.2, // Faster animation
+                delay: delay + 0.15 + (index * 0.05), // Reduced delay
+                ease: "easeOut" // Simpler easing
             }
         })
     };
 
     const priceVariants: Variants = {
-        initial: { scale: 0.8, opacity: 0 },
+        initial: { scale: 0.9, opacity: 0 }, // Less dramatic scale
         animate: {
             scale: 1,
             opacity: 1,
             transition: {
-                duration: 0.6,
-                delay: delay + 0.2,
-                type: "spring",
-                stiffness: 150,
-                damping: 12
+                duration: 0.3, // Faster animation
+                delay: delay + 0.1,
+                ease: "easeOut" // Simpler easing
             }
         }
     };
 
     const badgeVariants: Variants = {
-        initial: { y: -30, opacity: 0, scale: 0.8 },
+        initial: { y: -15, opacity: 0, scale: 0.9 }, // Reduced movement
         animate: {
             y: 0,
             opacity: 1,
             scale: 1,
             transition: {
-                duration: 0.8,
-                delay: delay + 0.1,
-                type: "spring",
-                stiffness: 120,
-                damping: 15
+                duration: 0.3, // Faster animation
+                delay: delay + 0.05,
+                ease: "easeOut" // Simpler easing
             }
         }
     };
 
     const buttonVariants: Variants = {
-        initial: { y: 20, opacity: 0 },
+        initial: { y: 10, opacity: 0 }, // Reduced movement
         animate: {
             y: 0,
             opacity: 1,
             transition: {
-                duration: 0.6,
-                delay: delay + 0.8,
+                duration: 0.3, // Faster animation
+                delay: delay + 0.2,
                 ease: "easeOut"
             }
         },
         hover: {
-            scale: 1.05,
-            y: -2,
-            transition: { duration: 0.2 }
+            scale: 1.02, // Reduced scale
+            y: -1, // Reduced movement
+            transition: { duration: 0.15 } // Faster transition
         },
         tap: {
             scale: 0.98,
@@ -150,40 +142,12 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 initial="initial"
                 animate={isInView ? "animate" : "initial"}
                 whileHover={{
-                    scale: 1.03,
-                    y: -8,
-                    transition: { duration: 0.3, ease: "easeOut" }
+                    scale: 1.02, // Reduced scale
+                    y: -4, // Reduced movement
+                    transition: { duration: 0.2, ease: "easeOut" } // Faster transition
                 }}
-                onHoverStart={() => setIsHovered(true)}
-                onHoverEnd={() => setIsHovered(false)}
             >
-                {/* Floating particles effect */}
-                {isHovered && (
-                    <>
-                        {[...Array(6)].map((_, i) => (
-                            <motion.div
-                                key={i}
-                                className="absolute w-2 h-2 bg-orange-300 rounded-full"
-                                style={{
-                                    top: `${20 + i * 15}%`,
-                                    left: `${10 + i * 12}%`,
-                                }}
-                                initial={{ opacity: 0, scale: 0 }}
-                                animate={{
-                                    opacity: [0, 1, 0],
-                                    scale: [0, 1, 0],
-                                    y: [-20, -40, -60],
-                                    x: [0, Math.random() * 20 - 10, 0]
-                                }}
-                                transition={{
-                                    duration: 2,
-                                    repeat: Infinity,
-                                    delay: i * 0.2
-                                }}
-                            />
-                        ))}
-                    </>
-                )}
+                {/* Removed heavy particle effects for better performance */}
 
                 {isPremium && (
                     <motion.div
@@ -199,8 +163,8 @@ const PricingCard: React.FC<PricingCardProps> = ({
                                 border: '1px solid #FFF',
                                 background: 'linear-gradient(180deg, #FFF 0%, #FFD7AE 56.5%, #FF9A72 113%)',
                             }}
-                            whileHover={{ scale: 1.1, rotate: 5 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                            whileHover={{ scale: 1.05, rotate: 2 }} // Reduced effects
+                            transition={{ duration: 0.15 }} // Simpler transition
                         >
                             <Star className="w-4 h-4" />
                             Most Popular
@@ -229,8 +193,8 @@ const PricingCard: React.FC<PricingCardProps> = ({
                     >
                         <motion.span
                             className={`text-4xl py-2 pb-2 sm:text-5xl font-bold ${isPremium ? 'text-orange-800' : 'text-gray-900'}`}
-                            whileHover={{ scale: 1.1 }}
-                            transition={{ type: "spring", stiffness: 300 }}
+                            whileHover={{ scale: 1.05 }} // Reduced scale
+                            transition={{ duration: 0.15 }} // Simpler transition
                         >
                             {price}
                         </motion.span>
@@ -247,7 +211,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
                             initial="initial"
                             animate={isInView ? "animate" : "initial"}
                             custom={index}
-                            whileHover={{ x: 5, transition: { duration: 0.2 } }}
+                            whileHover={{ x: 2, transition: { duration: 0.15 } }} // Reduced movement
                         >
                             <motion.div
                                 variants={iconVariants}
@@ -302,31 +266,21 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         <Link to={buttonLink}>
                             <motion.span
                                 className="relative z-10 flex items-center justify-center gap-2"
-                                whileHover={{ scale: 1.05 }}
+                                whileHover={{ scale: 1.02 }} // Reduced scale
                             >
                                 {isPremium && <Shield className="w-4 h-4" />}
                                 {buttonText}
                             </motion.span>
 
-                            {/* Button shine effect */}
-                            <motion.div
-                                className="absolute inset-0 bg-white opacity-0"
-                                whileHover={{
-                                    opacity: [0, 0.3, 0],
-                                    x: [-100, 300],
-                                    transition: { duration: 0.6, ease: "easeInOut" }
-                                }}
-                                style={{
-                                    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
-                                    transform: "skewX(-45deg)"
-                                }}
-                            />
+                            {/* Removed heavy shine effect for better performance */}
                         </Link>
                     </Button>
                 </motion.div>
             </motion.div>
         </div>
     );
-};
+});
+
+PricingCard.displayName = 'PricingCard';
 
 export default PricingCard;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Card, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Mic, LayoutDashboard, Lightbulb, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -40,31 +40,32 @@ const freeTierFeatures = [
   }
 ];
 
-const Features: React.FC = () => {
+const Features: React.FC = memo(() => {
+  // Simplified animations for better performance
   const containerVariants: Variants = {
     initial: {},
     animate: {
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.05 // Reduced stagger for faster animation
       }
     }
   };
 
   const cardVariants: Variants = {
-    initial: { opacity: 0, y: 40 },
+    initial: { opacity: 0, y: 20 }, // Reduced movement
     animate: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
+      transition: { duration: 0.3, ease: "easeOut" } // Faster animation
     }
   };
 
   const iconVariants = {
-    initial: { scale: 0.8, opacity: 0 },
+    initial: { scale: 0.9, opacity: 0 }, // Less dramatic scale
     animate: {
       scale: 1,
       opacity: 1,
-      transition: { duration: 0.4, delay: 0.2 }
+      transition: { duration: 0.2, delay: 0.1 } // Faster animation
     }
   };
 
@@ -118,9 +119,9 @@ const Features: React.FC = () => {
             key={index}
             variants={cardVariants}
             whileHover={{
-              y: -5,
-              scale: 1.02,
-              transition: { duration: 0.2 },
+              y: -2, // Reduced movement
+              scale: 1.01, // Reduced scale
+              transition: { duration: 0.15 }, // Faster transition
             }}
           >
             <Card
@@ -134,9 +135,9 @@ const Features: React.FC = () => {
                   className="w-fit pt-2 mb-4"
                   variants={iconVariants}
                   whileHover={{
-                    scale: 1.1,
-                    rotate: 5,
-                    transition: { duration: 0.2 },
+                    scale: 1.05, // Reduced scale
+                    rotate: 2, // Reduced rotation
+                    transition: { duration: 0.15 }, // Faster transition
                   }}
                 >
                   <Icon className="w-8 h-8 text-[#FF4500]" />
@@ -159,6 +160,8 @@ const Features: React.FC = () => {
     </section>
 
   );
-};
+});
+
+Features.displayName = 'Features';
 
 export default Features;

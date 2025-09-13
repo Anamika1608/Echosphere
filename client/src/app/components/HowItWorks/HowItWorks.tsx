@@ -4,6 +4,7 @@ import Icon3 from '../../../assets/Icon3.svg';
 import Icon4 from '../../../assets/Icon4.svg';
 import Icon5 from '../../../assets/Icon5.svg';
 import { motion } from 'framer-motion';
+import { memo } from 'react';
 import type {Variants} from 'framer-motion'
 
 const steps = [
@@ -49,32 +50,32 @@ const steps = [
   },
 ];
 
-const HowItWorks = () => {
-  // Animation variants
+const HowItWorks = memo(() => {
+  // Simplified animation variants for better performance
   const containerVariants: Variants = {
     initial: {},
     animate: {
       transition: {
-        staggerChildren: 0.15
+        staggerChildren: 0.08 // Reduced stagger
       }
     }
   };
 
   const stepVariants: Variants = {
-    initial: { opacity: 0, y: 30 },
+    initial: { opacity: 0, y: 20 }, // Reduced movement
     animate: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.6, ease: ["easeOut"] }
+      transition: { duration: 0.3, ease: "easeOut" } // Faster animation
     }
   };
 
   const iconVariants: Variants = {
-    initial: { scale: 0.8, opacity: 0 },
+    initial: { scale: 0.9, opacity: 0 }, // Less dramatic scale
     animate: { 
       scale: 1, 
       opacity: 1,
-      transition: { duration: 0.4, delay: 0.2 }
+      transition: { duration: 0.2, delay: 0.1 } // Faster animation
     }
   };
 
@@ -82,7 +83,7 @@ const HowItWorks = () => {
     initial: { scaleX: 0 },
     animate: { 
       scaleX: 1,
-      transition: { duration: 0.8, delay: 0.5, ease: ["easeOut"] }
+      transition: { duration: 0.4, delay: 0.2, ease: "easeOut" } // Faster animation
     }
   };
 
@@ -147,7 +148,7 @@ const HowItWorks = () => {
                 key={step.num} 
                 className="flex flex-col items-center text-center relative z-10"
                 variants={stepVariants}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                whileHover={{ y: -2, transition: { duration: 0.15 } }} // Reduced movement
               >
                 {/* Icon */}
                 <motion.div 
@@ -158,9 +159,9 @@ const HowItWorks = () => {
                   }}
                   variants={iconVariants}
                   whileHover={{ 
-                    scale: 1.1,
-                    rotate: 5,
-                    transition: { duration: 0.2 }
+                    scale: 1.05, // Reduced scale
+                    rotate: 2, // Reduced rotation
+                    transition: { duration: 0.15 } // Faster transition
                   }}
                 >
                   {step.icon}
@@ -221,7 +222,7 @@ const HowItWorks = () => {
                 key={step.num} 
                 className="flex flex-col items-center text-center relative z-10"
                 variants={stepVariants}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                whileHover={{ y: -2, transition: { duration: 0.15 } }} // Reduced movement
               >
                 {/* Icon */}
                 <motion.div 
@@ -232,9 +233,9 @@ const HowItWorks = () => {
                   }}
                   variants={iconVariants}
                   whileHover={{ 
-                    scale: 1.1,
-                    rotate: 5,
-                    transition: { duration: 0.2 }
+                    scale: 1.05, // Reduced scale
+                    rotate: 2, // Reduced rotation
+                    transition: { duration: 0.15 } // Faster transition
                   }}
                 >
                   {step.icon}
@@ -274,6 +275,8 @@ const HowItWorks = () => {
       </div>
     </section>
   );
-};
+});
+
+HowItWorks.displayName = 'HowItWorks';
 
 export default HowItWorks;
