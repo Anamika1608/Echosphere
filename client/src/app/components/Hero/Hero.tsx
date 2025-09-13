@@ -1,11 +1,9 @@
 import { Button } from '../../../components/ui/button';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Spline from '@splinetool/react-spline';
 import img1 from '../../../assets/img1.png';
 import img2 from '../../../assets/img2.png';
 import bgimage from '../../../assets/bgimage.png';
-import voiceBotAnimation from '../../../assets/voiceBotAnimation.mp4';
 import splineGIF from '../../../assets/splineGIF.gif';
 
 const Hero = () => {

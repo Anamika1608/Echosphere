@@ -55,7 +55,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <a
-              href="#demo"
+              href="/"
               className="text-black hover:text-gray-900 transition-colors duration-200 font-medium text-[15px]"
             >
               Demo
