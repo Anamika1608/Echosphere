@@ -79,16 +79,16 @@ const Hero = () => {
 
                 {/* Spline container */}
                 <motion.div
-  className="hidden lg:flex justify-center items-center h-[160px] sm:h-[200px] mt-6 mx-auto relative"
-  {...fadeIn}
-  transition={{ delay: 0.4 }}
->
-  <img 
-    src={splineGIF} 
-    alt="Spline Animation" 
-    className="w-full h-full object-contain pointer-events-none"
-  />
-</motion.div>
+                    className="hidden lg:flex justify-center items-center h-[160px] sm:h-[200px] mt-6 mx-auto relative"
+                    {...fadeIn}
+                    transition={{ delay: 0.4 }}
+                >
+                    <img
+                        src={splineGIF}
+                        alt="Spline Animation"
+                        className="w-full h-full object-contain pointer-events-none"
+                    />
+                </motion.div>
 
 
                 {/* Buttons with subtle hover */}
@@ -145,7 +145,7 @@ const Hero = () => {
                             transition: { duration: 0.3 }
                         }}
                     >
-                        <div className="w-full aspect-video">
+                        <div className="w-full aspect-video" style={{ pointerEvents: 'auto' }}>
                             <iframe
                                 className="w-full h-full"
                                 src='https://player.vimeo.com/video/1114512837?controls=1'
@@ -153,6 +153,7 @@ const Hero = () => {
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
+                                style={{ pointerEvents: 'auto' }}
                             />
                         </div>
                     </motion.div>
